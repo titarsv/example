@@ -6,7 +6,7 @@ use App\Http\Controllers\Controller;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-use TelegramBot\Api\Client;
+use Modules\Notifications\Services\TelegramNotifierService;
 use Carbon\Carbon;
 use Modules\Reviews\Models\SiteReview;
 use App\Models\UserData;
@@ -283,21 +283,11 @@ class SiteReviewsController extends Controller
             });
         }
 
-        $settings = new Setting();
-        $telegram = (array)$settings->get_setting('telegram');
-        if(!empty($telegram['token'])){
-            $bot = new Client($telegram['token']);
+        $text = trans('telegram.new_review')."\n";
+        $text .= trans('telegram.email').": ".$review->user->email."\n";
+        $text .= trans('telegram.review_text').": ".$review->review."\n";
 
-            $text = trans('telegram.new_review')."\n";
-            $text .= trans('telegram.email').": ".$review->user->email."\n";
-            $text .= trans('telegram.review_text').": ".$review->review."\n";
-
-            foreach($telegram['clients'] as $id => $client){
-                if($client->moderated){
-                    $bot->sendMessage($client->chat, $text);
-                }
-            }
-        }
+        app(TelegramNotifierService::class)->broadcast($text);
 
         return response()->json(['success' => trans('locale.messages.review_added_success'), 'type' => $request->type]);
     }

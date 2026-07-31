@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Notifications\Models;
 
 use Sendpulse\RestApi\ApiClient;
 use Sendpulse\RestApi\Storage\FileStorage;

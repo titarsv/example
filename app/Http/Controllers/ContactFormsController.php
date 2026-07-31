@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Models\Setting;
+use Modules\Notifications\Services\TelegramNotifierService;
 
 class ContactFormsController extends Controller
 {
@@ -37,26 +38,15 @@ class ContactFormsController extends Controller
                 'comment' => isset($data->message->val) ? $data->message->val : ''
             ]);
 
-            $settings = new Setting();
-            $telegram = (array)$settings->get_setting('telegram');
-            $token = env('TELEGRAM_TOKEN');
-            if(!empty($token)){
-                $bot = new \TelegramBot\Api\Client($token);
+            $text = trans('messages.new_application', ['sitename' => env('APP_NAME')]) . "\n";
+            if(isset($data->name->val))
+                $text .= trans('messages.name_label').": ".$data->name->val."\n";
+            if(isset($data->email->val))
+                $text .= trans('messages.email_label').": ".$data->email->val."\n";
+            if(isset($data->message->val))
+                $text .= trans('messages.message_label').": ".$data->message->val."\n";
 
-                $text = trans('messages.new_application', ['sitename' => env('APP_NAME')]) . "\n";
-                if(isset($data->name->val))
-                    $text .= trans('messages.name_label').": ".$data->name->val."\n";
-                if(isset($data->email->val))
-                    $text .= trans('messages.email_label').": ".$data->email->val."\n";
-                if(isset($data->message->val))
-                    $text .= trans('messages.message_label').": ".$data->message->val."\n";
-
-                foreach($telegram['clients'] as $id => $client){
-                    if($client->moderated){
-                        $bot->sendMessage($client->chat, $text);
-                    }
-                }
-            }
+            app(TelegramNotifierService::class)->broadcast($text);
 
             $this->sendMail($data, $files);
         }

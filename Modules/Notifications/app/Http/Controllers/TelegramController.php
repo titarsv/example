@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Notifications\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use Illuminate\Support\Facades\App;
 

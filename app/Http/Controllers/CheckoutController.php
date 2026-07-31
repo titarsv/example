@@ -15,7 +15,8 @@ use App\Models\Order;
 use App\Models\Setting;
 use App\Models\User;
 use Modules\Coupons\Models\Coupon;
-use App\Models\Sendpulse;
+use Modules\Notifications\Models\Sendpulse;
+use Modules\Notifications\Services\TelegramNotifierService;
 use App\Models\Product;
 use App;
 
@@ -252,35 +253,26 @@ class CheckoutController extends Controller
     }
 
     private function sendToTelegram(Order $order){
-        $settings = new Setting();
-        $telegram = (array)$settings->get_setting('telegram');
-        if(!empty($telegram['token'])){
-            $bot = new \TelegramBot\Api\Client($telegram['token']);
-            $user = json_decode($order->user_info);
-            $delivery = $order->getDeliveryInfo();
-            $products = $order->getProducts();
+        $user = json_decode($order->user_info);
+        $delivery = $order->getDeliveryInfo();
+        $products = $order->getProducts();
 
-            $text = __("New order on the website").": ".base_url('/')."/admin/orders/edit/".$order->id."\n";
-            $text .= __("Order amount").": £".((float)$order->total_price - (float)$order->total_sale)."\n";
-            $text .= __("Buyer's contacts").": ".(isset($user->name) ? $user->name : '')." ".(isset($user->phone) ? $user->phone : '')."\n";
-            $text .= __("Delivery").": ".
-                (!empty($delivery['method']) ? $delivery['method']." " : "").
-                (!empty($delivery['region']) ? $delivery['region']." " : "").
-                (!empty($delivery['city']) ? $delivery['city']." " : "").
-                $order->getAddressAttribute()."\n";
-            $text .= __("Payment").": ".$order->getPaymentMethodAttribute()."\n";
-            $text .= __("The following items have been ordered").":\n";
+        $text = __("New order on the website").": ".base_url('/')."/admin/orders/edit/".$order->id."\n";
+        $text .= __("Order amount").": £".((float)$order->total_price - (float)$order->total_sale)."\n";
+        $text .= __("Buyer's contacts").": ".(isset($user->name) ? $user->name : '')." ".(isset($user->phone) ? $user->phone : '')."\n";
+        $text .= __("Delivery").": ".
+            (!empty($delivery['method']) ? $delivery['method']." " : "").
+            (!empty($delivery['region']) ? $delivery['region']." " : "").
+            (!empty($delivery['city']) ? $delivery['city']." " : "").
+            $order->getAddressAttribute()."\n";
+        $text .= __("Payment").": ".$order->getPaymentMethodAttribute()."\n";
+        $text .= __("The following items have been ordered").":\n";
 
-            foreach($products as $product_id => $item) {
-                $text .= $item['product']->name." (".$item['quantity'].__("pcs").".)\n";
-            }
-
-            foreach($telegram['clients'] as $id => $client){
-                if($client->moderated){
-                    $bot->sendMessage($client->chat, $text);
-                }
-            }
+        foreach($products as $product_id => $item) {
+            $text .= $item['product']->name." (".$item['quantity'].__("pcs").".)\n";
         }
+
+        app(TelegramNotifierService::class)->broadcast($text);
     }
 
     /**
@@ -636,8 +628,10 @@ class CheckoutController extends Controller
                 $order->save();
                 $result['order_id'] = $order->id;
 
-                $sendpulse = new Sendpulse();
-                $sendpulse->orderHasBeenPaid($order->user, $order);
+                if(module_active('notifications')){
+                    $sendpulse = new Sendpulse();
+                    $sendpulse->orderHasBeenPaid($order->user, $order);
+                }
             }
         }catch(Exception $e){
             Log::error('Paypal exception:', ['error' => $e]);
@@ -647,9 +641,11 @@ class CheckoutController extends Controller
     }
 
     public function abandonedCartAction(Request $request){
-        $cart = new Cart();
-        $sendPulse = new Sendpulse();
-        $sendPulse->abandonedCart($request->name, $request->phone, $request->email, $cart->current_cart()->get_products(), $cart->total_price - $cart->payment_sale - $cart->coupon_sale, $cart->total_sale + $cart->coupon_sale + $cart->payment_sale);
+        if(module_active('notifications')){
+            $cart = new Cart();
+            $sendPulse = new Sendpulse();
+            $sendPulse->abandonedCart($request->name, $request->phone, $request->email, $cart->current_cart()->get_products(), $cart->total_price - $cart->payment_sale - $cart->coupon_sale, $cart->total_sale + $cart->coupon_sale + $cart->payment_sale);
+        }
 
         return response()->json(['result' => 'success']);
     }

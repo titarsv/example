@@ -372,7 +372,7 @@ foreach($prefixes as $prefix){
         $params = ['prefix' => '{locale}', 'where' => ['locale' => '[a-zA-Z]{2}'], 'middleware' => 'setlocale'];
     }
     Route::group($params, function(){
-        Route::post('/telegram_api', 'TelegramController@index');
+        // /telegram_api перенесён в Modules/Notifications/routes/web.php
         /**
          * Service routing
          */
