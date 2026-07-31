@@ -10,8 +10,6 @@ use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\Newpost;
 use App\Models\Justin;
-use App\Support\Modules\SettingsActivator;
-use Nwidart\Modules\Facades\Module;
 
 class SettingsController extends Controller
 {
@@ -104,67 +102,8 @@ class SettingsController extends Controller
         }
 
         $data['maintenanceSettings'] = $this->getMaintenanceSettings();
-        $data['modulesSettings'] = $this->getModulesSettings();
 
         return view('admin.shop.settings', $data);
-    }
-
-    /**
-     * Список необязательных модулей магазина и их текущее состояние (вкл/выкл).
-     * По умолчанию всё включено (см. SettingsActivator::isActive) — здесь просто
-     * фиксируем набор ключей, которые должны появиться в форме, даже если ни один
-     * тумблер ещё ни разу не сохранялся.
-     */
-    private function getModulesSettings(): array
-    {
-        $slugs = ['blog', 'reviews', 'wishlist', 'coupons', 'notifications', 'ai', 'cart_checkout'];
-
-        $settings = [];
-        foreach ($slugs as $slug) {
-            $settings[$slug] = SettingsActivator::isActive($slug);
-        }
-
-        return $settings;
-    }
-
-    /**
-     * Сохранение состояния модулей. Для реальных nwidart-модулей проходит через
-     * Module::enable()/disable() (те же данные, что и SettingsActivator), для
-     * cart_checkout (не физический модуль, только guard в ядре) — пишет флаг
-     * напрямую в ту же настройку modules_settings.
-     */
-    public function adminSaveModulesSettingsAction(Request $request)
-    {
-        $moduleMap = [
-            'blog' => 'Blog',
-            'reviews' => 'Reviews',
-            'wishlist' => 'Wishlist',
-            'coupons' => 'Coupons',
-            'notifications' => 'Notifications',
-            'ai' => 'Ai',
-        ];
-
-        $activator = app(SettingsActivator::class);
-
-        foreach ($moduleMap as $slug => $studlyName) {
-            $active = $request->boolean($slug);
-
-            if (Module::has($studlyName)) {
-                $active ? Module::enable($studlyName) : Module::disable($studlyName);
-            } else {
-                // Модуль ещё не создан физически (Modules/{Name}) — сохраняем
-                // намерение админа в settings, чтобы применилось, когда появится.
-                $activator->setActiveByName($studlyName, $active);
-            }
-        }
-
-        $activator->setActiveByName('cart_checkout', $request->boolean('cart_checkout'));
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Modules settings saved successfully',
-            'settings' => $this->getModulesSettings(),
-        ]);
     }
 
     private function getMaintenanceSettings()

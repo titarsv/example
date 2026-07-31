@@ -51,12 +51,6 @@
                                 <i class="bx bxs-cog mr-25"></i><span class="d-none d-sm-block">Maintenance</span>
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link d-flex align-items-center btn-sm" id="modules-tab" data-toggle="tab"
-                               href="#modules" aria-controls="modules" role="tab" aria-selected="false">
-                                <i class="bx bx-grid-alt mr-25"></i><span class="d-none d-sm-block">Модули</span>
-                            </a>
-                        </li>
                     </ul>
                     <div class="tab-content">
 {{--                        <div class="tab-pane active fade show" id="delivery" aria-labelledby="delivery-tab" role="tabpanel">--}}
@@ -1279,48 +1273,6 @@
                                             </form>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="tab-pane fade show" id="modules" aria-labelledby="modules-tab" role="tabpanel">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Модули магазина</h4>
-                                </div>
-                                <div class="card-body">
-                                    <div class="alert alert-info">
-                                        <div class="alert-body">
-                                            <i class="bx bx-info-circle"></i>
-                                            <span>Отключение модуля скрывает связанный раздел админки и функционал на сайте. Данные при этом не удаляются — включение модуля обратно восстанавливает прежнее поведение.</span>
-                                        </div>
-                                    </div>
-                                    <form id="modules-settings-form">
-                                        @csrf
-                                        @php
-                                            $moduleToggles = [
-                                                'blog' => 'Блог и категории контента',
-                                                'reviews' => 'Отзывы (товары и сайт)',
-                                                'wishlist' => 'Список желаний',
-                                                'coupons' => 'Промокоды',
-                                                'notifications' => 'Уведомления (Telegram, Sendpulse)',
-                                                'ai' => 'AI: рекомендации, семантический поиск, генерация SEO/переводов',
-                                                'cart_checkout' => 'Корзина, оформление заказа и отслеживание (выключение оставляет только каталог)',
-                                            ];
-                                        @endphp
-                                        @foreach($moduleToggles as $slug => $label)
-                                            <div class="form-group">
-                                                <div class="custom-control custom-switch">
-                                                    <input type="checkbox" class="custom-control-input module-toggle" id="module_{{ $slug }}" name="{{ $slug }}" value="1"{{ !empty($modulesSettings[$slug]) ? ' checked' : '' }}>
-                                                    <label class="custom-control-label" for="module_{{ $slug }}">{{ $label }}</label>
-                                                </div>
-                                            </div>
-                                        @endforeach
-                                        <div class="text-right mt-2">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="bx bx-save mr-25"></i> Save Settings
-                                            </button>
-                                        </div>
-                                    </form>
                                 </div>
                             </div>
                         </div>

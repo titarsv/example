@@ -365,38 +365,4 @@ $(document).ready(function () {
             }
         });
     });
-
-    // Save modules settings
-    $('#modules-settings-form').on('submit', function(e) {
-        e.preventDefault();
-
-        const form = $(this);
-        const formData = form.serialize();
-
-        const submitBtn = form.find('button[type="submit"]');
-        const originalBtnText = submitBtn.html();
-        submitBtn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Saving...');
-
-        $.ajax({
-            url: '/admin/shop/settings/modules',
-            type: 'POST',
-            data: formData,
-            success: function(response) {
-                if (response.success) {
-                    toastr.success('Modules settings saved successfully. Reload the page to see menu changes.');
-                } else {
-                    toastr.error(response.message || 'Failed to save modules settings');
-                }
-            },
-            error: function(xhr) {
-                const errorMessage = xhr.responseJSON && xhr.responseJSON.message
-                    ? xhr.responseJSON.message
-                    : 'An error occurred while saving modules settings';
-                toastr.error(errorMessage);
-            },
-            complete: function() {
-                submitBtn.prop('disabled', false).html(originalBtnText);
-            }
-        });
-    });
 });

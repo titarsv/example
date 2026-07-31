@@ -39,9 +39,10 @@ if(!function_exists('module_active')){
      * nwidart/laravel-modules packages (blog, reviews, wishlist, coupons, ai,
      * notifications — same slug as the module name in lowercase) and for
      * in-core-only toggles that never became a physical Modules/ package
-     * (cart_checkout). Both read the same `modules_settings` row via
-     * SettingsActivator, so admin's "Модули" toggle and this helper never
-     * disagree. Unknown slugs default to enabled.
+     * (cart_checkout). Both read config/modules_settings.php via
+     * SettingsActivator — edit that file (or the matching MODULE_* env var)
+     * to toggle a module, then `php artisan config:clear`. Unknown slugs
+     * default to enabled.
      */
     function module_active(string $slug): bool {
         return App\Support\Modules\SettingsActivator::isActive($slug);
