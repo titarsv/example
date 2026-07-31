@@ -2,10 +2,9 @@
 
 namespace Modules\Wishlist\Providers;
 
-use Nwidart\Modules\Support\ModuleServiceProvider;
-use Illuminate\Console\Scheduling\Schedule;
+use App\Support\Modules\GuardedModuleServiceProvider;
 
-class WishlistServiceProvider extends ModuleServiceProvider
+class WishlistServiceProvider extends GuardedModuleServiceProvider
 {
     /**
      * The name of the module.

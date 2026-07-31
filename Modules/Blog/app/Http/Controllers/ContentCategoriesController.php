@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Blog\Http\Controllers;
 
-use App\Models\Blog;
+use App\Http\Controllers\Controller;
+use Modules\Blog\Models\Blog;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Config;
@@ -10,7 +11,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\App;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\ContentCategory;
+use Modules\Blog\Models\ContentCategory;
 use App\Models\Action;
 use App\Models\User;
 use App\Helpers\Helper;

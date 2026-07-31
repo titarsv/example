@@ -5,9 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Page;
-use App\Models\Blog;
-use App\Models\ContentCategory;
 use Illuminate\Pagination\Paginator;
+use Modules\Blog\Models\Blog;
 
 class SitemapController extends Controller
 {
@@ -22,8 +21,11 @@ class SitemapController extends Controller
             base_url('/sitemap/categories') => trans('locale.sitemap.categories'),
             base_url('/sitemap/products') => trans('locale.sitemap.products'),
             base_url('/sitemap/pages') => trans('locale.sitemap.pages'),
-            base_url('/sitemap/blog') => trans('locale.sitemap.blog')
         ];
+
+        if (module_active('blog')) {
+            $links[base_url('/sitemap/blog')] = trans('locale.sitemap.blog');
+        }
 
         return view('public.sitemap')
             ->with('links', $links)
@@ -79,6 +81,10 @@ class SitemapController extends Controller
     }
 
     public function blog($page = 1){
+	    if (!module_active('blog')) {
+		    abort(404);
+	    }
+
 	    $p = str_replace('page-', '', $page);
 	    Paginator::currentPageResolver(function () use ($p) {
 		    return $p;

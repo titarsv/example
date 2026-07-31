@@ -17,7 +17,7 @@ use App\Models\Setting;
 use App\Models\Action;
 use App\Models\Product;
 use App\Models\Page;
-use App\Models\Blog;
+use Modules\Blog\Models\Blog;
 use App\Models\Seo;
 use App;
 
@@ -91,7 +91,7 @@ class PagesController extends Controller
             ->with('page', $page)
             ->with('fields', $fields)
             ->with('categories', Category::where('status', 1)->whereHas('image')->with('localization')->withCount('products')->get())
-            ->with('articles', Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get())
+            ->with('articles', module_active('blog') ? Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get() : collect())
             ->with('effects', AttributeValue::where('attribute_id', 1)->get())
             ->with('favorites', $recommended)
             ->with('reviews', SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get())

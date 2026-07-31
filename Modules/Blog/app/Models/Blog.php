@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Blog\Models;
 
+use App\Models\Entity;
+use App\Models\HasLocalizationTrait;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
@@ -44,7 +46,7 @@ class Blog extends Entity
         return $this->morphOne('App\Models\Seo', 'seotable');
     }
     public function categories(){
-        return $this->belongsToMany('App\Models\ContentCategory', 'blog_categories', 'article_id', 'category_id');
+        return $this->belongsToMany(ContentCategory::class, 'blog_categories', 'article_id', 'category_id');
     }
     public function saveSeo($request){
         $seo_data = $request->only(['canonical', 'robots']);

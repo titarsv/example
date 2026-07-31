@@ -13,6 +13,19 @@ use Nwidart\Modules\Module;
  * `modules_statuses.json` file, so the same admin "Модули" settings screen and the
  * same `module_active()` helper work for real nwidart modules and for in-core-only
  * toggles (e.g. cart_checkout) that never become an actual Modules/ package.
+ *
+ * hasStatus()/flags() get called during ServiceProvider::register() for every
+ * request - including by Nwidart\Modules\ModuleManifest, which decides right
+ * there whether a module's provider (and therefore its routes/views) gets
+ * registered at all. At that point in the bootstrap, Eloquent's connection
+ * resolver is not reliably wired up yet (confirmed: a DB-backed read here
+ * silently fails and falls back to "enabled" mid-request, not just in
+ * artisan's package:discover). So the actual source of truth for reads is a
+ * small file cache under bootstrap/cache/ (already gitignored, same spot
+ * Laravel/nwidart keep their own bootstrap caches) that mirrors the
+ * `settings` row - safe to read at any bootstrap stage, no DB dependency.
+ * Every write updates the DB row (so the admin UI has one durable source)
+ * and the file cache together, in that order.
  */
 class SettingsActivator implements ActivatorInterface
 {
@@ -44,19 +57,19 @@ class SettingsActivator implements ActivatorInterface
     {
         $flags = static::flags();
         $flags[Str::lower($name)] = $active;
-        app(Setting::class)->update_setting(static::SETTINGS_KEY, $flags, true);
+        static::persist($flags);
     }
 
     public function delete(Module $module): void
     {
         $flags = static::flags();
         unset($flags[Str::lower($module->getName())]);
-        app(Setting::class)->update_setting(static::SETTINGS_KEY, $flags, true);
+        static::persist($flags);
     }
 
     public function reset(): void
     {
-        app(Setting::class)->update_setting(static::SETTINGS_KEY, [], true);
+        static::persist([]);
     }
 
     /**
@@ -72,15 +85,24 @@ class SettingsActivator implements ActivatorInterface
     }
 
     /**
-     * Reads the flags row. Defensively returns [] (== everything enabled) on
-     * any failure — the module manifest reads activator status very early in
-     * the request/console lifecycle (e.g. `package:discover`, before the DB
-     * connection resolver or the settings table necessarily exist), so a
-     * broken/unavailable database must never take the whole app down just to
-     * answer "is this module on".
+     * Fast, DB-independent read path: the bootstrap/cache file mirror.
+     * Falls back to the `settings` table only when the file doesn't exist
+     * yet (e.g. brand new install, nobody has ever saved a toggle) - that
+     * DB read is itself wrapped in a try/catch so an unavailable database
+     * never breaks the app just to answer "is this module on".
      */
     public static function flags(): array
     {
+        $cachePath = static::cachePath();
+
+        if (is_file($cachePath)) {
+            $decoded = json_decode((string) file_get_contents($cachePath), true);
+
+            if (is_array($decoded)) {
+                return $decoded;
+            }
+        }
+
         try {
             $value = app(Setting::class)->get_setting(static::SETTINGS_KEY);
         } catch (\Throwable) {
@@ -91,6 +113,27 @@ class SettingsActivator implements ActivatorInterface
             return [];
         }
 
-        return (array) $value;
+        $flags = (array) $value;
+        static::writeCache($flags);
+
+        return $flags;
+    }
+
+    private static function persist(array $flags): void
+    {
+        app(Setting::class)->update_setting(static::SETTINGS_KEY, $flags, true);
+        static::writeCache($flags);
+    }
+
+    private static function writeCache(array $flags): void
+    {
+        @file_put_contents(static::cachePath(), json_encode($flags));
+    }
+
+    private static function cachePath(): string
+    {
+        return function_exists('base_path')
+            ? base_path('bootstrap/cache/modules_settings.json')
+            : __DIR__.'/../../../bootstrap/cache/modules_settings.json';
     }
 }

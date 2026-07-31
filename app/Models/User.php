@@ -86,7 +86,7 @@ class User extends \Cartalyst\Sentinel\Users\EloquentUser
 
     public function blog()
     {
-        return $this->hasMany('App\Models\Blog', 'user_id', 'id');
+        return $this->hasMany(\Modules\Blog\Models\Blog::class, 'user_id', 'id');
     }
     public function orders()
     {
@@ -195,7 +195,11 @@ class User extends \Cartalyst\Sentinel\Users\EloquentUser
     }
 
     public function getCategoriesAttribute(){
-        return ContentCategory::select('content_categories.*')
+        if (!module_active('blog')) {
+            return collect();
+        }
+
+        return \Modules\Blog\Models\ContentCategory::select('content_categories.*')
             ->leftJoin('blog_categories', 'blog_categories.category_id', '=', 'content_categories.id')
             ->leftJoin('blog', 'blog.id', '=', 'blog_categories.article_id')
             ->where('blog.user_id', $this->id)

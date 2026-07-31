@@ -186,16 +186,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
         });
     });
 
-    Route::group(['prefix' => 'articles'], function(){
-        Route::middleware(['role:articles.read'])->get('/', 'BlogController@adminIndexAction');
-        Route::middleware(['role:articles.read'])->post('/list', 'BlogController@adminListAction');
-        Route::middleware(['role:articles.create'])->post('/create', 'BlogController@adminStoreAction');
-        Route::middleware(['role:articles.read'])->get('/edit/{id}', 'BlogController@adminEditAction');
-        Route::middleware(['role:articles.write'])->post('/edit/{id}', 'BlogController@adminUpdateAction');
-        Route::middleware(['role:seo.write'])->post('/seo/{id}', 'BlogController@adminUpdateSeoAction');
-        Route::middleware(['role:articles.write'])->post('/change_status/{id}', 'BlogController@adminUpdateStatusAction');
-        Route::middleware(['role:articles.delete'])->post('/delete/{id}', 'BlogController@adminDestroyAction'); //softDelete
-    });
+    // Роуты статей блога перенесены в Modules/Blog/routes/web.php
 
 //    Route::group(['prefix' => 'news'], function(){
 //        Route::middleware(['role:news.read'])->get('/', 'NewsController@adminIndexAction');
@@ -208,19 +199,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
 //        Route::middleware(['role:news.create,news.write'])->post('/remove_product', 'AjaxController@adminRemoveNewsProduct');
 //    });
 
-    Route::group(['prefix' => 'content/categories'], function(){
-        Route::middleware(['role:content_categories.read'])->get('/', 'ContentCategoriesController@adminIndexAction');
-        Route::middleware(['role:content_categories.read'])->post('/list', 'ContentCategoriesController@adminListAction');
-        Route::middleware(['role:content_categories.create'])->get('/create', 'ContentCategoriesController@adminCreateAction');
-        Route::middleware(['role:content_categories.create'])->post('/create', 'ContentCategoriesController@adminStoreAction');
-        Route::middleware(['role:content_categories.delete'])->post('/delete/{id}', 'ContentCategoriesController@adminDestroyAction');
-        Route::middleware(['role:content_categories.read'])->get('/edit/{id}', 'ContentCategoriesController@adminEditAction');
-        Route::middleware(['role:content_categories.write'])->post('/edit/{id}', 'ContentCategoriesController@adminUpdateAction');
-        Route::middleware(['role:seo.write'])->post('/seo/{id}', 'ContentCategoriesController@adminUpdateSeoAction');
-        Route::middleware(['role:content_categories.write'])->post('/change_status/{id}', 'ContentCategoriesController@adminUpdateStatusAction');
-        Route::middleware(['role:content_categories.read'])->post('/children/{id}', 'ContentCategoriesController@adminChildrenAction');
-        Route::middleware(['role:content_categories.read'])->get('/livesearch', 'ContentCategoriesController@adminLivesearchAction');
-    });
+    // Роуты категорий контента перенесены в Modules/Blog/routes/web.php
 
     Route::group(['prefix' => 'pages'], function(){
         Route::middleware(['role:pages.read'])->get('/', 'PagesController@adminIndexAction');
@@ -518,13 +497,33 @@ foreach($prefixes as $prefix){
             $data->seo = $seo;
             $data->request = Request();
 
+            // Страницы, чей seotable_type принадлежит отключённому модулю, недоступны,
+            // даже если сама SEO-запись всё ещё есть в базе.
+            $moduleSeotableTypes = [
+                'Blog' => 'blog',
+                'ContentCategories' => 'blog',
+            ];
+            if(isset($moduleSeotableTypes[$seo->seotable_type]) && !module_active($moduleSeotableTypes[$seo->seotable_type])){
+                abort(404);
+            }
+
             $controllers = [
                 'Page' => 'Pages',
                 'Service' => 'Services',
                 'App\Models\Product' => 'Products',
             ];
 
-            $controller = app()->make('\App\Http\Controllers\\' . (isset($controllers[$seo->seotable_type]) ? $controllers[$seo->seotable_type] : $seo->seotable_type) . 'Controller');
+            // Контроллеры, вынесенные в модули, резолвятся в своём namespace;
+            // остальные — как раньше, в App\Http\Controllers.
+            $moduleControllers = [
+                'Blog' => \Modules\Blog\Http\Controllers\BlogController::class,
+                'ContentCategories' => \Modules\Blog\Http\Controllers\ContentCategoriesController::class,
+            ];
+
+            $controllerClass = $moduleControllers[$seo->seotable_type]
+                ?? ('\App\Http\Controllers\\' . (isset($controllers[$seo->seotable_type]) ? $controllers[$seo->seotable_type] : $seo->seotable_type) . 'Controller');
+
+            $controller = app()->make($controllerClass);
             return $controller->callAction($seo->action, ['data' => $data]);
 
         })->where('url', '([A-Za-z0-9А-Яа-я\-_\/,;"\' ]+)');

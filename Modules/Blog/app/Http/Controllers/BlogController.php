@@ -1,5 +1,6 @@
 <?php
-namespace App\Http\Controllers;
+namespace Modules\Blog\Http\Controllers;
+use App\Http\Controllers\Controller;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Config;
@@ -8,10 +9,10 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
-use App\Models\ContentCategory;
+use Modules\Blog\Models\ContentCategory;
 use App\Models\Redirect;
 use App\Models\Action;
-use App\Models\Blog;
+use Modules\Blog\Models\Blog;
 use App\Models\User;
 class BlogController extends Controller
 {

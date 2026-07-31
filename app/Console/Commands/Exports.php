@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Console\Command;
 use App\Models\ProductsExport;
+use Modules\Blog\Models\Blog;
 
 class Exports extends Command
 {
@@ -48,7 +49,7 @@ class Exports extends Command
             'Pages' => \App\Models\Page::class,
             'News' => \App\Models\News::class,
             'Seo' => \App\Models\Seo::class,
-            'Blog' => \App\Models\Blog::class,
+            'Blog' => Blog::class,
             'Categories' => \App\Models\Category::class,
             'Attributes' => \App\Models\Attribute::class,
             'Values' => \App\Models\AttributeValue::class,

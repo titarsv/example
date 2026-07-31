@@ -14,6 +14,7 @@ use Dompdf\Exception;
 use FFMpeg\FFMpeg;
 use FFMpeg\Coordinate\TimeCode;
 use App\Jobs\GenerateVideoThumbnail;
+use Modules\Blog\Models\Blog;
 
 class File extends Model
 {

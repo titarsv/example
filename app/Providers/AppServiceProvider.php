@@ -3,7 +3,8 @@
 namespace App\Providers;
 
 use App\Models\AttributeValue;
-use App\Models\Blog;
+use Modules\Blog\Models\Blog;
+use Modules\Blog\Models\ContentCategory;
 use App\Models\Product;
 use App\Models\SiteReview;
 use Nekhbet\LaravelGettext\Facades\LaravelGettext;
@@ -69,11 +70,11 @@ class AppServiceProvider extends ServiceProvider
             'Pages' => \App\Models\Page::class,
             'Services' => App\Models\Service::class,
             'Seo' => \App\Models\Seo::class,
-            'Blog' => \App\Models\Blog::class,
+            'Blog' => Blog::class,
             'News' => \App\Models\News::class,
             'Cases' => \App\Models\Cases::class,
             'Blocks' => App\Models\Block::class,
-            'ContentCategories' => App\Models\ContentCategory::class,
+            'ContentCategories' => ContentCategory::class,
             'Users' => App\Models\User::class,
             'AuditSteps' => App\Models\AuditStep::class,
             'Products' => App\Models\Product::class,
@@ -259,7 +260,7 @@ class AppServiceProvider extends ServiceProvider
                 ->with('reviews', SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get())
                 ->with('reviews_count', SiteReview::where('published', 1)->count())
                 ->with('reviews_grade', SiteReview::where('published', 1)->avg('grade'))
-                ->with('articles', Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get());
+                ->with('articles', module_active('blog') ? Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get() : collect());
         });
 
         view()->composer([

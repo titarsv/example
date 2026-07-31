@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Blog\Models;
 
+use App\Models\Entity;
+use App\Models\Localization;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Cache;
@@ -52,7 +54,7 @@ class ContentCategory extends Entity
     }
 
     public function articles(){
-        return $this->belongsToMany('App\Models\Blog', 'blog_categories', 'category_id', 'article_id');
+        return $this->belongsToMany(Blog::class, 'blog_categories', 'category_id', 'article_id');
     }
 
     public function children(){

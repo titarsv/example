@@ -10,6 +10,8 @@ use App\Models\Category;
 use App\Models\Seo;
 use App\Models\Redirect;
 use Carbon\Carbon;
+use Modules\Blog\Models\Blog;
+use Modules\Blog\Models\ContentCategory;
 
 class XMLSitemap extends Command
 {
@@ -60,9 +62,9 @@ class XMLSitemap extends Command
             'Pages' => \App\Models\Page::class,
             'News' => \App\Models\News::class,
             'Seo' => \App\Models\Seo::class,
-            'Blog' => \App\Models\Blog::class,
+            'Blog' => Blog::class,
             'Categories' => \App\Models\Category::class,
-            'ContentCategories' => \App\Models\ContentCategory::class,
+            'ContentCategories' => ContentCategory::class,
 //            'Attributes' => \App\Models\Attribute::class,
 //            'Values' => \App\Models\AttributeValue::class,
             'Products' => \App\Models\Product::class,
