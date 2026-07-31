@@ -30,7 +30,9 @@
                 </ul>
             @endif
             <div class="header-search__btn">Search</div>
-            <a href="javascript:void(0)" class="header-cart__btn">Cart (<span class="amount js_cart_counter">{{ $cart->total_quantity }}</span>)</a>
+            @if(module_active('cart_checkout'))
+                <a href="javascript:void(0)" class="header-cart__btn">Cart (<span class="amount js_cart_counter">{{ $cart->total_quantity }}</span>)</a>
+            @endif
             <div class="mobile-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" width="25" height="16" viewBox="0 0 25 16" fill="none">
                     <path d="M1 8L24 8" stroke="#0B0B0B" stroke-width="2" stroke-linecap="round"/>

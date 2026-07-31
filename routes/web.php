@@ -366,16 +366,18 @@ foreach($prefixes as $prefix){
         Route::post('/ajax/{method}', 'AjaxController@front');
         Route::post('/products/filter', 'CatalogController@filterAction');
         Route::post('/product_popup', 'ProductsController@popupAction');
-        Route::post('/cart/update','CartController@updateCart');
-        Route::post('/cart/updateAll','CartController@update');
-        Route::post('/cart/get','CartController@getCart');
-        Route::post('/apply_coupon', 'CheckoutController@applyCoupon');
+        if (module_active('cart_checkout')) {
+            Route::post('/cart/update','CartController@updateCart');
+            Route::post('/cart/updateAll','CartController@update');
+            Route::post('/cart/get','CartController@getCart');
+            Route::post('/apply_coupon', 'CheckoutController@applyCoupon');
+            Route::post('/confirm_order_payment', 'OrdersController@confirmOrderPaymentAction');
+            Route::post('/update_payment_method', 'CheckoutController@updatePaymentMethodAction');
+            Route::post('/track_order', 'OrdersController@trackOrderAction');
+        }
         Route::get('/livesearch', 'ProductsController@livesearch');
         Route::match(['get', 'post'], '/search/{page?}', ['as' => 'search', 'uses' => 'ProductsController@search']);
         // /shopreview/add и /review/add перенесены в Modules/Reviews/routes/web.php
-        Route::post('/confirm_order_payment', 'OrdersController@confirmOrderPaymentAction');
-        Route::post('/update_payment_method', 'CheckoutController@updatePaymentMethodAction');
-        Route::post('/track_order', 'OrdersController@trackOrderAction');
 
         Route::get('/', ['as'=>'home', 'uses'=>'PagesController@indexAction']);
 
@@ -386,7 +388,9 @@ foreach($prefixes as $prefix){
         Route::post('/login', 'AuthenticationController@authenticate');
         Route::get('/logout', 'AuthenticationController@logoutAction');
         Route::post('/sendmail', 'ContactFormsController@sendForm');
-        Route::get('/thanks', 'OrdersController@thanksAction');
+        if (module_active('cart_checkout')) {
+            Route::get('/thanks', 'OrdersController@thanksAction');
+        }
 
         //Social Login
         Route::get('/login/{provider?}',[
@@ -451,6 +455,8 @@ foreach($prefixes as $prefix){
             $moduleSeotableTypes = [
                 'Blog' => 'blog',
                 'ContentCategories' => 'blog',
+                'Checkout' => 'cart_checkout',
+                'Cart' => 'cart_checkout',
             ];
             if(isset($moduleSeotableTypes[$seo->seotable_type]) && !module_active($moduleSeotableTypes[$seo->seotable_type])){
                 abort(404);

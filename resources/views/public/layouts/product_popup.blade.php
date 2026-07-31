@@ -195,10 +195,12 @@
                 {!! $product->description !!}
             </div>
         </div>
+        @if(module_active('cart_checkout'))
         <div class="options-popup__buttons">
             <div class="btn btn-tr js_add_to_cart" data-id="{{ $product->id }}">Add to Cart</div>
             <div class="btn js_by_now" data-id="{{ $product->id }}">By it Now</div>
         </div>
+        @endif
     </div>
     <div class="options-popup__image">
         {!! !empty($product->image) ? $product->image->image([411, 411], ['alt' => $product->name, 'loading' => 'lazy'], 'cover', ['<767' => '100vw - 80px', '<960' => '50vw - 68px', '441px']) : '<img src="\images\larchik\no_image.jpg" alt="No image" loading="lazy">' !!}

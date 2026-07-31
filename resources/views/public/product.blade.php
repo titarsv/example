@@ -175,10 +175,12 @@
                                 @endforeach
                             </ul>
                         </div>
+                        @if(module_active('cart_checkout'))
                         <div class="product-page__info-buttons sticky">
                             <div class="btn btn-tr js_add_to_cart" data-id="{{ $product->id }}">Add to Cart</div>
                             <div class="btn js_by_now" data-id="{{ $product->id }}">Buy it Now</div>
                         </div>
+                        @endif
                         <div class="product-page__info-footnote js_variation_wrapper">
                             @if(!empty($variations))
                                 @foreach($variations as $variation)

@@ -249,8 +249,10 @@ class AppServiceProvider extends ServiceProvider
         view()->composer([
             'public.layouts.header'
         ], function ($view) {
-            $cart = new Cart;
-            $current_cart = $cart->current_cart();
+            // При выключенном cart_checkout не создаём/не трогаем корзину вовсе — иначе
+            // current_cart() молча создаёт пустую строку в БД для каждого нового посетителя
+            // каждой страницы, даже если корзины на сайте вообще нет.
+            $current_cart = module_active('cart_checkout') ? (new Cart)->current_cart() : null;
             $main_menu = Menu::find(2);
             $settings = new Setting;
             $view->with('cart', $current_cart)
