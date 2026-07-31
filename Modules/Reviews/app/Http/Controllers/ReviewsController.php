@@ -1,20 +1,23 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Reviews\Http\Controllers;
 
-use Cartalyst\Sentinel\Native\Facades\Sentinel;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Http\Request;
-use TelegramBot\Api\Client;
-use Carbon\Carbon;
-use App\Models\SiteReview;
-use App\Models\UserData;
+use App\Http\Controllers\Controller;
 use App\Models\Setting;
-use App\Models\Action;
+use Cartalyst\Sentinel\Native\Facades\Sentinel;
+use Illuminate\Http\Request;
+use Modules\Reviews\Models\Review;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use Mail;
+use App\Models\File;
+use App\Models\Action;
+use App\Models\UserData;
+use App\Models\Product;
+use Carbon\Carbon;
+use TelegramBot\Api\Client;
+use Illuminate\Support\Facades\Mail;
 
-class SiteReviewsController extends Controller
+class ReviewsController extends Controller
 {
     private $user;
 
@@ -23,12 +26,12 @@ class SiteReviewsController extends Controller
     }
 
     public function adminIndexAction(){
-        return view('admin.sitereviews.index')
+        return view('admin.reviews.index')
             ->with(['localization' => json_encode(['datatable' => trans('datatable')])]);
     }
 
     public function adminListAction(Request $request){
-        $query = SiteReview::select('*');
+        $query = Review::select('*');
 
         if($request->has('search.value')){
             $text = $request->search['value'];
@@ -57,7 +60,7 @@ class SiteReviewsController extends Controller
             if($this->user->hasAccess(['reviews.write'])){
                 $actions[] = [
                     'type' => 'edit',
-                    'link' => asset('admin/reviews/site/edit/'.$review->id)
+                    'link' => asset('admin/reviews/products/edit/'.$review->id)
                 ];
             }
             if($this->user->hasAccess(['articles.delete'])){
@@ -67,7 +70,6 @@ class SiteReviewsController extends Controller
                     'name' => $review->author
                 ];
             }
-
 
             $data[] = [
                 'id' => $review->id,
@@ -81,24 +83,24 @@ class SiteReviewsController extends Controller
 
         return response()->json([
             'draw' => $request->draw,
-            'recordsTotal' => SiteReview::count(),
+            'recordsTotal' => Review::count(),
             'recordsFiltered' => $records_filtered,
             'data' => $data
         ]);
     }
 
     public function adminEditAction($id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
-        return view('admin.sitereviews.edit', ['review' => $review]);
+        return view('admin.reviews.edit', ['review' => $review]);
     }
 
     public function adminUpdateAction(Request $request, $id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
         $review->update(['published' => $request->published, 'answer' =>$request->answer, 'new' => 0]);
 
-        return redirect('/admin/sitereviews')
+        return redirect('/admin/reviews')
             ->with('message-success', trans('locale.messages.review_updated'));
     }
 
@@ -110,7 +112,7 @@ class SiteReviewsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateStatusAction(Request $request, $id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
         if(empty($review)){
             return response()->json(['result' => 'error', 'message' => trans('locale.messages.review_not_found')], 200);
@@ -119,6 +121,10 @@ class SiteReviewsController extends Controller
         $review->published = (int)$request->status;
         $review->new = 0;
         $review->save();
+
+        $product = Product::find($review->product_id);
+        $product_rating = $product->reviews()->where('published', 1)->avg('grade');
+        $product->update(['rating' => $product_rating]);
 
         Action::updateEntity($review->find($id), $review_data);
 
@@ -136,7 +142,7 @@ class SiteReviewsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateFavoriteStatusAction(Request $request, $id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
         if(empty($review)){
             return response()->json(['result' => 'error', 'message' => trans('locale.messages.review_not_found')], 200);
@@ -161,7 +167,7 @@ class SiteReviewsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateAnswerAction(Request $request, $id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
         if(empty($review)){
             return response()->json(['result' => 'error', 'message' => trans('locale.messages.review_not_found')], 200);
@@ -186,7 +192,7 @@ class SiteReviewsController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateMediaAction(Request $request, $id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
 
         if(empty($review)){
             return response()->json(['result' => 'error', 'message' => trans('locale.messages.review_not_found')], 200);
@@ -204,15 +210,16 @@ class SiteReviewsController extends Controller
     }
 
     public function adminDestroyAction($id){
-        $review = SiteReview::find($id);
+        $review = Review::find($id);
         $review->delete();
 
         return response()->json(['result' => 'success', 'message' => trans('locale.messages.review_deleted')], 200);
     }
 
-    public function addAction(Request $request, SiteReview $review, UserData $user_data, Setting $setting)
+    public function addAction(Request $request, Review $review, UserData $user_data, Setting $setting)
     {
         $rules = [
+            'product_id' => 'required',
             'review' => 'required',
             'name' => 'required',
             'email' => 'required|email',
@@ -261,6 +268,7 @@ class SiteReviewsController extends Controller
 
         $review->fill($request->except('_token'));
         $review->user_id = $user->id;
+        $review->product_id = $request->product_id;
         $review->published = 0;
         $review->new = 1;
         $review->author = $request->name;

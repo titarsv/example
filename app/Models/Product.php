@@ -281,7 +281,7 @@ class Product extends Entity
     // Отзывы
     public function reviews()
     {
-        return $this->hasMany('App\Models\Review', 'product_id');
+        return $this->hasMany(\Modules\Reviews\Models\Review::class, 'product_id');
     }
 
     public function wishlist()
@@ -433,6 +433,10 @@ class Product extends Entity
 
     public function getGradeAttribute()
     {
+        if (!module_active('reviews')) {
+            return null;
+        }
+
         return round($this->reviews->avg('grade'));
     }
 
@@ -1122,6 +1126,10 @@ class Product extends Entity
 
     public function getReviews($count, $page, $paginator_options = [])
     {
+        if (!module_active('reviews')) {
+            return new LengthAwarePaginator([], 0, $count, $page, $paginator_options);
+        }
+
         return new LengthAwarePaginator(
             $this->reviews()
                 ->where('published', 1)

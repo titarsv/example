@@ -88,7 +88,7 @@ class ProductsController extends Controller
         $locale = App::getLocale();
         $settings = new Setting;
 
-        $reviews = $product->reviews()->where('published', 1)->get();
+        $reviews = module_active('reviews') ? $product->reviews()->where('published', 1)->get() : collect();
 
         $seo = $product->seo;
         if(empty($seo->meta_title) || $seo->meta_title == $product->name){

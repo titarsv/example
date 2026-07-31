@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Reviews\Models;
 
+use App\Models\Entity;
+use App\Models\Gallery;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Http\Request;
 

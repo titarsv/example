@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Models\Order;
-use App\Models\Review;
-use App\Models\SiteReview;
+use Modules\Reviews\Models\Review;
+use Modules\Reviews\Models\SiteReview;
 
 class MenuServiceProvider extends ServiceProvider
 {

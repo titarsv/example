@@ -344,30 +344,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
         Route::middleware(['role:coupons.read'])->post('/contacts', 'SettingsController@adminSaveContactsShopSettingsAction');
     });
 
-    Route::group(['prefix' => 'reviews'], function(){
-        Route::group(['prefix' => 'products'], function(){
-            Route::middleware(['role:reviews.read'])->get('/', 'ReviewsController@adminIndexAction');
-            Route::middleware(['role:reviews.read'])->post('/list', 'ReviewsController@adminListAction');
-            Route::middleware(['role:reviews.read'])->get('/edit/{id}', 'ReviewsController@adminEditAction');
-            Route::middleware(['role:reviews.write'])->post('/edit/{id}', 'ReviewsController@adminUpdateAction');
-            Route::middleware(['role:reviews.write'])->post('/change_status/{id}', 'ReviewsController@adminUpdateStatusAction');
-            Route::middleware(['role:reviews.write'])->post('/favorite/change_status/{id}', 'ReviewsController@adminUpdateFavoriteStatusAction');
-            Route::middleware(['role:reviews.write'])->post('/update_answer/{id}', 'ReviewsController@adminUpdateAnswerAction');
-            Route::middleware(['role:reviews.write'])->post('/media/{id}', 'ReviewsController@adminUpdateMediaAction');
-            Route::middleware(['role:reviews.delete'])->post('/delete/{id}', 'ReviewsController@adminDestroyAction'); //softDelete
-        });
-        Route::group(['prefix' => 'site'], function(){
-            Route::middleware(['role:reviews.read'])->get('/', 'SiteReviewsController@adminIndexAction');
-            Route::middleware(['role:reviews.read'])->post('/list', 'SiteReviewsController@adminListAction');
-            Route::middleware(['role:reviews.read'])->get('/edit/{id}', 'SiteReviewsController@adminEditAction');
-            Route::middleware(['role:reviews.write'])->post('/edit/{id}', 'SiteReviewsController@adminUpdateAction');
-            Route::middleware(['role:reviews.write'])->post('/change_status/{id}', 'SiteReviewsController@adminUpdateStatusAction');
-            Route::middleware(['role:reviews.write'])->post('/favorite/change_status/{id}', 'SiteReviewsController@adminUpdateFavoriteStatusAction');
-            Route::middleware(['role:reviews.write'])->post('/update_answer/{id}', 'SiteReviewsController@adminUpdateAnswerAction');
-            Route::middleware(['role:reviews.write'])->post('/media/{id}', 'SiteReviewsController@adminUpdateMediaAction');
-            Route::middleware(['role:reviews.delete'])->post('/delete/{id}', 'SiteReviewsController@adminDestroyAction'); //softDelete
-        });
-    });
+    // Роуты отзывов (products/site) перенесены в Modules/Reviews/routes/web.php
 
 //    Route::group(['prefix' => 'shopreviews'], function(){
 //        Route::middleware(['role:shopreviews.read'])->get('/', 'ShopReviewsController@index');
@@ -422,8 +399,7 @@ foreach($prefixes as $prefix){
         Route::post('/apply_coupon', 'CheckoutController@applyCoupon');
         Route::get('/livesearch', 'ProductsController@livesearch');
         Route::match(['get', 'post'], '/search/{page?}', ['as' => 'search', 'uses' => 'ProductsController@search']);
-        Route::post('/shopreview/add', 'SiteReviewsController@addAction');
-        Route::post('/review/add', 'ReviewsController@addAction');
+        // /shopreview/add и /review/add перенесены в Modules/Reviews/routes/web.php
         Route::post('/confirm_order_payment', 'OrdersController@confirmOrderPaymentAction');
         Route::post('/update_payment_method', 'CheckoutController@updatePaymentMethodAction');
         Route::post('/track_order', 'OrdersController@trackOrderAction');

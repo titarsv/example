@@ -98,11 +98,11 @@ class User extends \Cartalyst\Sentinel\Users\EloquentUser
     }
     public function reviews()
     {
-        return $this->hasMany('App\Models\Review', 'user_id', 'id');
+        return $this->hasMany(\Modules\Reviews\Models\Review::class, 'user_id', 'id');
     }
     public function shopreviews()
     {
-        return $this->hasMany('App\Models\SiteReview', 'user_id', 'id');
+        return $this->hasMany(\Modules\Reviews\Models\SiteReview::class, 'user_id', 'id');
     }
     public function seo(){
         return $this->morphOne('App\Models\Seo', 'seotable');

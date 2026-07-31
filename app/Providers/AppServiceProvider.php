@@ -6,7 +6,7 @@ use App\Models\AttributeValue;
 use Modules\Blog\Models\Blog;
 use Modules\Blog\Models\ContentCategory;
 use App\Models\Product;
-use App\Models\SiteReview;
+use Modules\Reviews\Models\SiteReview;
 use Nekhbet\LaravelGettext\Facades\LaravelGettext;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 use App\Models\File;
 use App\Models\Order;
-use App\Models\Review;
+use Modules\Reviews\Models\Review;
 use App\Models\Cart;
 use App\Models\Menu;
 use App\Services\AiServiceInterface;
@@ -232,7 +232,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer(['admin.layouts.sidebar', 'admin.layouts.main'], function ($view) {
-            $view->with('new_site_reviews', SiteReview::where('new', 1)->get());
+            $view->with('new_site_reviews', module_active('reviews') ? SiteReview::where('new', 1)->get() : collect());
         });
 
         view()->composer(['public.layouts.site_reviews', 'public.layouts.microdata.category'], function ($view){
@@ -243,23 +243,23 @@ class AppServiceProvider extends ServiceProvider
                 });
             }
 
-            $view->with('site_reviews', SiteReview::where('published', 1)
+            $view->with('site_reviews', module_active('reviews') ? SiteReview::where('published', 1)
                 ->orderBy('created_at', 'desc')
                 ->with('user')
-                ->paginate(16));
+                ->paginate(16) : new \Illuminate\Pagination\LengthAwarePaginator([], 0, 16));
         });
 
         view()->composer(['public.layouts.pages.reviews'], function ($view){
-            $view->with('reviews_count', SiteReview::where('published', 1)->count())
-                ->with('reviews_grade', SiteReview::where('published', 1)->avg('grade'));
+            $view->with('reviews_count', module_active('reviews') ? SiteReview::where('published', 1)->count() : 0)
+                ->with('reviews_grade', module_active('reviews') ? SiteReview::where('published', 1)->avg('grade') : null);
         });
 
         view()->composer(['public.layouts.pages.city'], function ($view){
             $view->with('effects', AttributeValue::where('attribute_id', 1)->get())
                 ->with('favorites', Product::orderBy('popularity', 'desc')->where('visible', 1)->limit(7)->get())
-                ->with('reviews', SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get())
-                ->with('reviews_count', SiteReview::where('published', 1)->count())
-                ->with('reviews_grade', SiteReview::where('published', 1)->avg('grade'))
+                ->with('reviews', module_active('reviews') ? SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get() : collect())
+                ->with('reviews_count', module_active('reviews') ? SiteReview::where('published', 1)->count() : 0)
+                ->with('reviews_grade', module_active('reviews') ? SiteReview::where('published', 1)->avg('grade') : null)
                 ->with('articles', module_active('blog') ? Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get() : collect());
         });
 
@@ -330,9 +330,9 @@ class AppServiceProvider extends ServiceProvider
             $products_ids = App\Models\Product::select('products.id')->where('products.visible', 1)->leftJoin('product_attributes', 'products.id', 'product_attributes.product_id')->where('product_attributes.attribute_value_id', $strain->id)->get()->pluck('id')->toArray();
             $products = App\Models\Product::select('products.*')->where('products.visible', 1)->leftJoin('product_attributes', 'products.id', 'product_attributes.product_id')->where('product_attributes.attribute_value_id', $strain->id)->paginate(20, '', $seo->name, $page);
             $view->with('products', $products)
-                ->with('reviews', Review::orderBy('id', 'desc')->where('published', 1)->whereIn('product_id', $products_ids)->limit(7)->get())
-                ->with('reviews_count', Review::where('published', 1)->whereIn('product_id', $products_ids)->count())
-                ->with('reviews_grade', Review::where('published', 1)->whereIn('product_id', $products_ids)->avg('grade'));
+                ->with('reviews', module_active('reviews') ? Review::orderBy('id', 'desc')->where('published', 1)->whereIn('product_id', $products_ids)->limit(7)->get() : collect())
+                ->with('reviews_count', module_active('reviews') ? Review::where('published', 1)->whereIn('product_id', $products_ids)->count() : 0)
+                ->with('reviews_grade', module_active('reviews') ? Review::where('published', 1)->whereIn('product_id', $products_ids)->avg('grade') : null);
         });
     }
 

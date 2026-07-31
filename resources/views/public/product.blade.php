@@ -280,7 +280,7 @@
             <div class="container">
                 <div class="section-head">
                     <h2 class="section-title">Customer reviews</h2>
-                    @if($product->reviews->count() > 0)
+                    @if(module_active('reviews') && $product->reviews->count() > 0)
                         <div class="reviews-rating">
                             <div class="rating-stars">
                                 @for($i = 0; $i < 5; $i++)
@@ -361,7 +361,9 @@
                             <span>based on {{ $reviews->count() }} reviews</span>
                         </div>
                     @endif
-                    <span class="btn popup-btn" data-mfp-src="#reviews-popup">Send Review</span>
+                    @if(module_active('reviews'))
+                        <span class="btn popup-btn" data-mfp-src="#reviews-popup">Send Review</span>
+                    @endif
                 </div>
             </div>
             @if($reviews->count() > 0)

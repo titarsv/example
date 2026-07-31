@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
 use App\Models\AttributeValue;
-use App\Models\SiteReview;
+use Modules\Reviews\Models\SiteReview;
 use App\Models\Category;
 use App\Models\Setting;
 use App\Models\Action;
@@ -94,9 +94,9 @@ class PagesController extends Controller
             ->with('articles', module_active('blog') ? Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get() : collect())
             ->with('effects', AttributeValue::where('attribute_id', 1)->get())
             ->with('favorites', $recommended)
-            ->with('reviews', SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get())
-            ->with('reviews_count', SiteReview::where('published', 1)->count())
-            ->with('reviews_grade', SiteReview::where('published', 1)->avg('grade'))
+            ->with('reviews', module_active('reviews') ? SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get() : collect())
+            ->with('reviews_count', module_active('reviews') ? SiteReview::where('published', 1)->count() : 0)
+            ->with('reviews_grade', module_active('reviews') ? SiteReview::where('published', 1)->avg('grade') : null)
             ->with('seo', $seo)
             ->withShortcodes()
             ->render();
