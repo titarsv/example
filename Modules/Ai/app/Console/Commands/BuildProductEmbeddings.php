@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Ai\Console\Commands;
 
-use App\Jobs\GenerateProductEmbeddingJob;
+use Modules\Ai\Jobs\GenerateProductEmbeddingJob;
 use App\Models\Product;
-use App\Models\ProductEmbedding;
+use Modules\Ai\Models\ProductEmbedding;
 use Illuminate\Console\Command;
 
 class BuildProductEmbeddings extends Command

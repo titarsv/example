@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Ai\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\Localization;
-use App\Jobs\TranslateLocalizationBatch;
-use App\Jobs\TranslateJsonJob;
+use Modules\Ai\Jobs\TranslateLocalizationBatch;
+use Modules\Ai\Jobs\TranslateJsonJob;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

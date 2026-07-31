@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Ai\Console\Commands;
 
 use App\Models\Product;
 use Illuminate\Console\Command;

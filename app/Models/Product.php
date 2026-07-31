@@ -15,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Config;
 use App;
+use Modules\Ai\Models\ProductEmbedding;
 
 class Product extends Entity
 {
@@ -62,8 +63,10 @@ class Product extends Entity
 
             // Эмбеддинг строится асинхронно (воркер очереди подхватит задачу уже после
             // того, как в этом же запросе будет сохранена локализация названия/описания)
-            foreach (config('app.locales', [config('app.locale')]) as $locale) {
-                \App\Jobs\GenerateProductEmbeddingJob::dispatch($model->id, $locale);
+            if (module_active('ai')) {
+                foreach (config('app.locales', [config('app.locale')]) as $locale) {
+                    \Modules\Ai\Jobs\GenerateProductEmbeddingJob::dispatch($model->id, $locale);
+                }
             }
         });
 
@@ -791,6 +794,10 @@ class Product extends Entity
      */
     public function getBoughtTogether($limit = 8, $only_in_stock = true)
     {
+        if (!module_active('ai')) {
+            return collect();
+        }
+
         $ids = Redis::command('zrevrange', ["bought_with_{$this->id}", 0, ($limit * 2) - 1]);
 
         if (empty($ids)) {
@@ -893,7 +900,7 @@ class Product extends Entity
      */
     public static function getPersonalizedRecommendations(array $viewedIds, $limit = 8, $only_in_stock = true)
     {
-        if (empty($viewedIds)) {
+        if (empty($viewedIds) || !module_active('ai')) {
             return collect();
         }
 
@@ -931,7 +938,11 @@ class Product extends Entity
      */
     public static function semanticSearch(string $query, $limit = 20, $only_in_stock = true, $timeoutSeconds = 30)
     {
-        $ai = app(\App\Services\AiServiceInterface::class);
+        if (!module_active('ai')) {
+            return collect();
+        }
+
+        $ai = app(\Modules\Ai\Services\AiServiceInterface::class);
         $queryVector = $ai->embed($query, $timeoutSeconds);
 
         if (empty($queryVector)) {
@@ -948,6 +959,10 @@ class Product extends Entity
      */
     public function getSimilarByEmbedding($limit = 8, $only_in_stock = true)
     {
+        if (!module_active('ai')) {
+            return collect();
+        }
+
         $locale = App::getLocale();
 
         $embedding = ProductEmbedding::where('product_id', $this->id)->where('locale', $locale)->first();

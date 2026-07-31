@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Ai\Models;
 
+use App\Models\Product;
 use Illuminate\Database\Eloquent\Model;
 
 class ProductEmbedding extends Model

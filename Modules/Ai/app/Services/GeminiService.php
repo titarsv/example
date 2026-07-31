@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace Modules\Ai\Services;
 
 use Gemini\Client;
 use Gemini\Data\Blob;

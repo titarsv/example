@@ -19,11 +19,10 @@ class Kernel extends ConsoleKernel
         Commands\CartCleaner::class,
         Commands\TrustpilotReviewsUpdater::class,
         Commands\MyCryptoCheckout::class,
-        Commands\GenerateSeoContentCommand::class,
-        Commands\BuildBoughtTogetherRecommendations::class,
-        Commands\BuildProductEmbeddings::class,
-        Commands\TestSemanticSearch::class,
-        Commands\SyncOrderProducts::class,
+        // GenerateSeoContentCommand, BuildBoughtTogetherRecommendations,
+        // BuildProductEmbeddings, TestSemanticSearch, SyncOrderProducts moved
+        // to Modules\Ai and are now registered by AiServiceProvider::boot()
+        // (only when the Ai module is enabled).
     ];
 
     /**
@@ -36,8 +35,8 @@ class Kernel extends ConsoleKernel
         $schedule->command('clear_carts')->daily();
         $schedule->command('sales')->everyTenMinutes();
         $schedule->command('mycryptocheckout')->hourly();
-        $schedule->command('recommendations:bought-together')->dailyAt('03:00');
-        $schedule->command('embeddings:build-products --only-missing')->weekly();
+        $schedule->command('recommendations:bought-together')->dailyAt('03:00')->when(fn() => module_active('ai'));
+        $schedule->command('embeddings:build-products --only-missing')->weekly()->when(fn() => module_active('ai'));
 //        $schedule->command('update_trustpilot_reviews')->daily();
 //        $schedule->command('seo:generate-content --limit=50')->hourly();
     }

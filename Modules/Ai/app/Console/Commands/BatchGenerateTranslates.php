@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Ai\Console\Commands;
 
 use App\Models\Localization;
-use App\Jobs\TranslateLocalizationBatch;
-use App\Jobs\TranslateJsonJob;
+use Modules\Ai\Jobs\TranslateLocalizationBatch;
+use Modules\Ai\Jobs\TranslateJsonJob;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 

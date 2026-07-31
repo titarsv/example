@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Ai\Console\Commands;
 
 use App\Models\Category;
 use App\Models\Seo;
-use App\Jobs\GenerateSeoContentJob;
+use Modules\Ai\Jobs\GenerateSeoContentJob;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Redis;

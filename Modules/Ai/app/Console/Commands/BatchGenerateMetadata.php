@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Console\Commands;
+namespace Modules\Ai\Console\Commands;
 
 use App\Models\File;
-use App\Jobs\GenerateProductAltText;
+use Modules\Ai\Jobs\GenerateProductAltText;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Relations\Relation;
 

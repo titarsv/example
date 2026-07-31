@@ -49,24 +49,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
         Route::post('/remove_images', 'ImagesController@removeImages');
     });
 
-    Route::group(['prefix' => 'metadata'], function(){
-        Route::get('/', 'MetadataController@index');
-        Route::post('/generate', 'MetadataController@generate');
-        Route::get('/progress', 'MetadataController@getProgress');
-    });
-
-    Route::group(['prefix' => 'seo-content'], function(){
-        Route::get('/', 'SeoContentController@index');
-        Route::post('/generate', 'SeoContentController@generate');
-        Route::get('/progress', 'SeoContentController@getProgress');
-    });
-
-    Route::group(['prefix' => 'gemini-translate'], function(){
-        Route::get('/', 'GeminiTranslateController@index');
-        Route::post('/generate', 'GeminiTranslateController@generate');
-        Route::post('/generate-type', 'GeminiTranslateController@generateType');
-        Route::get('/progress', 'GeminiTranslateController@getProgress');
-    });
+    // Роуты metadata/seo-content/gemini-translate перенесены в Modules/Ai/routes/web.php
 
 //    Route::group(['prefix' => 'index'], function(){
 //        Route::get('/products', 'IndexController@products');

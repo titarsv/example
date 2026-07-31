@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Jobs;
+namespace Modules\Ai\Jobs;
 
 use App\Models\File;
 use App\Models\Localization;
-use App\Services\AiServiceInterface;
+use Modules\Ai\Services\AiServiceInterface;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;

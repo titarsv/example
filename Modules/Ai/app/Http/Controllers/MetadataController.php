@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Ai\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\File;
-use App\Jobs\GenerateProductAltText;
+use Modules\Ai\Jobs\GenerateProductAltText;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;

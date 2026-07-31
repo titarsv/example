@@ -61,11 +61,13 @@ class Order extends Entity
 
                 $model->products = json_encode($saved_products, JSON_UNESCAPED_UNICODE);
 
-                $product_ids = array_map(function($code){
-                    return (int) explode('_', (string) $code)[0];
-                }, array_keys($saved_products));
+                if (module_active('ai')) {
+                    $product_ids = array_map(function($code){
+                        return (int) explode('_', (string) $code)[0];
+                    }, array_keys($saved_products));
 
-                \App\Jobs\UpdateBoughtTogetherJob::dispatch($product_ids);
+                    \Modules\Ai\Jobs\UpdateBoughtTogetherJob::dispatch($product_ids);
+                }
             }
 
             // Send paid order email when status changes to 3

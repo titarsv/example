@@ -22,9 +22,6 @@ use App\Models\Order;
 use Modules\Reviews\Models\Review;
 use App\Models\Cart;
 use App\Models\Menu;
-use App\Services\AiServiceInterface;
-use App\Services\GeminiService;
-use App\Services\OllamaService;
 use App;
 use Illuminate\Support\Facades\Config;
 
@@ -32,20 +29,6 @@ class AppServiceProvider extends ServiceProvider
 {
     private $user;
     private $roles_array = array();
-
-
-    /**
-     * Register any application services.
-     */
-    public function register(): void
-    {
-        $this->app->singleton(AiServiceInterface::class, function ($app) {
-            if (config('services.ai_provider') === 'ollama') {
-                return new OllamaService();
-            }
-            return new GeminiService();
-        });
-    }
 
     /**
      * Bootstrap any application services.
