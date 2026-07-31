@@ -71,9 +71,21 @@ class SettingsActivator implements ActivatorInterface
         return (bool) ($flags[Str::lower($name)] ?? true);
     }
 
+    /**
+     * Reads the flags row. Defensively returns [] (== everything enabled) on
+     * any failure — the module manifest reads activator status very early in
+     * the request/console lifecycle (e.g. `package:discover`, before the DB
+     * connection resolver or the settings table necessarily exist), so a
+     * broken/unavailable database must never take the whole app down just to
+     * answer "is this module on".
+     */
     public static function flags(): array
     {
-        $value = app(Setting::class)->get_setting(static::SETTINGS_KEY);
+        try {
+            $value = app(Setting::class)->get_setting(static::SETTINGS_KEY);
+        } catch (\Throwable) {
+            return [];
+        }
 
         if ($value === '' || $value === null) {
             return [];

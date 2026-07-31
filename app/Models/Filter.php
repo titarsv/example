@@ -838,7 +838,7 @@ class Filter
         $locale = App::getLocale();
         $user = Sentinel::check();
 
-        $collection->with(['image',
+        $relations = ['image',
         'seo' => function($query){
             $query->select(['url', 'seotable_id', 'seotable_type']);
         },
@@ -867,7 +867,13 @@ class Filter
         'actual_sales',
         'gallery',
 //        'variations.attribute_values',
-        ]);
+        ];
+
+        if (!module_active('wishlist')) {
+            unset($relations['wishlist']);
+        }
+
+        $collection->with($relations);
 //        ->withCount('reviews');
 
         return $collection;

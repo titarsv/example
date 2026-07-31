@@ -286,7 +286,7 @@ class Product extends Entity
 
     public function wishlist()
     {
-        return $this->hasMany('App\Models\Wishlist', 'product_id');
+        return $this->hasMany(\Modules\Wishlist\Models\Wishlist::class, 'product_id');
     }
 
 //    public function similar(){
@@ -657,6 +657,10 @@ class Product extends Entity
 
     public function in_wish()
     {
+        if (!module_active('wishlist')) {
+            return false;
+        }
+
         if (isset($this->relations['wishlist'])) {
             if ($this->wishlist->count()) {
                 return true;

@@ -27,7 +27,9 @@
     </div>
     <div class="col-12 col-sm-5 px-0 d-flex justify-content-end align-items-center px-1 mb-2">
       <a href="{{asset('admin/users/orders/'.$user->id)}}" class="btn btn-sm mr-25 border">{{ trans('Orders') }}</a>
+      @if(module_active('wishlist'))
       <a href="{{asset('admin/users/wishlist/'.$user->id)}}" class="btn btn-sm mr-25 border">{{ trans('Favorites') }}</a>
+      @endif
       <a href="{{asset('admin/users/edit/'.$user->id)}}" class="btn btn-sm btn-primary">{{ trans('Edit') }}</a>
     </div>
   </div>

@@ -94,7 +94,7 @@ class User extends \Cartalyst\Sentinel\Users\EloquentUser
     }
     public function wishlist()
     {
-        return $this->hasMany('App\Models\Wishlist', 'user_id', 'id');
+        return $this->hasMany(\Modules\Wishlist\Models\Wishlist::class, 'user_id', 'id');
     }
     public function reviews()
     {

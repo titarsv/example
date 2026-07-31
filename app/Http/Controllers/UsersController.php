@@ -23,7 +23,6 @@ use App\Models\Order;
 use App\Models\User;
 use App\Models\Newpost;
 use App\Models\Justin;
-use App\Models\Wishlist;
 
 class UsersController extends Controller
 {
@@ -794,13 +793,6 @@ class UsersController extends Controller
         $shopreviews = SiteReview::where('user_id', $id)->paginate(10);
 
         return view('admin.users.shopreviews')->with('shopreviews', $shopreviews)->with('user', User::find($id));
-    }
-
-    public function adminWishlist($id)
-    {
-        $wishlist = Wishlist::where('user_id', $id)->paginate(10);
-
-        return view('admin.users.wishlist')->with('wishlist', $wishlist)->with('user', User::find($id));
     }
 
     public function sendMail()

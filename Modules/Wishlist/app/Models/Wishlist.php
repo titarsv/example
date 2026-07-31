@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Wishlist\Models;
 
+use App\Models\Product;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Model;
 
 class Wishlist extends Model
@@ -15,11 +17,11 @@ class Wishlist extends Model
 
     public function user()
     {
-        return $this->belongsTo('App\Models\User');
+        return $this->belongsTo(User::class);
     }
 
     public function product()
     {
-        return $this->hasOne('App\Models\Product', 'id','product_id');
+        return $this->hasOne(Product::class, 'id', 'product_id');
     }
 }
