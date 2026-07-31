@@ -1,0 +1,74 @@
+.rating {
+    float: left;
+}
+
+.rating > input,
+.favorite > input{
+    display: none;
+}
+
+.rating > label{
+    float: right;
+}
+
+.rating > input ~ label{
+    cursor: pointer;
+}
+
+.rating > input:checked ~ label{
+    color: #FDAC41 !important;
+}
+
+.favorite > input:checked ~ label{
+    color: #FF5B5C !important;
+}
+
+.rating:hover > input + label{
+    color: #828D99 !important;
+}
+
+.rating > input + label:hover,
+.rating > input + label:hover ~ label{
+    color: #FDAC41 !important;
+}
+
+.favorite > input + label:hover{
+    color: #FF5B5C !important;
+}
+
+.rating > input:checked ~ label:before{
+    content: "\ee67";
+}
+
+.favorite > input:checked ~ label:before{
+    content: "\ed94";
+}
+
+.favorite > input:checked + label:hover:before{
+    content: "\ead6";
+}
+
+body.dark-layout .review-edit .card-header,
+body.dark-layout .review-edit .card-header + .card-content,
+body.dark-layout .review-edit .card-header + .card-content .card-body,
+body.dark-layout .review-edit .quill-wrapper {
+    background-color: #1a233a !important;
+}
+
+.review-edit .quill-wrapper .snow-container .ql-container.ql-snow {
+    border: none;
+}
+
+.review-edit .quill-wrapper .ql-editor {
+    min-height: 80px;
+    padding-left: 0;
+    padding-right: 0;
+}
+
+.review-edit .quill-wrapper .ql-editor.ql-blank::before {
+    left: 0;
+}
+
+.review-edit .quill-wrapper .snow-container .ql-toolbar {
+    border: none;
+}

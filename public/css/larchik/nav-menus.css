@@ -1,0 +1,1278 @@
+/* nav-menu */
+
+/* @todo: determine if this is truly for nav menus only */
+.no-js #message {
+	display: block;
+}
+
+ul.add-menu-item-tabs li {
+	padding: 3px 5px 4px 8px;
+}
+
+.accordion-section ul.category-tabs,
+.accordion-section ul.add-menu-item-tabs,
+.accordion-section ul.wp-tab-bar {
+	margin: 0;
+}
+
+.accordion-section .categorychecklist {
+	margin: 13px 0;
+}
+
+#nav-menu-meta .accordion-section-content {
+	padding: 18px 13px;
+}
+
+#nav-menu-meta .button-controls {
+	margin-bottom: 0;
+}
+
+.has-no-menu-item .button-controls {
+	display: none;
+}
+
+#nav-menus-frame {
+	margin-left: 300px;
+	margin-top: 23px;
+}
+
+#wpbody-content #menu-settings-column {
+	display:inline;
+	width:281px;
+	margin-left: -300px;
+	clear: both;
+	float: left;
+	padding-top: 0;
+}
+
+#menu-settings-column .inside {
+	clear: both;
+	margin: 10px 0 0;
+}
+
+.metabox-holder-disabled .postbox,
+.metabox-holder-disabled .accordion-section-content,
+.metabox-holder-disabled .accordion-section-title {
+	opacity: 0.5;
+	filter: alpha(opacity=50);
+}
+
+.metabox-holder-disabled .button-controls .select-all {
+	display: none;
+}
+
+#wpbody {
+	position: relative;
+}
+
+.blank-slate .menu-settings {
+	border: none;
+	margin-top: 0;
+	padding-top: 0;
+	overflow: hidden;
+}
+
+.is-submenu {
+	color: #555d66; /* #fafafa background */
+	font-style: italic;
+	font-weight: 400;
+	margin-left: 4px;
+}
+
+.manage-menus {
+	margin-top: 23px;
+	padding: 10px;
+	overflow: hidden;
+	background: #fbfbfb;
+}
+
+.manage-menus .selected-menu,
+.manage-menus select,
+.manage-menus .submit-btn,
+.nav-menus-php .add-new-menu-action {
+	display: inline-block;
+	margin-right: 3px;
+	vertical-align: middle;
+}
+
+.manage-menus select,
+.menu-location-menus select {
+	max-width: 100%;
+}
+
+.menu-edit #post-body-content h3 {
+	margin: 1em 0 10px;
+}
+
+.menu-settings {
+	border-top: 1px solid #eee;
+	margin-top: 2em;
+}
+
+.menu-settings-group {
+	margin: 0 0 10px;
+	overflow: hidden;
+	padding-left: 20%;
+}
+
+.menu-settings-group:last-of-type {
+	margin-bottom: 0;
+}
+
+.menu-settings-input {
+	float: left;
+	margin: 0;
+	width: 100%;
+}
+
+.menu-settings-group-name {
+	float: left;
+	clear: both;
+	width: 25%;
+	padding: 3px 0 0;
+	margin-left: -25%; /* 20 container left padding x ( 100 container % width / 80 this % width ) */
+}
+
+.menu-settings label {
+	vertical-align: baseline;
+}
+
+.menu-edit .checkbox-input {
+	margin-top: 4px;
+}
+
+.theme-location-set {
+	color: #72777c;
+	font-size: 11px;
+}
+
+/* Menu Container */
+
+/* @todo: responsive view. */
+#menu-management-liquid {
+	float: left;
+	min-width: 100%;
+	margin-top: 3px;
+}
+
+/* @todo: responsive view. */
+#menu-management {
+	position: relative;
+	margin-right: 20px;
+	margin-top: -3px;
+	width: 100%;
+	background: #f5f5f5;
+}
+
+#menu-management .menu-edit {
+	margin-bottom: 20px;
+}
+
+.nav-menus-php #post-body {
+	padding: 0 10px 10px;
+	border-top: 1px solid #fff;
+	border-bottom: 1px solid #ddd;
+	background: #fff;
+}
+
+#nav-menu-header,
+#nav-menu-footer {
+	padding: 0 10px;
+}
+
+#nav-menu-header {
+	border-bottom: 1px solid #ddd;
+	margin-bottom: 0;
+}
+
+#nav-menu-header .menu-name-label {
+	display: inline-block;
+	vertical-align: middle;
+	margin-right: 7px;
+	font-style: italic;
+}
+
+.nav-menus-php #post-body div.updated,
+.nav-menus-php #post-body div.error {
+	margin: 0;
+}
+
+.nav-menus-php #post-body-content {
+	position: relative;
+	float: none;
+}
+
+#menu-management .menu-add-new abbr {
+	font-weight:600;
+}
+
+#select-nav-menu-container {
+	text-align: right;
+	padding: 0 10px 3px 10px;
+	margin-bottom: 5px;
+}
+
+#select-nav-menu {
+	width: 100px;
+	display: inline;
+}
+
+#menu-name-label {
+	margin-top: -2px;
+}
+
+.widefat .menu-locations .menu-location-title {
+	padding: 13px 10px 0;
+}
+
+.menu-location-title label {
+	font-weight: 600;
+}
+
+.menu-location-menus select {
+	float: left;
+}
+
+#locations-nav-menu-wrapper {
+	padding: 5px 0;
+}
+
+.locations-nav-menu-select select {
+	float: left;
+	width: 160px;
+	margin-right: 5px;
+}
+
+.locations-row-links {
+	float: left;
+	margin: 6px 0 0 6px;
+}
+
+.locations-edit-menu-link,
+.locations-add-menu-link {
+	margin: 0 3px;
+}
+
+.locations-edit-menu-link {
+	padding-right: 3px;
+	border-right: 1px solid #ccc;
+}
+
+#menu-management .inside {
+	padding: 0 10px;
+}
+
+/* Add Menu Item Boxes */
+.postbox .howto input,
+.customlinkdiv .menu-item-textbox,
+.groupdiv .menu-item-textbox {
+	width: 180px;
+	float: right;
+}
+
+.accordion-container .outer-border {
+	margin: 0;
+}
+
+.customlinkdiv p,
+.groupdiv p {
+	margin-top: 0;
+    float: left;
+    width: 100%;
+}
+
+#nav-menu-theme-locations .howto select {
+	width: 100%;
+}
+
+#nav-menu-theme-locations .button-controls {
+	text-align: right;
+}
+
+.add-menu-item-view-all {
+	height: 400px;
+}
+
+/* Button Primary Actions */
+#menu-container .submit {
+	margin: 0 0 10px;
+	padding: 0;
+}
+
+/* @todo: is this actually used? */
+#cancel-save {
+	text-decoration: underline;
+	font-size: 12px;
+	margin-left: 20px;
+	margin-top: 5px;
+}
+
+.button.right, .button-secondary.right, .button-primary.right {
+	float: right;
+}
+
+/* Button Secondary Actions */
+.list-controls {
+	float: left;
+	margin-top: 5px;
+}
+
+.add-to-menu {
+	float: right;
+}
+
+.button-controls {
+	clear:both;
+	margin: 10px 0;
+}
+
+.show-all,
+.hide-all {
+	cursor: pointer;
+}
+
+.hide-all {
+	display: none;
+}
+
+/* Create Menu */
+.menu-name {
+	width: 270px !important;
+	vertical-align: middle;
+}
+
+#manage-menu .inside {
+	padding: 0px 0px;
+}
+
+/* Custom Links */
+#available-links dt {
+	display: block;
+}
+
+#add-custom-link .howto {
+	font-size: 12px;
+}
+
+#add-custom-link label span {
+	display: block;
+	float: left;
+	margin-top: 5px;
+	padding-right: 5px;
+}
+
+.menu-item-textbox {
+	width: 180px;
+}
+
+.customlinkdiv label,
+.groupdiv label,
+.nav-menus-php .howto span {
+	float: left;
+	margin-top: 2px;
+    font-weight: normal;
+}
+
+/* Menu item types */
+.quick-search {
+	width: 190px;
+}
+
+.quick-search-wrap .spinner {
+	float: none;
+	margin: -3px -10px 0 0;
+}
+
+.nav-menus-php .list-wrap {
+	display: none;
+	clear: both;
+	margin-bottom: 10px;
+}
+
+.nav-menus-php .postbox p.submit {
+	margin-bottom: 0;
+}
+
+/* Listings */
+.nav-menus-php .list li {
+	display: none;
+	margin: 0;
+	margin-bottom: 5px;
+}
+
+.nav-menus-php .list li .menu-item-title {
+	cursor: pointer;
+	display: block;
+}
+
+.nav-menus-php .list li .menu-item-title input {
+	margin-right: 3px;
+	margin-top: -3px;
+}
+
+.menu-item-title input[type=checkbox] {
+	display: inline-block;
+	margin-top: -4px;
+}
+
+/* Nav Menu */
+#menu-container .inside {
+	padding-bottom: 10px;
+}
+
+.menu {
+	padding-top:1em;
+}
+
+#menu-to-edit {
+	margin: 0;
+	padding: 0.1em 0;
+}
+
+.menu ul {
+	width: 100%;
+}
+
+.menu li {
+	margin-bottom: 0;
+	position:relative;
+}
+
+.menu-item-bar {
+	clear:both;
+	line-height:1.5em;
+	position:relative;
+	margin: 9px 0 0;
+}
+
+.menu-item-bar .menu-item-handle {
+	border: 1px solid #ddd;
+	position: relative;
+	padding: 10px 15px;
+	height: auto;
+	min-height: 20px;
+	width: 402px;
+	line-height: 30px;
+	overflow: hidden;
+	word-wrap: break-word;
+}
+
+.menu-item-bar .menu-item-handle:hover {
+	border-color: #999;
+}
+
+#menu-to-edit .menu-item-invalid .menu-item-handle {
+	background: #f6c9cc;
+	border-color: #f1acb1;
+}
+
+.no-js .menu-item-edit-active .item-edit {
+	display: none;
+}
+
+.js .menu-item-handle {
+	cursor: move;
+}
+
+.menu li.deleting .menu-item-handle {
+	background-image: none;
+	background-color: #f66;
+}
+
+.menu-item-handle .item-title {
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 20px;
+	display: block;
+	/* @todo: responsive view. */
+	margin-right: 13em;
+}
+
+.menu-item-handle .menu-item-title.no-title {
+	color: #72777c;
+}
+
+/* Sortables */
+li.menu-item.ui-sortable-helper .menu-item-bar {
+	margin-top: 0;
+}
+
+li.menu-item.ui-sortable-helper .menu-item-transport .menu-item-bar {
+	margin-top: 13px;
+}
+
+.menu .sortable-placeholder {
+	height: 35px;
+	width: 410px;
+	margin-top: 13px;
+}
+
+/* Hide the transport list when it's empty */
+.menu-item .menu-item-transport:empty {
+	display: none;
+}
+
+/* WARNING: The factor of 30px is hardcoded into the nav-menus JavaScript. */
+.menu-item-depth-0 { margin-left: 0px; }
+.menu-item-depth-1 { margin-left: 30px; }
+.menu-item-depth-2 { margin-left: 60px; }
+.menu-item-depth-3 { margin-left: 90px; }
+.menu-item-depth-4 { margin-left: 120px; }
+.menu-item-depth-5 { margin-left: 150px; }
+.menu-item-depth-6 { margin-left: 180px; }
+.menu-item-depth-7 { margin-left: 210px; }
+.menu-item-depth-8 { margin-left: 240px; }
+.menu-item-depth-9 { margin-left: 270px; }
+.menu-item-depth-10 { margin-left: 300px; }
+.menu-item-depth-11 { margin-left: 330px; }
+
+.menu-item-depth-0 .menu-item-transport { margin-left: 0px; }
+.menu-item-depth-1 .menu-item-transport { margin-left: -30px; }
+.menu-item-depth-2 .menu-item-transport { margin-left: -60px; }
+.menu-item-depth-3 .menu-item-transport { margin-left: -90px; }
+.menu-item-depth-4 .menu-item-transport { margin-left: -120px; }
+.menu-item-depth-5 .menu-item-transport { margin-left: -150px; }
+.menu-item-depth-6 .menu-item-transport { margin-left: -180px; }
+.menu-item-depth-7 .menu-item-transport { margin-left: -210px; }
+.menu-item-depth-8 .menu-item-transport { margin-left: -240px; }
+.menu-item-depth-9 .menu-item-transport { margin-left: -270px; }
+.menu-item-depth-10 .menu-item-transport { margin-left: -300px; }
+.menu-item-depth-11 .menu-item-transport { margin-left: -330px; }
+
+body.menu-max-depth-0 { min-width: 950px !important; }
+body.menu-max-depth-1 { min-width: 980px !important; }
+body.menu-max-depth-2 { min-width: 1010px !important; }
+body.menu-max-depth-3 { min-width: 1040px !important; }
+body.menu-max-depth-4 { min-width: 1070px !important; }
+body.menu-max-depth-5 { min-width: 1100px !important; }
+body.menu-max-depth-6 { min-width: 1130px !important; }
+body.menu-max-depth-7 { min-width: 1160px !important; }
+body.menu-max-depth-8 { min-width: 1190px !important; }
+body.menu-max-depth-9 { min-width: 1220px !important; }
+body.menu-max-depth-10 { min-width: 1250px !important; }
+body.menu-max-depth-11 { min-width: 1280px !important; }
+
+/* Menu item controls */
+.item-type {
+	display: inline-block;
+	padding: 12px 16px;
+	color: #666;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.item-controls {
+	font-size: 12px;
+	position: absolute;
+	right: 20px;
+	top: -1px;
+}
+
+.item-controls a {
+	text-decoration: none;
+}
+
+.item-controls a:hover {
+	cursor: pointer;
+}
+
+.item-controls .item-order {
+	padding-right: 10px;
+}
+
+.nav-menus-php .item-edit {
+	position: absolute;
+	right: -20px;
+	top: 0;
+	display: block;
+	width: 30px;
+	height: 40px;
+	outline: none;
+}
+
+.no-js.nav-menus-php .item-edit {
+	position: static;
+	float: right;
+	width: auto;
+	height: auto;
+	margin: 12px -10px 12px 0;
+	padding: 0;
+	color: #0073aa;
+	text-decoration: underline;
+	font-size: 12px;
+	line-height: 18px;
+}
+
+.no-js.nav-menus-php .item-edit .screen-reader-text {
+	position: static;
+	-webkit-clip-path: none;
+	clip-path: none;
+	width: auto;
+	height: auto;
+	margin: 0;
+}
+
+.nav-menus-php .item-edit:before {
+	margin-top: 10px;
+	margin-left: 4px;
+	width: 20px;
+	border-radius: 50%;
+	text-indent: -1px; /* account for the dashicon alignment */
+}
+
+.no-js.nav-menus-php .item-edit:before {
+	display: none;
+}
+
+.rtl .nav-menus-php .item-edit:before {
+	text-indent: 1px; /* account for the dashicon alignment */
+}
+
+.js.nav-menus-php .item-edit:focus {
+	box-shadow: none;
+}
+
+.nav-menus-php .item-edit:focus:before {
+	box-shadow:
+		0 0 0 1px #5b9dd9,
+		0 0 2px 1px rgba(30, 140, 190, .8);
+}
+
+/* Menu editing */
+.menu-instructions-inactive {
+	display: none;
+}
+
+.menu-item-settings {
+	display: block;
+	width: 402px;
+	padding: 10px 0 10px 10px;
+	position: relative;
+	z-index: 10; /* Keep .item-title's shadow from appearing on top of .menu-item-settings */
+	border: 1px solid #e5e5e5;
+	border-top: none;
+	box-shadow: 0 1px 1px rgba(0,0,0,0.04);
+    float: left;
+}
+
+.menu-item-settings .field-move {
+	margin: 3px 0 5px;
+	line-height: 1.5;
+}
+
+.field-move-visual-label {
+	float: left;
+	margin-right: 4px;
+	font-style: italic;
+}
+
+.menu-item-settings .field-move .button-link {
+	display: none;
+	margin: 0 2px;
+	font-style: italic;
+}
+
+.menu-item-edit-active .menu-item-settings {
+	display: block;
+}
+
+.menu-item-edit-inactive .menu-item-settings {
+	display: none;
+}
+
+.add-menu-item-pagelinks {
+	margin: .5em -10px;
+	text-align: center;
+}
+
+.add-menu-item-pagelinks .page-numbers {
+	display: inline-block;
+	min-width: 20px;
+}
+
+.add-menu-item-pagelinks .page-numbers.dots {
+	min-width: 0;
+}
+
+.link-to-original {
+	display: block;
+	margin: 0 0 15px;
+	padding: 3px 5px 5px;
+	border: 1px solid #ddd;
+	color: #72777c;
+	font-size: 12px;
+	font-style: italic;
+}
+
+.link-to-original a {
+	padding-left: 4px;
+	font-style: normal;
+}
+
+.hidden-field {
+	display: none;
+}
+
+.menu-item-settings .description-thin,
+.menu-item-settings .description-wide,
+.menu-item-settings .image-wide {
+	margin-right: 10px;
+	float: left;
+}
+
+.menu-item-settings .image-wide{
+    margin-bottom: 0;
+    width: 100%;
+}
+
+.description-thin {
+	width: 190px;
+}
+
+.description-wide {
+	width: 390px;
+}
+
+.menu-item-actions {
+	padding-top: 15px;
+	padding-bottom: 7px;
+}
+
+#cancel-save {
+	cursor: pointer;
+}
+
+/* Major/minor publishing actions (classes) */
+.nav-menus-php .major-publishing-actions {
+	clear: both;
+	padding: 10px 0;
+	line-height: 28px;
+}
+
+.nav-menus-php .major-publishing-actions .publishing-action {
+	text-align: right;
+	float: right;
+}
+
+.nav-menus-php .blank-slate .menu-settings {
+	display: none;
+}
+
+/* Same as the Publish Meta Box #delete-action */
+.nav-menus-php .delete-action {
+	float: left;
+	line-height: 28px;
+}
+
+.nav-menus-php .major-publishing-actions .form-invalid {
+	padding-left: 4px;
+	margin-left: -4px;
+}
+
+#nav-menus-frame,
+.button-controls,
+#menu-item-url-wrap,
+#menu-item-name-wrap {
+	display: block;
+}
+
+/* =Media Queries
+-------------------------------------------------------------- */
+
+@media only screen and (min-width: 769px) and (max-width: 1000px){
+	body.menu-max-depth-0 {
+		min-width: 0 !important;
+	}
+
+	#menu-management-liquid{
+		width: 100%;
+	}
+
+	.nav-menus-php #post-body-content{
+		min-width: 0;
+	}
+
+	.menu-item-bar .menu-item-handle{
+		width: 90%;
+	}
+}
+
+@media screen and ( max-width: 782px ) {
+	body.nav-menus-php,
+	body.wp-customizer {
+		min-width: 0 !important;
+	}
+
+	#nav-menus-frame {
+		margin-left: 0;
+		float: none;
+		width: 100%;
+	}
+
+	#wpbody-content #menu-settings-column {
+		display: block;
+		width: 100%;
+		float: none;
+		margin-left: 0;
+	}
+
+	#side-sortables .add-menu-item-tabs {
+		margin: 15px 0 14px;
+	}
+
+	ul.add-menu-item-tabs li.tabs {
+		padding: 13px 15px 14px;
+	}
+
+	.nav-menus-php .customlinkdiv .howto input,
+	.nav-menus-php .groupdiv .howto input {
+		width: 65%;
+	}
+
+	.nav-menus-php .quick-search {
+		width: 85%;
+	}
+
+	#menu-management-liquid {
+		margin-top: 25px;
+	}
+
+	.nav-menus-php .menu-name-label.howto span {
+		margin-top: 13px
+	}
+
+	#menu-name {
+		width: 100%;
+	}
+
+	.nav-menus-php .major-publishing-actions .publishing-action {
+		padding-top: 1em;
+	}
+
+	.nav-menus-php .delete-action {
+		font-size: 14px;
+		line-height: 30px;
+	}
+
+	.menu-item-bar .menu-item-handle,
+	.menu-item-settings,
+	.description-wide {
+		width: auto;
+	}
+
+	.menu-item-settings {
+		padding: 10px;
+	}
+
+	.menu-item-settings .description-thin,
+	.menu-item-settings .description-wide {
+		width: 100%;
+	}
+
+	.menu-item-settings input {
+		width: 100%;
+	}
+
+	.menu-item-settings input[type="checkbox"],
+	.menu-item-settings input[type="radio"] {
+		width: 25px;
+	}
+
+	.menu-settings-group {
+		padding-left: 0;
+	}
+
+	.menu-settings-group-name {
+		float: none;
+		width: auto;
+		margin-left: 0;
+		margin-bottom: 15px;
+	}
+
+	.menu-settings-input {
+		float: none;
+		margin-bottom: 15px;
+	}
+
+	.menu-edit .checkbox-input {
+		margin-top: 0;
+	}
+
+	.manage-menus select {
+		margin: 0.5em 0;
+	}
+
+	.widefat .menu-locations .menu-location-title {
+		padding-top: 16px;
+	}
+}
+
+@media only screen and (max-width: 768px) {
+	/* menu locations */
+	#menu-locations-wrap .widefat {
+		width: 100%;
+	}
+}
+
+#wpbody-content ul{
+    list-style: none;
+    padding: 0;
+    max-width: 800px;
+}
+
+.accordion-section-title::after, .control-section .accordion-section-title::after, .nav-menus-php .item-edit::before, .widget-top .widget-action .toggle-indicator::before {
+    content: "\f140";
+    font: 400 20px/1 dashicons;
+    speak: none;
+    display: block;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-decoration: none !important;
+}
+
+#customize-info.open .accordion-section-title::after, .control-section.open .accordion-section-title::after, .nav-menus-php .menu-item-edit-active .item-edit::before, .widget.open .widget-top .widget-action .toggle-indicator::before {
+    content: "\f142";
+}
+
+.nav-menus-php .item-edit::before {
+    margin-top: 10px;
+    margin-left: 4px;
+    width: 20px;
+    border-radius: 50%;
+    text-indent: -1px;
+}
+
+p.description label,
+p.image label{
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+    width: calc(100% - 10px);
+}
+
+p.description label input[type="text"], p.description label textarea{
+    width: 100%;
+}
+
+.form-wrap p, p.description, p.image {
+    color: #666;
+    font-style: italic;
+    font-size: 12px;
+}
+
+input[type="text"], input[type="search"], input[type="radio"], input[type="tel"], input[type="time"], input[type="url"], input[type="week"], input[type="password"], input[type="checkbox"], input[type="color"], input[type="date"], input[type="datetime"], input[type="datetime-local"], input[type="email"], input[type="month"], input[type="number"], select, textarea {
+    border: 1px solid #ddd;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.07);
+    background-color: #fff;
+    color: #32373c;
+    outline: 0;
+    transition: 50ms border-color ease-in-out;
+}
+
+input, select, textarea {
+    color: #32373c;
+    font-size: 14px;
+    border-radius: 0;
+    font-style: normal;
+    font-weight: normal;
+}
+
+.menu-item-settings .description-thin.field-xfn{
+    margin-right: 0;
+}
+
+.button-link {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    border: 0;
+    border-radius: 0;
+    background: 0 0;
+    outline: 0;
+    cursor: pointer;
+    text-align: left;
+    color: #0073aa;
+    text-decoration: underline;
+    transition-property: border,background,color;
+    transition-duration: .05s;
+    transition-timing-function: ease-in-out;
+    font-style: italic;
+}
+
+.menu-item-settings .field-move .button-link {
+    display: none;
+    margin: 0 2px;
+    font-style: italic;
+}
+
+.menu-item-settings .description-wide{
+    font-size: 12px;
+}
+
+.submitbox .submitdelete {
+    color: #a00;
+}
+
+.menu li{
+    float: left;
+}
+
+#menu-to-edit{
+    float: left;
+    margin-top: 45px;
+}
+
+#nav-menu-header, #nav-menu-footer{
+    float: left;
+    width: 100%;
+}
+
+.metabox-holder .stuffbox > h3, /* Back-compat for pre-4.4 */
+.metabox-holder .postbox > h3, /* Back-compat for pre-4.4 */
+.metabox-holder h3.hndle, /* Back-compat for pre-4.4 */
+.metabox-holder h2.hndle {
+    font-size: 14px;
+    padding: 8px 12px;
+    margin: 0;
+    line-height: 1.4;
+}
+
+.control-section .accordion-section-title:after,
+.accordion-section-title:after {
+    float: right;
+    right: 20px;
+    top: -2px;
+}
+
+/* Accordion */
+.accordion-section {
+    border-bottom: 1px solid #ddd;
+    margin: 0;
+}
+
+.accordion-section.open .accordion-section-content,
+.no-js .accordion-section .accordion-section-content {
+    display: block;
+}
+
+.accordion-section.open:hover {
+    border-bottom-color: #ddd;
+}
+
+.accordion-section-content {
+    display: none;
+    padding: 10px 20px 15px;
+    overflow: hidden;
+    background: #fff;
+}
+
+.accordion-section-title {
+    margin: 0;
+    padding: 12px 15px 15px;
+    position: relative;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.js .accordion-section-title {
+    cursor: pointer;
+}
+
+.js .accordion-section-title:after {
+    position: absolute;
+    top: 12px;
+    right: 10px;
+    z-index: 1;
+}
+
+.accordion-section-title:focus {
+    outline: none;
+}
+
+.accordion-section-title:hover:after,
+.accordion-section-title:focus:after {
+    border-color: #a0a5aa transparent;
+}
+
+.cannot-expand .accordion-section-title {
+    cursor: auto;
+}
+
+.cannot-expand .accordion-section-title:after {
+    display: none;
+}
+
+.control-section .accordion-section-title,
+.customize-pane-child .accordion-section-title {
+    border-left: none;
+    border-right: none;
+    padding: 10px 10px 11px 14px;
+    line-height: 21px;
+    background: #fff;
+}
+
+.control-section .accordion-section-title:after,
+.customize-pane-child .accordion-section-title:after {
+    top: calc(50% - 10px); /* Arrow height is 20px, so use half of that to vertically center */
+}
+
+.js .control-section:hover .accordion-section-title,
+.js .control-section .accordion-section-title:hover,
+.js .control-section.open .accordion-section-title,
+.js .control-section .accordion-section-title:focus {
+    color: #23282d;
+    background: #f5f5f5;
+}
+
+.control-section.open .accordion-section-title {
+    /* When expanded */
+    border-bottom: 1px solid #ddd;
+}
+
+.js .control-section .accordion-section-title:focus, .js .control-section .accordion-section-title:hover, .js .control-section.open .accordion-section-title, .js .control-section:hover .accordion-section-title {
+    color: #23282d;
+    background: #f5f5f5;
+}
+
+#menu-settings-column .accordion-container{
+    border: 1px solid #e5e5e5;
+    box-shadow: 0 1px 1px rgba(0,0,0,.04);
+}
+
+.menu-item-title{
+    font-weight: normal;
+    font-size: 12px;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    border: 1px solid #b4b9be;
+    background: #fff;
+    color: #555;
+    clear: none;
+    cursor: pointer;
+    display: inline-block;
+    line-height: 0;
+    height: 16px;
+    margin: -4px 4px 0 0;
+    margin-top: -4px;
+    margin-bottom: 0px;
+    outline: 0;
+    padding: 0 !important;
+    text-align: center;
+    vertical-align: middle;
+    width: 16px;
+    min-width: 16px;
+    -webkit-appearance: none;
+    box-shadow: inset 0 1px 2px rgba(0,0,0,.1);
+    transition: .05s border-color ease-in-out;
+}
+
+.form-table input.tog, input[type="radio"], input[type="checkbox"] {
+    margin-bottom: -1px;
+}
+
+.menu-item-title input[type="checkbox"] {
+    display: inline-block;
+    margin-top: -4px;
+}
+
+input[type="radio"], input[type="checkbox"] {
+    color: #555;
+    cursor: pointer;
+    line-height: 0;
+    text-align: center;
+}
+
+input[type="checkbox"]:checked::before {
+    float: left;
+    display: inline-block;
+    vertical-align: middle;
+    width: 16px;
+    font: 400 21px/1 dashicons;
+    speak: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+input[type="checkbox"]:checked::before {
+    content: "\f147";
+    margin: -3px 0 0 -4px;
+    color: #1e8cbe;
+}
+
+p.quick-search-wrap {
+    font-size: 13px;
+    line-height: 1.5;
+    margin: 1em 0;
+}
+
+input[type="text"]:focus, input[type="search"]:focus, input[type="radio"]:focus, input[type="tel"]:focus, input[type="time"]:focus, input[type="url"]:focus, input[type="week"]:focus, input[type="password"]:focus, input[type="checkbox"]:focus, input[type="color"]:focus, input[type="date"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="email"]:focus, input[type="month"]:focus, input[type="number"]:focus, select:focus, textarea:focus {
+    border-color: #5b9dd9;
+    box-shadow: 0 0 2px rgba(30,140,190,.8);
+}
+
+.select-all{
+    font-size: 12px;
+}
+
+.sortable-placeholder {
+    border: 1px dashed #b4b9be;
+    margin-bottom: 20px;
+}
+
+.spinner {
+    background: url(/images/larchik/spinner.gif) no-repeat;
+    background-size: auto;
+    background-size: 20px 20px;
+    display: inline-block;
+    float: right;
+    vertical-align: middle;
+    opacity: .7;
+    filter: alpha(opacity=70);
+    width: 20px;
+    height: 20px;
+    margin: 4px 10px 0;
+}
+
+#ajax-loading, .ajax-feedback, .ajax-loading, .imgedit-wait-spin, .list-ajax-loading, .spinner, .wp-header-end {
+    visibility: hidden;
+}
+
+.loading-content .spinner, .spinner.is-active {
+    visibility: visible;
+}
+
+.spinner.is-active {
+    display: inline-block;
+}
+
+.submit-add-to-menu{
+    font-size: 13px;
+}
+
+.menu-item-settings .image-container{
+    clear: both;
+    max-height: 100px;
+    max-width: calc(100% - 10px);
+}
+
+.menu-item-settings .upload_image_button{
+    max-height: 100px;
+}
+
+.menu-item-settings .add-btn, .image-container > div > div{
+    padding: 49px calc(50% - 2px);
+}
+
+.menu-item-handle, .widget .widget-top {
+    background: #fafafa;
+    color: #23282d;
+}
+
+.accordion-section-title::after, .handlediv, .item-edit, .postbox .handlediv.button-link, .toggle-indicator {
+    color: #72777c;
+}

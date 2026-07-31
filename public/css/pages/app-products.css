@@ -1,0 +1,5 @@
+.products-list-wrapper table.dataTable.dtr-column > tbody > tr > td.control:before,
+.products-list-wrapper table.dataTable.dtr-column > tbody > tr > th.control:before {
+  line-height: 18px;
+}
+

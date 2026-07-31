@@ -1,0 +1,77 @@
+@import "../../../scss/variables";
+//@import "../../../../../node_modules/sweetalert2/src/sweetalert2";
+//@import "../../../../../node_modules/chosen-js/chosen.css";
+
+$validateBackground: #000 !default;
+$validateColor: #fff !default;
+
+.validate-error{
+  position: absolute;
+  display: inline-block;
+  opacity: 1;
+  padding: 5px 0;
+  z-index: 1070;
+  font-family: -apple-system,BlinkMacSystemFont,Roboto,Arial,sans-serif;
+  line-height: 1.5;
+  font-style: normal;
+  font-weight: 400;
+  letter-spacing: normal;
+  text-align: start;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  white-space: normal;
+  word-break: normal;
+  word-spacing: normal;
+  font-size: 12px;
+  word-wrap: break-word;
+  transform: translateX(-50%);
+
+  .animated{
+    padding-bottom: 5px;
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+    &.infinite {-webkit-animation-iteration-count: infinite; animation-iteration-count: infinite;}
+    &.hinge{ -webkit-animation-duration: 2s;animation-duration: 2s;}
+    &.flipOutX, &.flipOutY, &.bounceIn, &.bounceOut {-webkit-animation-duration: .75s; animation-duration: .75s;}
+
+    > div{
+      max-width: 200px;
+      padding: 3px 8px;
+      color: $validateColor;
+      text-align: center;
+      background-color: $validateBackground;
+      border-radius: .25rem;
+
+      > i{
+        bottom: 0;
+        left: 50%;
+        margin-left: -5px;
+        border-width: 5px 5px 0;
+        border-top-color: $validateBackground;
+        position: absolute;
+        width: 0;
+        height: 0;
+        border-left-color: transparent;
+        border-right-color: transparent;
+        border-style: solid;
+      }
+    }
+  }
+}
+
+@-webkit-keyframes shake{
+  from, to { -webkit-transform: translate3d(0, 0, 0); transform: translate3d(0, 0, 0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translate3d(-10px, 0, 0); transform: translate3d(-10px, 0, 0);}
+  20%, 40%, 60%, 80% { -webkit-transform: translate3d(10px, 0, 0);transform: translate3d(10px, 0, 0);}
+}
+
+@keyframes shake{
+  from, to { -webkit-transform: translate3d(0, 0, 0);  transform: translate3d(0, 0, 0);}
+  10%, 30%, 50%, 70%, 90% {-webkit-transform: translate3d(-10px, 0, 0); transform: translate3d(-10px, 0, 0);}
+  20%, 40%, 60%, 80% { -webkit-transform: translate3d(10px, 0, 0);transform: translate3d(10px, 0, 0);}
+}
+
+.shake{-webkit-animation-name: shake;animation-name: shake;}

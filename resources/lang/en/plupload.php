@@ -1,0 +1,25 @@
+<?php
+return [
+    'queue_limit_exceeded' => 'You have too many files in the queue.',
+    'file_exceeds_size_limit' => 'The file "%s" exceeds the maximum size for this site.',
+    'zero_byte_file' => 'The file is empty. Please choose another one.',
+    'invalid_filetype' => 'Sorry, this file type is not permitted for security reasons.',
+    'not_an_image' => 'The file is not an image. Please choose another one.',
+    'image_memory_exceeded' => 'Memory limit exceeded. Please choose a smaller file.',
+    'image_dimensions_exceeded' => 'The image dimensions exceed the maximum. Please choose another one.',
+    'default_error' => 'An error occurred during upload. Please try again later.',
+    'missing_upload_url' => 'Configuration error. Please contact the server administrator.',
+    'upload_limit_exceeded' => 'You can only upload 1 file.',
+    'http_error' => 'HTTP error.',
+    'upload_failed' => 'Upload failed.',
+    'big_upload_failed' => 'Try uploading this file via the %1$sbrowser uploader%2$s.',
+    'big_upload_queued' => 'The size of the file "%s" exceeds the maximum for the multi-file uploader in combination with your browser.',
+    'io_error' => 'I/O error.',
+    'security_error' => 'Security error.',
+    'file_cancelled' => 'Upload cancelled.',
+    'upload_stopped' => 'Upload stopped.',
+    'dismiss' => 'Close',
+    'crunching' => 'Processing...',
+    'deleted' => 'moved to trash.',
+    'error_uploading' => 'The file "%s" could not be uploaded.'
+];

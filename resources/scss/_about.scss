@@ -1,0 +1,137 @@
+.page-about{
+  padding: 0 0 50px;
+  @include bp(xs) {
+    padding-bottom: 32px;
+  }
+  .page-description{
+    max-width: 920px;
+  }
+}
+
+.about-main__wrapper{
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -1px;
+  margin-left: -1px;
+  width: calc(100% + 3px);
+  @include bp(sm) {
+    width: calc(100% + 2px);
+  }
+  >div{
+    height: inherit;
+    min-height: 340px;
+    width: 50%;
+    padding: 36px 24px;
+    border: 1px solid $black;
+    background-color: $bg-grey;
+    margin-right: -1px;
+    margin-bottom: -1px;
+    @include bp(sm) {
+      width: 100%;
+      min-height: unset;
+    }
+    @include bp(xs) {
+      padding: 24px 20px;
+    }
+    >i{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background-color: #fff;
+      overflow: hidden;
+      @include bp(xs) {
+        width: 80px;
+        height: 80px;
+      }
+      img{
+        width: auto;
+        max-width: 100%;
+        max-height: 100%;
+        object-fit: contain;
+      }
+    }
+    >span{
+      display: block;
+      font-family: $title;
+      font-size: 24px;
+      font-style: normal;
+      font-weight: 500;
+      line-height: normal;
+      text-transform: capitalize;
+      margin-top: 16px;
+      @include bp(xs) {
+        font-size: 18px;
+        line-height: 130%;
+      }
+    }
+    >div{
+      display: block;
+      font-size: 18px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: capitalize;
+      margin-top: 16px;
+      @include bp(xs) {
+        font-size: 14px;
+        margin-top: 8px;
+      }
+    }
+  }
+}
+
+.about-thx{
+  padding: 52px 24px;
+  text-align: center;
+  border-bottom: 1px solid $black;
+  @include bp(xs) {
+    padding: 64px 20px 32px;
+  }
+}
+
+.about-thx__text{
+  max-width: 920px;
+  margin: 20px auto 0;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-transform: capitalize;
+  @include bp(xs) {
+    font-size: 16px;
+  }
+}
+
+.about-footnote{
+  padding: 24px;
+  text-align: center;
+  background-color: #fff;
+  border-bottom: 1px solid $black;
+  color: #0B0B0B;
+  font-family: $title;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 150%;
+  text-transform: capitalize;
+  @include bp(xs) {
+    padding: 24px 20px;
+  }
+  span{
+    display: block;
+  }
+  a{
+    display: block;
+    color: $black;
+    text-decoration-line: underline;
+    text-decoration-style: solid;
+    text-decoration-skip-ink: auto;
+    text-decoration-thickness: auto;
+    text-underline-offset: auto;
+    text-underline-position: from-font;
+    text-transform: capitalize;
+  }
+}

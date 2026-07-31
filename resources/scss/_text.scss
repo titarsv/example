@@ -1,0 +1,194 @@
+.page-text-info {
+	padding-bottom: 50px;
+	@include bp(xs) {
+		padding-bottom: 32px;
+	}
+}
+
+.text-info-main {
+	padding-top: 60px;
+	border-top: 1px solid $black;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	text-transform: capitalize;
+	color: $black;
+	@include bp(xs) {
+		padding-top: 32px;
+		font-size: 16px;
+	}
+
+	[class^="col"] {
+		> * {
+			margin: 8px 0;
+			@include bp(xs) {
+				margin-top: 4px;
+				margin-bottom: 4px;
+			}
+
+			&:first-child {
+				margin-top: 0;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+
+		h2, h3, h4 {
+			margin-top: 24px;
+			margin-bottom: 16px;
+			font-family: $title;
+			font-size: 24px;
+			font-style: normal;
+			font-weight: 500;
+			line-height: normal;
+			text-transform: capitalize;
+			color: $black;
+			@include bp(xs) {
+				font-size: 18px;
+			}
+		}
+
+		p {
+			margin-top: 8px;
+			margin-bottom: 8px;
+			@include bp(xs) {
+				margin-top: 4px;
+				margin-bottom: 4px;
+			}
+		}
+
+		ul {
+			padding-left: 24px;
+			list-style-type: disc;
+
+			> li {
+				margin-bottom: 8px;
+				@include bp(xs) {
+					margin-bottom: 4px;
+				}
+
+				&::marker {
+					font-size: smaller;
+				}
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+
+		ol {
+			list-style-type: decimal;
+			padding-left: 24px;
+
+			> li {
+				margin-bottom: 8px;
+				@include bp(xs) {
+					margin-bottom: 4px;
+				}
+
+				&:last-child {
+					margin-bottom: 0;
+				}
+			}
+		}
+	}
+}
+
+.section-info {
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 400;
+	line-height: normal;
+	text-transform: capitalize;
+	@include bp(xs) {
+		font-size: 16px;
+	}
+
+	> * {
+		margin: 8px 0;
+		@include bp(xs) {
+			margin-top: 4px;
+			margin-bottom: 4px;
+		}
+
+		&:first-child {
+			margin-top: 0;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
+		}
+	}
+
+	h2, h3, h4 {
+		margin-top: 24px;
+		margin-bottom: 16px;
+		font-family: $title;
+		font-size: 24px;
+		font-style: normal;
+		font-weight: 500;
+		line-height: normal;
+		text-transform: capitalize;
+		color: $black;
+		@include bp(xs) {
+			font-size: 18px;
+		}
+	}
+
+	p {
+		margin-top: 8px;
+		margin-bottom: 8px;
+		@include bp(xs) {
+			margin-top: 4px;
+			margin-bottom: 4px;
+		}
+	}
+
+	ul {
+		padding-left: 24px;
+		list-style-type: disc;
+
+		> li {
+			margin-bottom: 8px;
+			@include bp(xs) {
+				margin-bottom: 4px;
+			}
+
+			&::marker {
+				font-size: smaller;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	ol {
+		list-style-type: decimal;
+		padding-left: 24px;
+
+		> li {
+			margin-bottom: 8px;
+			@include bp(xs) {
+				margin-bottom: 4px;
+			}
+
+			&:last-child {
+				margin-bottom: 0;
+			}
+		}
+	}
+
+	b, strong {
+		font-weight: 500;
+	}
+
+	a {
+		text-decoration: underline;
+	}
+}

@@ -1,0 +1,10 @@
+.js_attribute_checkbox_filter:checked + svg,
+.js_mob_attribute_checkbox_filter:checked + svg,
+#js_mob_is_sale:checked + svg{
+  path {
+    stroke: #f5b700;
+    + path {
+      opacity: 1;
+    }
+  }
+}

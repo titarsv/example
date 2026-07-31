@@ -1,0 +1,442 @@
+/* For Drag And Drop css */
+
+/* --------------------- */
+
+#draggable-cards .card {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+#basic-list-group .list-group-item,
+#multiple-list-group-a .list-group-item,
+#multiple-list-group-b .list-group-item {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+#clone-lists .chip {
+  cursor: -webkit-grab;
+  cursor: grab;
+}
+
+/* For Multi List */
+
+#multiple-list-group-a,
+#multiple-list-group-b {
+  min-height: 5.714rem;
+}
+
+#dd-with-handle .list-group {
+  min-height: 5.714rem;
+}
+
+#dd-with-handle .list-group .handle {
+  /* handle in list-group*/
+  padding: 0 5px;
+  margin-right: 5px;
+  background-color: rgba(0, 0, 0, 0.1);
+  cursor: move;
+  font-size: 1.2rem;
+}
+
+/* treeview Wrapper css */
+
+/* -------------------- */
+
+.bootstraptreeview .list-group .list-group-item.node-colourful-treeview:hover {
+  color: #FFFFFF;
+}
+
+.bootstraptreeview .list-group .list-group-item.node-colourful-treeview.node-selected .badge {
+  background-color: #e2ecff;
+  color: #5A8DEE;
+}
+
+.bootstraptreeview .list-group .list-group-item.node-node-override-treeview:last-child .badge,
+.bootstraptreeview .list-group .list-group-item.node-node-override-treeview.node-selected .badge {
+  background-color: #FFFFFF;
+  color: #FDAC41;
+}
+
+.bootstraptreeview .list-group .list-group-item.node-node-override-treeview .badge {
+  background-color: #FDAC41;
+  color: #FFFFFF;
+}
+
+.bootstraptreeview .list-group .list-group-item .badge {
+  /* Comman badge style inside treeview */
+  margin-left: 0.8rem;
+  background-color: #e2ecff;
+  color: #5A8DEE;
+}
+
+.bootstraptreeview .list-group .list-group-item .icon {
+  /* treeview icon alignment and spacing */
+  vertical-align: middle;
+  margin-right: 0.5rem;
+}
+
+/* Email application css */
+
+/*-----------------------*/
+
+.email-application .content-area-wrapper {
+  border: 1px solid #DFE3E7;
+  border-radius: 0.267rem;
+}
+
+.email-application .content-area-wrapper .app-content-overlay {
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: 7;
+  visibility: hidden;
+  opacity: 0;
+  border-radius: 0.267rem;
+}
+
+.email-application .content-area-wrapper .app-content-overlay.show {
+  visibility: visible;
+  transition: all 0.3s ease;
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.email-application .content-area-wrapper .sidebar {
+  position: inherit;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar {
+  width: 260px;
+  height: calc(100vh - 9rem);
+  border-right: 1px solid #DFE3E7;
+  border-top-left-radius: 0.267rem;
+  border-bottom-left-radius: 0.267rem;
+  transition: all 0.3s ease;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu {
+  width: 100%;
+  z-index: 3;
+  background-color: transparent;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .form-group-compose {
+  padding: 1px 1.5rem;
+  margin-bottom: 0.8rem;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .form-group-compose .compose-btn {
+  box-shadow: 0 2px 4px 0 rgba(90, 141, 238, 0.6);
+  font-weight: 500;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .sidebar-menu-list {
+  /* left sidebar menu list */
+  padding: 0 1.7rem;
+  position: relative;
+  height: calc(100% - 6.4rem);
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .sidebar-menu-list a:hover {
+  color: #596F88;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .list-group .list-group-item {
+  padding: 0.6rem 0;
+  font-weight: 500;
+  background-color: transparent;
+  border: none;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .list-group .list-group-item.active {
+  color: #5A8DEE;
+}
+
+.email-application .content-area-wrapper .sidebar .email-app-sidebar .email-app-menu .list-group .list-group-item.active::before {
+  content: "";
+  width: 2px;
+  height: 30px;
+  background-color: #5A8DEE;
+  position: absolute;
+  left: -26px;
+}
+
+.email-application .content-area-wrapper .content-right {
+  width: calc(100% - 260px);
+  background-color: #FFFFFF;
+}
+
+.email-application .content-area-wrapper .content-right .content-wrapper {
+  padding: 0;
+}
+
+.email-application .content-area-wrapper .content-right .selected-row-bg {
+  background-color: #e7edf3 !important;
+}
+
+.email-application .content-area-wrapper .content-right .email-app-list-wrapper .email-app-list .checkbox {
+  cursor: pointer;
+}
+
+.email-application .content-area-wrapper .content-right .email-app-list-wrapper .email-app-list .checkbox label {
+  cursor: pointer;
+}
+
+.email-application .content-area-wrapper .content-right .email-app-list-wrapper .email-app-list .email-action {
+  padding: 1rem 1.5rem;
+  display: flex;
+  border-bottom: 1px solid #DFE3E7;
+}
+
+.email-application .content-area-wrapper .content-right .email-app-list-wrapper .email-app-list .email-user-list {
+  position: relative;
+  height: calc(100vh - 13.65rem);
+}
+
+@media screen and (max-width: 1280px) {
+  .email-application .content-area-wrapper .content-right .email-app-list-wrapper .email-app-list .email-user-list {
+    height: calc(100vh - 13.9rem);
+  }
+}
+
+@media (max-width: 991.98px) {
+  .email-application .app-content .content-area-wrapper .email-user-list {
+    height: calc(100vh - 17.4rem) !important;
+  }
+
+  .email-application .app-content .content-area-wrapper .sidebar-left .email-app-sidebar {
+    background-color: #fafbfb;
+    height: calc(100vh - 8.98rem);
+    transform: translateX(-110%);
+    transition: transform 0.25s;
+    position: absolute;
+    z-index: 8;
+    left: -34px;
+    top: 1px;
+  }
+
+  .email-application .app-content .content-area-wrapper .sidebar-left .email-app-sidebar .sidebar-close-icon {
+    visibility: visible;
+  }
+
+  .email-application .app-content .content-area-wrapper .sidebar-left.show .email-app-sidebar {
+    transform: translateX(13%) translateY(-1px);
+  }
+
+  .email-application .app-content .content-area-wrapper .sidebar-left .compose-new-mail-sidebar.show {
+    transform: translateX(10.5%) translateY(1px);
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right {
+    width: 100%;
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right .email-action {
+    flex-direction: column-reverse;
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right .email-action .action-right {
+    margin-bottom: 1rem;
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right .email-action .action-right .email-fixed-search {
+    margin-left: 0 !important;
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right .email-action .action-right .email-fixed-search .sidebar-toggle {
+    margin-left: 0;
+  }
+
+  .email-application .app-content .content-area-wrapper .content-right .email-app-details {
+    width: 100%;
+    border-radius: 0.267rem;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .email-application .content-area-wrapper .sidebar .compose-new-mail-sidebar {
+    width: auto;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .email-application .content-area-wrapper .content-right .email-user-list .users-list-wrapper li .user-details .mail-items {
+    width: 70%;
+    display: inline-grid;
+  }
+
+  .email-application .content-area-wrapper .content-right .email-user-list .users-list-wrapper li .user-details .mail-meta-item {
+    position: absolute;
+    right: 1rem;
+  }
+
+  .email-application .content-area-wrapper .content-right .email-user-list .users-list-wrapper li .user-details .mail-meta-item .mail-date {
+    margin: 1rem 0.75rem 0 0;
+  }
+}
+
+@media screen and (max-width: 436px) {
+  .email-app-details .email-header-right {
+    margin-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .email-app-details .email-header-right li {
+    margin-right: 0;
+  }
+}
+
+@-webkit-keyframes fadeIn {
+  /* Keyframe for user list animation */
+  0% {
+    opacity: 0;
+    top: 100px;
+  }
+
+  75% {
+    opacity: 0.5;
+    top: 0px;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeIn {
+  /* Keyframe for user list animation */
+  0% {
+    opacity: 0;
+    top: 100px;
+  }
+
+  75% {
+    opacity: 0.5;
+    top: 0px;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  /* IE specific css */
+
+  .email-scroll-area .collapse-header .media .media-body {
+    flex: none;
+  }
+}
+
+.field .fields {
+  border: 1px solid #464d5c;
+  border-radius: 5px;
+  padding: 10px 10px 0;
+}
+
+.treeview span.icon {
+  position: relative;
+  top: 2px;
+  margin-right: 10px !important;
+}
+
+.spinner-border {
+  top: -2px;
+  position: relative;
+}
+
+.content-area-wrapper {
+  margin: 0;
+  border-color: #464d5c !important;
+  overflow: hidden;
+}
+
+.sidebar-content {
+  border-right-color: #464d5c !important;
+}
+
+.sidebar-menu-list {
+  overflow: auto;
+  height: calc(100% - 67px);
+}
+
+.content-right {
+  background-color: #242c45 !important;
+}
+
+.email-app-area {
+  height: 100%;
+}
+
+.email-app-list-wrapper {
+  height: 100%;
+}
+
+.email-app-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.email-action {
+  border-bottom-color: #464d5c !important;
+}
+
+.email-action pre {
+  width: 100%;
+  margin: 0 15px;
+  background-color: #242c45;
+  color: #8a99b5;
+  display: flex;
+  align-items: center;
+}
+
+.email-action .btn-success {
+  height: 36px;
+  display: none;
+}
+
+.list-group {
+  flex: 1;
+}
+
+.list-group form {
+  height: 100%;
+}
+
+.field-group {
+  height: calc(100% - 40px - 2rem);
+}
+
+.field-group .form-group {
+  height: 100%;
+}
+
+.field-group .form-group textarea {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  border-bottom: 1px solid #464d5c;
+}
+
+.CodeMirror {
+    border-radius: 4px;
+    resize: vertical;
+    min-height: calc(100vh - 400px);
+    background-color: #1a233a !important;
+    border: none !important;
+}
+
+.CodeMirror .CodeMirror-scroll {
+    font-size: .9rem;
+    font-family: Nunito, "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.CodeMirror .CodeMirror-gutters {
+    background: #272e48 ;
+    border-right-color: transparent;
+}

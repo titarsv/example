@@ -1,0 +1,9 @@
+User-agent: *
+Disallow: /admin
+Disallow: /cart
+Disallow: /user
+Disallow: /search
+Disallow: /login
+Disallow: /checkout
+
+Sitemap: https://properloud.cc/sitemap.xml

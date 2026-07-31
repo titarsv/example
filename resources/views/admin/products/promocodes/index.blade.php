@@ -1,0 +1,63 @@
+@extends('admin.layouts.contentLayoutMaster')
+{{-- page title --}}
+@section('title', trans('locale.Promo codes'))
+{{-- vendor style --}}
+@section('vendor-styles')
+    <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/tables/datatable/datatables.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/tables/datatable/extensions/dataTables.checkboxes.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/tables/datatable/responsive.bootstrap.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('vendors/css/extensions/toastr.css')}}">
+@endsection
+{{-- page style --}}
+@section('page-styles')
+    <link rel="stylesheet" type="text/css" href="{{asset('css/admin/promocodes.css')}}">
+@endsection
+@section('content')
+    <!-- promocodes list -->
+    <h1 class="pages-title">{{ trans('locale.Promo codes') }}</h1>
+    <section class="promocodes-list-wrapper">
+        @if($me->hasAccess(['coupons.create']))
+        <!-- create promocode button-->
+        <div class="promocode-create-btn mb-1">
+            <a href="/admin/products/promocodes/create" class="btn btn-primary glow invoice-create">{{ trans('locale.Add new') }}</a>
+        </div>
+        @endif
+        <!-- Options and filter dropdown button-->
+        <div class="table-responsive" id="js_promocodes_list_wrapper">
+            <table class="table js_promocodes_data_table promocodes-data-table dt-responsive nowrap" style="width:100%">
+                <thead>
+                <tr>
+                    <th>{{ trans('locale.Name') }}</th>
+                    <th>{{ trans('locale.Code') }}</th>
+                    <th>{{ trans('locale.Discount size') }}</th>
+                    <th>{{ trans('locale.Valid until') }}</th>
+                    <th>{{ trans('locale.Reusable') }}</th>
+                    <th>{{ trans('locale.Used') }}</th>
+                    <th>{{ trans('locale.Status') }}</th>
+                    <th>{{ trans('locale.Actions') }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </section>
+@endsection
+{{-- vendor scripts --}}
+@section('vendor-scripts')
+    <script src="{{asset('vendors/js/tables/datatable/datatables.min.js')}}"></script>
+    <script src="{{asset('vendors/js/tables/datatable/dataTables.bootstrap4.min.js')}}"></script>
+    <script src="{{asset('vendors/js/tables/datatable/datatables.checkboxes.min.js')}}"></script>
+    <script src="{{asset('vendors/js/tables/datatable/dataTables.responsive.min.js')}}"></script>
+    <script src="{{asset('vendors/js/tables/datatable/responsive.bootstrap.min.js')}}"></script>
+    <script src="{{asset('vendors/js/extensions/sweetalert2.all.min.js')}}"></script>
+    <script src="{{asset('vendors/js/extensions/polyfill.min.js')}}"></script>
+    <script src="{{asset('vendors/js/extensions/toastr.min.js')}}"></script>
+@endsection
+{{-- page scripts --}}
+@section('page-scripts')
+    <script>window.localization = {!! $localization !!}</script>
+    <script src="{{asset('js/admin/admin.js')}}"></script>
+    <script src="{{asset('js/admin/promocodes.js')}}"></script>
+    <script src="{{asset('js/scripts/extensions/sweet-alerts.js')}}"></script>
+@endsection

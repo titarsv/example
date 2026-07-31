@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="robots" content="noindex, nofollow">
+	<title>ProperLoud</title>
+	<meta name="description" content="ProperLoud descriprion">
+	<link rel="icon" type="image/png" href="../../images/favicon.png">
+	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	<meta name="theme-color" content="#F4F4F4">
+	<meta name="msapplication-navbutton-color" content="#F4F4F4">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#F4F4F4">
+	<meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+<include src="app/assets/templates/parts/header.html"></include>
+<main class="main">
+	<div class="page-checkout">
+		<div class="page-top">
+			<div class="container">
+				<nav class="breadcrumbs">
+					<a href="/">Home</a>
+					<span>Checkout</span>
+				</nav>
+				<h1 class="page-title">Checkout</h1>
+			</div>
+		</div>
+		<div class="container">
+			<form class="checkout-form validate-form">
+				<div class="checkout-delivery">
+					<div class="checkout-delivery__inputs">
+						<span class="checkout-subtitle">Delivery Information</span>
+						<div class="form-row">
+							<div class="input-wrapper">
+								<label>First name<span>*</span></label>
+								<input class="input" type="text" name="first_name" data-rule-required="true" data-msg-required="Required item">
+							</div>
+							<div class="input-wrapper">
+								<label>Last name<span>*</span></label>
+								<input class="input" type="text" name="last_name" data-rule-required="true" data-msg-required="Required item">
+							</div>
+						</div>
+						<div class="input-wrapper input-wrapper-uk">
+							<label>Country<span>*</span></label>
+							<div class="input">United Kingdom (UK)</div>
+						</div>
+						<div class="form-row">
+							<div class="input-wrapper dropdown-wrapper">
+								<label>Street address<span>*</span></label>
+								<input class="input" type="text" name="address" placeholder="House number and street name" data-rule-required="true" data-msg-required="Required item">
+
+								<div class="dropdown-list">
+									<span class="placeholder">Start typing to find address</span>
+									<ul>
+										<li>Item 1</li>
+										<li>Item 2</li>
+										<li>Item 3</li>
+										<li>Item 4</li>
+										<li>Item 5</li>
+										<li>Item 6</li>
+										<li>Item 7</li>
+										<li>Item 8</li>
+										<li>Item 9</li>
+										<li>Item 10</li>
+										<li>item N</li>
+										<li>Very very very very very very very very very long text</li>
+									</ul>
+								</div>
+							</div>
+							<div class="input-wrapper">
+								<label>City / town<span>*</span></label>
+								<input class="input" type="text" name="city" data-rule-required="true" data-msg-required="Required item">
+							</div>
+						</div>
+						<div class="form-row">
+							<div class="input-wrapper">
+								<label>Postcode<span>*</span></label>
+								<input class="input" type="text" name="postcode" data-rule-required="true" data-msg-required="Required item">
+							</div>
+							<div class="input-wrapper">
+								<label>Email<span>*</span></label>
+								<input class="input" type="text" name="email" data-rule-required="true" data-msg-required="Required item">
+							</div>
+						</div>
+					</div>
+					<div class="checkout-delivery__payment">
+						<div class="payment">
+							<div class="payment__top">
+								<span class="checkout-subtitle">Payment</span>
+								<div>Get <span>10%</span> Off when Paying by Crypto!</div>
+							</div>
+							<div class="payment__methods">
+								<div class="checkout-payment">
+									<div class="checkout-payment__item checked">
+										<span class="checkbox-wrapper">
+											<input type="radio" name="payment" id="payment_1" checked>
+											<label for="payment_1">
+												<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+													<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+												</svg>
+												<div class="label">
+													<span>Cryptocurrency</span>
+												</div>
+											</label>
+										</span>
+										<div class="checkout-payment__inner">
+											<span class="label-text">Please Select the Cryptocurrency You'd Like to Use:</span>
+											<div class="input-wrapper select-wrapper">
+												<select class="select select-cripto">
+													<option value="BTC" selected="selected">Bitcoin (BTC)</option>
+													<option value="ETH">Ethereum (ETH)</option>
+													<option value="LTC">Litecoin (LTC)</option>
+													<option value="XMR">Monero (XMR)</option>
+												</select>
+											</div>
+											<div class="payment-method__text">
+												* You might consider using a different cryptocurrency, such as ETH or LTC, instead of BTC to avoid high transaction fees.
+											</div>
+										</div>
+									</div>
+									<div class="checkout-payment__item">
+										<div class="checkbox-wrapper">
+											<input type="radio" name="payment" id="payment_2">
+											<label for="payment_2">
+												<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+													<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+												</svg>
+												<div class="label">
+													<span>Pay by Bank Card Via a Third-Party Service</span>
+													<div class="label-tooltip">
+														<i>
+															<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+																<circle cx="10" cy="10" r="9" fill="#F5B700" fill-opacity="0.1" stroke="#F5B700" stroke-width="2"/>
+																<path
+																	d="M8.91765 11.3437C8.91765 10.9475 9.02431 10.6029 9.23765 10.3101C9.45098 10.0172 9.7919 9.75022 10.2604 9.50904L11.2267 9.01809C11.4651 8.8932 11.6491 8.74677 11.7788 8.57881C11.9127 8.40655 11.9796 8.22136 11.9796 8.02326C11.9796 7.61843 11.8144 7.29974 11.4839 7.06718C11.1535 6.83032 10.6933 6.71189 10.1035 6.71189C9.50536 6.71189 9.02222 6.8497 8.65412 7.12532C8.28601 7.40095 8.07268 7.77993 8.01412 8.26227H6C6.04601 7.58183 6.24052 6.99828 6.58353 6.51163C6.92654 6.02067 7.39712 5.64599 7.99529 5.3876C8.59346 5.1292 9.29621 5 10.1035 5C10.915 5 11.6115 5.11628 12.1929 5.34884C12.7786 5.5814 13.2261 5.91731 13.5357 6.35659C13.8452 6.79156 14 7.31481 14 7.92636C14 8.38286 13.8724 8.79845 13.6173 9.17313C13.3663 9.5435 12.9961 9.85142 12.5067 10.0969L11.4651 10.6331C11.235 10.7537 11.0656 10.8829 10.9569 11.0207C10.8481 11.1542 10.7937 11.3221 10.7937 11.5245V11.8346H8.98039C8.93856 11.6882 8.91765 11.5245 8.91765 11.3437ZM9.85882 15C9.62039 15 9.40706 14.9505 9.21882 14.8514C9.03477 14.7524 8.89046 14.6146 8.78588 14.438C8.68549 14.2571 8.63529 14.0525 8.63529 13.8243C8.63529 13.596 8.68549 13.3915 8.78588 13.2106C8.89046 13.0297 9.03477 12.8898 9.21882 12.7907C9.40706 12.6916 9.62039 12.6421 9.85882 12.6421C10.0973 12.6421 10.3085 12.6916 10.4925 12.7907C10.6766 12.8898 10.8188 13.0297 10.9192 13.2106C11.0238 13.3915 11.0761 13.596 11.0761 13.8243C11.0761 14.0525 11.0238 14.2571 10.9192 14.438C10.8188 14.6146 10.6766 14.7524 10.4925 14.8514C10.3085 14.9505 10.0973 15 9.85882 15Z"
+																	fill="#F5B700"/>
+															</svg>
+														</i>
+														<div class="label-tooltip__inner">
+															Pay to our Bitcoin (BTC) cryptocurrency wallet directly from a credit card through our recommended third-party payment services.
+														</div>
+													</div>
+												</div>
+											</label>
+										</div>
+										<!-- <div class="checkout-payment__inner" style="display: none;"></div> -->
+									</div>
+									<div class="checkout-payment__item">
+										<div class="checkbox-wrapper">
+											<input type="radio" name="payment" id="payment_3">
+											<label for="payment_3">
+												<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+													<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+												</svg>
+												<div class="label"><span>ProperLoudPay</span>
+													<div class="label-tooltip">
+														<i>
+															<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+																<circle cx="10" cy="10" r="9" fill="#F5B700" fill-opacity="0.1" stroke="#F5B700" stroke-width="2"/>
+																<path
+																	d="M8.91765 11.3437C8.91765 10.9475 9.02431 10.6029 9.23765 10.3101C9.45098 10.0172 9.7919 9.75022 10.2604 9.50904L11.2267 9.01809C11.4651 8.8932 11.6491 8.74677 11.7788 8.57881C11.9127 8.40655 11.9796 8.22136 11.9796 8.02326C11.9796 7.61843 11.8144 7.29974 11.4839 7.06718C11.1535 6.83032 10.6933 6.71189 10.1035 6.71189C9.50536 6.71189 9.02222 6.8497 8.65412 7.12532C8.28601 7.40095 8.07268 7.77993 8.01412 8.26227H6C6.04601 7.58183 6.24052 6.99828 6.58353 6.51163C6.92654 6.02067 7.39712 5.64599 7.99529 5.3876C8.59346 5.1292 9.29621 5 10.1035 5C10.915 5 11.6115 5.11628 12.1929 5.34884C12.7786 5.5814 13.2261 5.91731 13.5357 6.35659C13.8452 6.79156 14 7.31481 14 7.92636C14 8.38286 13.8724 8.79845 13.6173 9.17313C13.3663 9.5435 12.9961 9.85142 12.5067 10.0969L11.4651 10.6331C11.235 10.7537 11.0656 10.8829 10.9569 11.0207C10.8481 11.1542 10.7937 11.3221 10.7937 11.5245V11.8346H8.98039C8.93856 11.6882 8.91765 11.5245 8.91765 11.3437ZM9.85882 15C9.62039 15 9.40706 14.9505 9.21882 14.8514C9.03477 14.7524 8.89046 14.6146 8.78588 14.438C8.68549 14.2571 8.63529 14.0525 8.63529 13.8243C8.63529 13.596 8.68549 13.3915 8.78588 13.2106C8.89046 13.0297 9.03477 12.8898 9.21882 12.7907C9.40706 12.6916 9.62039 12.6421 9.85882 12.6421C10.0973 12.6421 10.3085 12.6916 10.4925 12.7907C10.6766 12.8898 10.8188 13.0297 10.9192 13.2106C11.0238 13.3915 11.0761 13.596 11.0761 13.8243C11.0761 14.0525 11.0238 14.2571 10.9192 14.438C10.8188 14.6146 10.6766 14.7524 10.4925 14.8514C10.3085 14.9505 10.0973 15 9.85882 15Z"
+																	fill="#F5B700"/>
+															</svg>
+														</i>
+														<div class="label-tooltip__inner">
+															<strong>Not into crypto?</strong>
+															<strong>No problem, hotshot.</strong>
+															<p>We got you covered with Skrill, PayPal, or a slick bank transfer.</p>
+															<p>Pick this option, then hit up our crew on Telegram to seal the deal.</p>
+															<p>Keep it cool, and we’ll take it from there.</p>
+															<p>To keep your order rolling, hit up our support on Telegram <a href="javascript:void(0)">https://t.me/telegram</a>, champ.</p>
+														</div>
+													</div>
+												</div>
+											</label>
+										</div>
+										<!-- <div class="checkout-payment__inner" style="display: none;"></div> -->
+									</div>
+									<div class="checkout-payment__item">
+										<div class="checkbox-wrapper">
+											<input type="radio" name="payment" id="payment_4">
+											<label for="payment_4">
+												<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+													<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+													<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+												</svg>
+												<div class="label">
+													<span>Revolut</span>
+												</div>
+											</label>
+										</div>
+										<div class="checkout-payment__inner" style="display: none;">
+											<span class="label-text">Pay via credit card</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="checkout-order">
+					<span class="checkout-subtitle">Your order</span>
+					<div class="cart-items">
+						<div class="cart-item">
+							<div class="cart-item__del">
+								<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+									<path
+										d="M14.74 9.00003L14.394 18M9.606 18L9.26 9.00003M19.228 5.79003C19.57 5.84203 19.91 5.89703 20.25 5.95603M19.228 5.79003L18.16 19.673C18.1164 20.2383 17.8611 20.7662 17.445 21.1513C17.029 21.5364 16.4829 21.7502 15.916 21.75H8.084C7.5171 21.7502 6.97102 21.5364 6.55498 21.1513C6.13894 20.7662 5.88359 20.2383 5.84 19.673L4.772 5.79003M19.228 5.79003C18.0739 5.61555 16.9138 5.48313 15.75 5.39303M4.772 5.79003C4.43 5.84103 4.09 5.89603 3.75 5.95503M4.772 5.79003C5.92613 5.61555 7.08623 5.48313 8.25 5.39303M15.75 5.39303V4.47703C15.75 3.29703 14.84 2.31303 13.66 2.27603C12.5536 2.24067 11.4464 2.24067 10.34 2.27603C9.16 2.31303 8.25 3.29803 8.25 4.47703V5.39303M15.75 5.39303C13.2537 5.20011 10.7463 5.20011 8.25 5.39303"
+										stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+								</svg>
+							</div>
+							<div class="cart-item__pic">
+								<img src="../../images/product-main.png" loading="lazy" alt="">
+							</div>
+							<div class="cart-item__info">
+								<a href="javascript:void(0)" class="cart-item__title">Fryd “Bubblegum Gelato”</a>
+								<span class="cart-item__tag">Disposable Vape</span>
+								<div class="cart-item__footer">
+									<div class="cart-item__counter js_counter">
+										<span class="minus">
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+														  <path d="M5 12H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+														</svg>
+									</span>
+										<input class="value" value="1" type="text" oninput="this.value=this.value.replace(/[^0-9\.]/g,'');">
+										<span class="plus">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+							  <path d="M5 12H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							  <path d="M12 5V19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</span>
+									</div>
+									<div class="cart-item__price">£34.99</div>
+								</div>
+							</div>
+							<div class="cart-item__footer cart-item__footer-mob">
+								<div class="cart-item__price">£34.99</div>
+								<div class="cart-item__counter js_counter">
+										<span class="minus">
+														<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+														  <path d="M5 12H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+														</svg>
+									</span>
+									<input class="value" value="1" type="text" oninput="this.value=this.value.replace(/[^0-9\.]/g,'');">
+									<span class="plus">
+							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+							  <path d="M5 12H19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							  <path d="M12 5V19" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+							</svg>
+						</span>
+								</div>
+								<div class="cart-item__del">
+									<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+										<path
+											d="M14.74 9.00003L14.394 18M9.606 18L9.26 9.00003M19.228 5.79003C19.57 5.84203 19.91 5.89703 20.25 5.95603M19.228 5.79003L18.16 19.673C18.1164 20.2383 17.8611 20.7662 17.445 21.1513C17.029 21.5364 16.4829 21.7502 15.916 21.75H8.084C7.5171 21.7502 6.97102 21.5364 6.55498 21.1513C6.13894 20.7662 5.88359 20.2383 5.84 19.673L4.772 5.79003M19.228 5.79003C18.0739 5.61555 16.9138 5.48313 15.75 5.39303M4.772 5.79003C4.43 5.84103 4.09 5.89603 3.75 5.95503M4.772 5.79003C5.92613 5.61555 7.08623 5.48313 8.25 5.39303M15.75 5.39303V4.47703C15.75 3.29703 14.84 2.31303 13.66 2.27603C12.5536 2.24067 11.4464 2.24067 10.34 2.27603C9.16 2.31303 8.25 3.29803 8.25 4.47703V5.39303M15.75 5.39303C13.2537 5.20011 10.7463 5.20011 8.25 5.39303"
+											stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+									</svg>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="checkout-spend">
+						Spend <span>£67.01</span> more for free shipping!
+					</div>
+					<div class="checkout-promo">
+						<div class="checkout-promo__head">
+							<svg width="36" height="36" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+								<g clip-path="url(#clip0_491_3668)">
+									<path d="M22.5 7.5V10.5" stroke="#411CC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M22.5 16.5V19.5" stroke="#411CC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path d="M22.5 25.5V28.5" stroke="#411CC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+									<path
+										d="M7.5 7.5H28.5C29.2956 7.5 30.0587 7.81607 30.6213 8.37868C31.1839 8.94129 31.5 9.70435 31.5 10.5V15C30.7044 15 29.9413 15.3161 29.3787 15.8787C28.8161 16.4413 28.5 17.2044 28.5 18C28.5 18.7956 28.8161 19.5587 29.3787 20.1213C29.9413 20.6839 30.7044 21 31.5 21V25.5C31.5 26.2956 31.1839 27.0587 30.6213 27.6213C30.0587 28.1839 29.2956 28.5 28.5 28.5H7.5C6.70435 28.5 5.94129 28.1839 5.37868 27.6213C4.81607 27.0587 4.5 26.2956 4.5 25.5V21C5.29565 21 6.05871 20.6839 6.62132 20.1213C7.18393 19.5587 7.5 18.7956 7.5 18C7.5 17.2044 7.18393 16.4413 6.62132 15.8787C6.05871 15.3161 5.29565 15 4.5 15V10.5C4.5 9.70435 4.81607 8.94129 5.37868 8.37868C5.94129 7.81607 6.70435 7.5 7.5 7.5Z"
+										stroke="#411CC1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+								</g>
+							</svg>
+							<div>Have a coupon? <span>Click here to enter your code</span></div>
+						</div>
+						<div class="checkout-promo__body promo-wrapper" style="display: none;">
+							<span>If you have a coupon code, please apply it below.</span>
+							<div class="input-wrapper">
+								<input type="text" class="input">
+								<button type="button" class="btn" data-default="Apply coupon" data-success="Applied" disabled>Apply coupon</button>
+							</div>
+							<div class="promo-error">Promo code "<span></span>" does not exist!</div>
+						</div>
+					</div>
+					<div class="checkout-price">
+						<div class="checkout-price__item">
+							<span>Subtotal</span>
+							<span>£34.99</span>
+						</div>
+						<div class="checkout-price__item">
+							<span>Crypto Discount</span>
+							<span>- £2</span>
+						</div>
+						<div class="checkout-price__item">
+							<span>Shipping</span>
+							<span>£5</span>
+						</div>
+						<!-- if promo applied -->
+						<div class="checkout-price__item promo-subtotal active">
+							<span>Promo Discount</span>
+							<span>- £7</span>
+						</div>
+					</div>
+					<div class="checkout-total">
+						<span>Total</span>
+						<span>£37.99</span>
+					</div>
+					<div class="checkout-footer">
+						<div class="checkout-footer__text">
+							Your personal data will be used only to process your order, and support your experience throughout this website. <a href="javascript:void(0)">Privacy policy</a>
+						</div>
+						<div class="checkbox-wrapper">
+							<input type="checkbox" class="input-checkbox" name="terms" id="terms">
+							<label for="terms">
+								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+									<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+								</svg>
+								<span>
+									I have read and agree to the website <a href="/terms-of-use/" target="_blank">Terms and Conditions</a>
+								</span>
+							</label>
+						</div>
+						<div class="checkbox-wrapper">
+							<input type="checkbox" class="input-checkbox" id="updates">
+							<label for="updates">
+								<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+									<path d="M17 1H3C1.89543 1 1 1.89543 1 3V17C1 18.1046 1.89543 19 3 19H17C18.1046 19 19 18.1046 19 17V3C19 1.89543 18.1046 1 17 1Z" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+									<path d="M7 10L9 12L13 8" stroke="#FFBB44" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+								</svg>
+								<span>
+									I would like my email address to be used to receive tracking updates from Shipping Company (optional).
+								</span>
+							</label>
+						</div>
+					</div>
+					<div class="checkout-btn">
+						<button type="submit" class="btn">Continue to Payment</button>
+					</div>
+				</div>
+			</form>
+		</div>
+	</div>
+</main>
+<include src="app/assets/templates/parts/footer.html"></include>
+</body>
+</html>

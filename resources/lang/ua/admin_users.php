@@ -1,0 +1,23 @@
+<?php
+return [
+    "Users" => "Користувачі",
+    "General" => "Основне",
+    "Change Password" => "Зміна пароля",
+    "Info" => "Інформація",
+    "Social links" => "Соціальні мережі",
+    "Connections" => "Підключення",
+    "Notifications" => "Оповіщення",
+    "Upload new photo" => "Завантажити нове фото",
+    "Reset" => "Скинути",
+    "Allowed JPG, GIF or PNG. Max size of 800kB" => "Допускаються формати JPG, GIF чи PNG. Максимальний розмір 800КБ",
+    "Name" => "Ім'я",
+    "Surname" => "Прізвище",
+    "Your email is not confirmed. Please check your inbox." => "Вашу електронну пошту не підтверджено. Будь ласка, перевірте свою поштову скриньку.",
+    "Resend confirmation" => "Надіслати повторно",
+    "Old Password" => "Поточний пароль",
+    "This old password field is required" => "Поле поточного пароля є обов'язковим",
+    "New Password" => "Новий пароль",
+    "The password field is required" => "Поле пароля є обов'язковим для заповнення",
+    "Retype new Password" => "Введіть новий пароль знову",
+    "The Confirm password field is required" => "Поле підтвердження пароля є обов'язковим",
+];

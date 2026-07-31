@@ -1,0 +1,243 @@
+{
+	"menu": [
+        {
+          "navheader": "Shop"
+        },
+        {
+          "url": "/admin/orders",
+          "name": "Orders",
+          "i18n": "Orders",
+          "icon": "shoppingcart",
+          "tagcustom": "badge badge-light-danger badge-pill badge-round float-right mr-2"
+        },
+        {
+          "url": "/admin/products",
+          "name": "Products",
+          "i18n": "Products",
+          "icon": "coins",
+          "submenu": [
+            {
+              "url": "/admin/products",
+              "name": "Products catalog",
+              "i18n": "Products catalog",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/categories",
+              "name": "Categories",
+              "i18n": "Categories",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/attributes",
+              "name": "Attributes",
+              "i18n": "Attributes",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/promocodes",
+              "name": "Promo codes",
+              "i18n": "Promo codes",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/exports",
+              "name": "Exports",
+              "i18n": "Exports",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/imports",
+              "name": "Imports",
+              "i18n": "Imports",
+              "icon": "bx bx-right-arrow-alt"
+            },
+            {
+              "url": "/admin/products/redis",
+              "name": "Redis",
+              "i18n": "Redis",
+              "icon": "bx bx-right-arrow-alt"
+            }
+          ]
+        },
+        {
+          "url": "/admin/shop/settings",
+          "name": "Shop settings",
+          "i18n": "Shop settings",
+          "icon": "wrench"
+        },
+        {
+          "url": "/admin/menu",
+          "name": "Menus",
+          "i18n": "Menus",
+          "icon": "priority-low"
+        },
+		{
+			"navheader": "Site"
+		},
+		{
+			"url": "/admin/pages",
+			"name": "Pages",
+			"i18n": "Pages",
+			"icon": "desktop",
+			"submenu": [
+				{
+					"url": "/admin/pages",
+					"name": "Pages",
+					"i18n": "Pages",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/pages/templates",
+					"name": "Page Templates",
+					"i18n": "Page Templates",
+					"icon": "bx bx-right-arrow-alt"
+				}
+			]
+		},
+		{
+			"url": "/admin/blocks",
+			"name": "Blocks",
+			"i18n": "Blocks",
+			"icon": "square",
+			"submenu": [
+				{
+					"url": "/admin/blocks",
+					"name": "Blocks",
+					"i18n": "Blocks",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/blocks/templates",
+					"name": "Blocks Templates",
+					"i18n": "Blocks Templates",
+					"icon": "bx bx-right-arrow-alt"
+				}
+			]
+		},
+		{
+			"url": "/admin/media",
+			"name": "File Manager",
+			"i18n": "File Manager",
+			"icon": "save"
+		},
+		{
+			"url": "/admin/reviews",
+			"name": "Reviews",
+			"i18n": "Reviews",
+			"icon": "comments",
+			"tagcustom": "badge badge-light-danger badge-pill badge-round float-right mr-2",
+			"submenu": [
+				{
+					"url": "/admin/reviews/products",
+					"name": "Products reviews",
+					"i18n": "Products reviews",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/reviews/site",
+					"name": "Site reviews",
+					"i18n": "Site reviews",
+					"icon": "bx bx-right-arrow-alt"
+				}
+			]
+		},
+		{
+			"url": "/admin/users",
+			"name": "Users",
+			"i18n": "Users",
+			"icon": "users",
+			"submenu": [
+				{
+					"url": "/admin/users",
+					"name": "List",
+					"i18n": "List",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/users/create",
+					"name": "Add",
+					"i18n": "Add",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/users/profile",
+					"name": "My profile",
+					"i18n": "My profile",
+					"icon": "bx bx-right-arrow-alt"
+				}
+			]
+		},
+		{
+			"url": "/admin/promotion/settings",
+			"name": "Promotion",
+			"i18n": "Promotion",
+			"icon": "rocket",
+			"submenu": [
+				{
+					"url": "/admin/promotion/settings",
+					"name": "Settings",
+					"i18n": "Settings",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/promotion/pages",
+					"name": "Pages",
+					"i18n": "Pages",
+					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/promotion/redirects",
+					"name": "Redirects",
+					"i18n": "Redirects",
+					"icon": "bx bx-right-arrow-alt"
+				},
+                {
+                    "url": "/admin/seo-content",
+                    "name": "SEO Content Generation",
+                    "i18n": "SEO Content Generation",
+                    "icon": "bx bx-right-arrow-alt"
+                },
+                {
+                    "url": "/admin/gemini-translate",
+                    "name": "AI Translation",
+                    "i18n": "AI Translation",
+                    "icon": "bx bx-right-arrow-alt"
+                },
+                {
+                    "url": "/admin/metadata",
+                    "name": "Metadata Generation",
+                    "i18n": "Metadata Generation",
+                    "icon": "bx bx-right-arrow-alt"
+                }
+            ]
+		},
+        {
+            "url": "/admin/requests",
+            "name": "Requests",
+            "i18n": "Requests",
+            "icon": "paper-plane"
+        },
+        {
+            "url": "/admin/cacheflush",
+            "name": "Clear cache",
+            "i18n": "Clear cache",
+            "icon": "retweet"
+        },
+        {
+            "navheader": "Blog"
+        },
+        {
+            "url": "/admin/articles",
+            "name": "Articles",
+            "i18n": "Articles",
+            "icon": "grid"
+        },
+        {
+            "url": "/admin/content/categories",
+            "name": "Articles categories",
+            "i18n": "Articles categories",
+            "icon": "thumbnails-small"
+        }
+	]
+}

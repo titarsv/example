@@ -1,0 +1,23 @@
+<?php
+return [
+    "Users" => "Users",
+    "General" => "General",
+    "Change Password" => "Change Password",
+    "Info" => "Info",
+    "Social links" => "Social links",
+    "Connections" => "Connections",
+    "Notifications" => "Notifications",
+    "Upload new photo" => "Upload new photo",
+    "Reset" => "Reset",
+    "Allowed JPG, GIF or PNG. Max size of 800kB" => "Allowed JPG, GIF or PNG. Max size of 800kB",
+    "Name" => "Name",
+    "Surname" => "Surname",
+    "Your email is not confirmed. Please check your inbox." => "Your email is not confirmed. Please check your inbox.",
+    "Resend confirmation" => "Resend confirmation",
+    "Old Password" => "Old Password",
+    "This old password field is required" => "This old password field is required",
+    "New Password" => "New Password",
+    "The password field is required" => "The password field is required",
+    "Retype new Password" => "Retype new Password",
+    "The Confirm password field is required" => "The Confirm password field is required",
+];

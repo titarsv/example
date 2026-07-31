@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="robots" content="noindex, nofollow">
+	<title>ProperLoud</title>
+	<meta name="description" content="ProperLoud descriprion">
+	<link rel="icon" type="image/png" href="../../images/favicon.png">
+	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	<meta name="theme-color" content="#F4F4F4">
+	<meta name="msapplication-navbutton-color" content="#F4F4F4">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#F4F4F4">
+	<meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+<include src="app/assets/templates/parts/header.html"></include>
+<main class="main">
+	<div class="section page-contacts">
+		<div class="page-top">
+			<div class="container">
+				<nav class="breadcrumbs">
+					<a href="/">Home</a>
+					<span>Contact us</span>
+				</nav>
+				<h1 class="page-title">Contact us</h1>
+			</div>
+		</div>
+		<div class="contacts-main">
+			<div class="contacts-left">
+				<form class="contacts-form ajax_form clear-styles" id="contacts-form"
+					  data-error-title="Sending Error!"
+					  data-error-message="Please try again later."
+					  data-success-title="Thank you for contacting us."
+					  data-success-message="Our manager will contact you shortly."
+					  data-success-btn="Ok">
+					<div class="form-row">
+						<div class="input-wrapper">
+							<label>Name</label>
+							<input class="input" type="text" name="name" placeholder="Your Name"
+								   data-validate-required="Required field">
+						</div>
+						<div class="input-wrapper">
+							<label>Email address</label>
+							<input class="input" type="text" name="email" placeholder="client@mail.com"
+								   data-validate-required="Required field">
+						</div>
+					</div>
+					<div class="input-wrapper">
+						<label>Message</label>
+						<textarea class="textarea" name="message"></textarea>
+					</div>
+					<button type="submit" class="btn"
+							data-sending="Sending..."
+							data-error="Error :("
+							data-sent="Sent">Submit</button>
+				</form>
+			</div>
+			<div class="contacts-right">
+				<img src="../../images/contacts-bg.jpg" loading="lazy" alt="" class="contacts-bg">
+				<span>Get in Touch</span>
+				<img src="../../images/logo-color.png" loading="lazy" alt="" class="contacts-logo">
+			</div>
+		</div>
+	</div>
+</main>
+<include src="app/assets/templates/parts/footer.html"></include>
+</body>
+</html>

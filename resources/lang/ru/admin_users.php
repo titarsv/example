@@ -1,0 +1,23 @@
+<?php
+return [
+    "Users" => "Пользователи",
+    "General" => "Основное",
+    "Change Password" => "Смена пароля",
+    "Info" => "Информация",
+    "Social links" => "Социальные сети",
+    "Connections" => "Подключения",
+    "Notifications" => "Оповещения",
+    "Upload new photo" => "Загрузить новое фото",
+    "Reset" => "Сбросить",
+    "Allowed JPG, GIF or PNG. Max size of 800kB" => "Допускаются форматы JPG, GIF или PNG. Максимальный размер 800КБ",
+    "Name" => "Имя",
+    "Surname" => "Фамилия",
+    "Your email is not confirmed. Please check your inbox." => "Ваша электронная почта не подтверждена. Пожалуйста, проверьте свой почтовый ящик.",
+    "Resend confirmation" => "Отправить повторно",
+    "Old Password" => "Текущий пароль",
+    "This old password field is required" => "Поле текущего пароля является обязательным",
+    "New Password" => "Новый пароль",
+    "The password field is required" => "Поле пароля обязательно для заполнения",
+    "Retype new Password" => "Введите повторно новый пароль",
+    "The Confirm password field is required" => "Поле подтверждения пароля является обязательным",
+];

@@ -1,0 +1,156 @@
+.page-reviews {
+	padding-bottom: 58px;
+	@include bp(xs) {
+		padding-top: 0;
+		padding-bottom: 32px;
+	}
+}
+
+.page-reviews__wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: 30px;
+	@include bp(xs) {
+		gap: 0
+	}
+	> div {
+		+ div {
+			padding-top: 7px;
+			@include bp(xs) {
+				padding-top: 16px;
+			}
+		}
+	}
+	.reviews-rating {
+		display: flex;
+		align-items: center;
+		margin-top: 18px;
+		@include bp(xs) {
+			margin-top: 12px;
+		}
+		.rating-stars {
+			margin-right: 8px;
+			@include bp(xxs) {
+				margin-right: 4px;
+			}
+		}
+		strong {
+			margin-right: 5px;
+			font-family: $title;
+			font-size: 18px;
+			font-style: normal;
+			font-weight: 500;
+			line-height: normal;
+			@include bp(xs) {
+				font-size: 16px;
+			}
+			@include bp(xxs) {
+				font-size: 14px;
+			}
+		}
+		span {
+			font-family: $default;
+			font-size: 18px;
+			font-style: normal;
+			font-weight: 400;
+			line-height: normal;
+			@include bp(xs) {
+				font-size: 14px;
+			}
+			@include bp(xxs) {
+				font-size: 12px;
+			}
+		}
+	}
+}
+
+.reviews-main {
+	margin-top: -12px;
+	@include bp(xs) {
+		margin-top: 0;
+	}
+	.pagination {
+		position: relative;
+		padding: 0 24px;
+		@include bp(xs) {
+			padding: 0 20px;
+			margin-top: 32px;
+		}
+		.pagination-numbers {
+			margin-left: auto;
+			margin-right: auto;
+		}
+		.pagination-arrows {
+			position: absolute;
+			right: 24px;
+			@include bp(xs) {
+				left: 20px;
+				right: 20px;
+			}
+			@include bp(xxs) {
+				left: 0;
+				right: 0;
+			}
+		}
+	}
+}
+
+.reviews-main__wrapper {
+	display: flex;
+	flex-wrap: wrap;
+	width: calc(100% + 5px);
+	margin-right: -1px;
+	margin-bottom: 44px;
+	margin-left: -1px;
+	@include bp(sm) {
+		width: calc(100% + 2px);
+	}
+	@include bp(xs) {
+		margin-bottom: 32px;
+	}
+	> div {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+		width: 25%;
+		height: inherit;
+		padding: 20px 24px 18px;
+		border: 1px solid $black;
+		margin-right: -1px;
+		margin-bottom: -1px;
+		background-color: $bg-grey;
+		@include bp(lg) {
+			width: 50%;
+		}
+		@include bp(sm) {
+			width: 100%;
+		}
+		@include bp(xs) {
+			padding: 16px 20px;
+		}
+		> div {
+			&:nth-of-type(1) {
+				margin-bottom: 8px;
+				font-size: 16px;
+				font-style: normal;
+				font-weight: 500;
+				line-height: 1.5;
+				color: $black;
+				@include bp(xs) {
+					margin-bottom: 16px;
+				}
+			}
+			&:nth-of-type(2) {
+				font-size: 14px;
+				font-style: normal;
+				font-weight: 400;
+				line-height: normal;
+				color: $grey;
+				@include bp(xs) {
+					line-height: 14px;
+				}
+			}
+		}
+	}
+}

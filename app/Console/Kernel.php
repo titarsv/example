@@ -1,0 +1,54 @@
+<?php
+
+namespace App\Console;
+
+use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+
+class Kernel extends ConsoleKernel
+{
+    /**
+     * The Artisan commands provided by your application.
+     *
+     * @var array
+     */
+    protected $commands = [
+        Commands\Sales::class,
+        Commands\XMLSitemap::class,
+        Commands\Exports::class,
+        Commands\CartCleaner::class,
+        Commands\TrustpilotReviewsUpdater::class,
+        Commands\MyCryptoCheckout::class,
+        Commands\GenerateSeoContentCommand::class,
+        Commands\BuildBoughtTogetherRecommendations::class,
+        Commands\BuildProductEmbeddings::class,
+        Commands\TestSemanticSearch::class,
+        Commands\SyncOrderProducts::class,
+    ];
+
+    /**
+     * Define the application's command schedule.
+     */
+    protected function schedule(Schedule $schedule): void
+    {
+        $schedule->command('xmlsitemap')->daily();
+        $schedule->command('generate_exports')->everyMinute();
+        $schedule->command('clear_carts')->daily();
+        $schedule->command('sales')->everyTenMinutes();
+        $schedule->command('mycryptocheckout')->hourly();
+        $schedule->command('recommendations:bought-together')->dailyAt('03:00');
+        $schedule->command('embeddings:build-products --only-missing')->weekly();
+//        $schedule->command('update_trustpilot_reviews')->daily();
+//        $schedule->command('seo:generate-content --limit=50')->hourly();
+    }
+
+    /**
+     * Register the commands for the application.
+     */
+    protected function commands(): void
+    {
+        $this->load(__DIR__.'/Commands');
+
+        require base_path('routes/console.php');
+    }
+}

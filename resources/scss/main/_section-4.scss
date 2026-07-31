@@ -1,0 +1,511 @@
+.advantages-main{
+  position: relative;
+  //aspect-ratio: 1440 / 650;
+  height: 650px;
+  min-height: 650px;
+  overflow: hidden;
+  @include bp(sm) {
+    height: 750px;
+    min-height: 750px;
+  }
+  @include bp(xxs) {
+    height: calc(750px * 0.75);
+    min-height: calc(750px * 0.75);
+  }
+  >img{
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    left: 0;
+    top: 0;
+  }
+  .container{
+    height: 100%;
+    position: relative;
+  }
+}
+
+.advantages-container{
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+  height: 100%;
+  width: 1390px;
+  max-width: 100%;
+  display: flex;
+  align-items: center;
+  @include bp(sm) {
+    width: 390px;
+  }
+  @include bp(xxs) {
+    transform: translateX(-50%) scale(.75);
+    height: calc(750px * 0.75);
+    top: -70px;
+  }
+  >img{
+    display: block;
+    //aspect-ratio: 329 / 249;
+    //height: 38%;
+    width: auto;
+    //min-height: 249px;
+    height: 249px;
+    object-fit: contain;
+    margin: auto;
+    position: relative;
+    z-index: 2;
+    @include bp(sm) {
+      height: 174px;
+      width: 390px;
+    }
+    @include bp(xxs) {
+      transform: translateY(70px);;
+    }
+  }
+}
+
+.advantages-list{
+  li{
+    &.advantage{
+      position: absolute;
+      z-index: 1;
+      opacity: 0;
+      transform: translateY(-460px) scale(0.8);
+      transform-origin: 50% 100%;
+      will-change: transform, opacity;
+      font-size: 20px;
+      font-style: normal;
+      font-weight: 400;
+      line-height: normal;
+      text-transform: capitalize;
+      @media (max-width: 1400px) {
+        position: absolute;
+        left: calc(var(--left-percent) * 1vw) !important;
+        top: calc(var(--top-percent) * 1% + 250px) !important;
+        font-size: 1rem;
+      }
+      @include bp(sm) {
+        font-size: 14px;
+      }
+      @include bp(xxs) {
+        margin-left: -9vw;
+      }
+      &.is-fading {
+        animation: fadeInScale 0.4s forwards;
+      }
+      &.is-bouncing {
+        animation: bouncePhysics 1.3s both;
+      }
+      &.advantage1{
+        left: 130px;
+        //top: 30px;
+        top: 500px;
+        @media (max-width: 1400px) {
+          --left-percent: 9;
+          --top-percent: 37;
+        }
+        @include bp(lg) {
+          --left-percent: 7.5;
+          --top-percent: 39.5;
+        }
+        @include bp(md) {
+          --left-percent: 19;
+          --top-percent: 44;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 653px !important;
+          left: 154px !important;
+        }
+        >div{
+          transform: rotate(9.557deg);
+          @media (max-width: 1400px) {
+            transform: rotate(18deg);
+          }
+          @include bp(lg) {
+            transform: rotate(16deg);
+          }
+          @include bp(md) {
+            transform: rotate(2deg);
+          }
+          @include bp(sm) {
+            transform: rotate(11.707deg);
+          }
+          >i{
+            background-color: $yellow;
+          }
+        }
+      }
+      &.advantage2{
+        left: 493px;
+        //top: 62px;
+        top: 533px;
+        @media (max-width: 1400px) {
+          --left-percent: 35;
+          --top-percent: 44;
+        }
+        @include bp(lg) {
+          --left-percent: 33;
+          --top-percent: 43;
+        }
+        @include bp(md) {
+          --left-percent: 55;
+          --top-percent: 47;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 710px !important;
+          left: 56px !important;
+        }
+        >div{
+          transform: rotate(5.547deg);
+          @include bp(lg) {
+            transform: rotate(10deg);
+          }
+          @include bp(md) {
+            transform: rotate(9deg);
+          }
+          @include bp(sm) {
+            transform: rotate(-1.193deg);
+          }
+          >i{
+            background-color: $lilac;
+          }
+        }
+      }
+      &.advantage3{
+        left: 975px;
+        //top: 49px;
+        top: 519px;
+        @media (max-width: 1400px) {
+          --left-percent: 67;
+          --top-percent: 43;
+        }
+        @include bp(lg) {
+          --top-percent: 44;
+        }
+        @include bp(md) {
+          --left-percent: 0;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 610px !important;
+          left: 224px !important;
+        }
+        >div{
+          transform: rotate(-14.323deg);
+          @media (max-width: 1400px) {
+            transform: rotate(-22deg);
+          }
+          @include bp(md) {
+            transform: rotate(15deg);
+          }
+          @include bp(sm) {
+            transform: rotate(-4.938deg);
+          }
+          >i{
+            background-color: $red;
+          }
+        }
+      }
+      &.advantage4{
+        left: -3px;
+        //top: 100px;
+        top: 571px;
+        @media (max-width: 1400px) {
+          --left-percent: 2;
+          --top-percent: 48;
+        }
+        @include bp(lg) {
+          --top-percent: 50;
+        }
+        @include bp(md) {
+          --left-percent: 2;
+          --top-percent: 52;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 526px !important;
+          left: 54px !important;
+        }
+        >div{
+          transform: rotate(-15deg);
+          @include bp(md) {
+            transform: rotate(-11deg);
+          }
+          @include bp(sm) {
+            transform: rotate(-12.158deg);
+          }
+          >i{
+            background-color: $blue;
+          }
+        }
+      }
+      &.advantage5{
+        left: 209px;
+        //top: 110px;
+        top: 580px;
+        @media (max-width: 1400px) {
+          --left-percent: 14;
+          --top-percent: 52;
+        }
+        @include bp(lg) {
+          --top-percent: 52.5;
+        }
+        @include bp(md) {
+          --left-percent: 26;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 608px !important;
+          left: 36px !important;
+        }
+        >div{
+          transform: rotate(-5.542deg);
+          @include bp(lg) {
+            transform: rotate(-9deg);
+          }
+          @include bp(sm) {
+            transform: rotate(-17.386deg);
+          }
+          >i{
+            background-color: $green;
+          }
+        }
+      }
+      &.advantage6{
+        left: 532px;
+        //top: 124px;
+        top: 595px;
+        @media (max-width: 1400px) {
+          --left-percent: 38;
+          --top-percent: 53;
+        }
+        @include bp(md) {
+          --left-percent: 70;
+          --top-percent: 40;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 561px !important;
+          left: 205px !important;
+        }
+        >div{
+          transform: rotate(-3.703deg);
+          @include bp(lg) {
+            transform: rotate(-9deg);
+          }
+          @include bp(md) {
+            transform: rotate(-1deg);
+          }
+          @include bp(sm) {
+            transform: rotate(14.593deg);
+          }
+          >i{
+            background-color: $purple;
+          }
+        }
+      }
+      &.advantage7{
+        left: 819px;
+        //top: 127px;
+        top: 598px;
+        @media (max-width: 1400px) {
+          --left-percent: 58;
+          --top-percent: 54;
+        }
+        @include bp(lg) {
+          --top-percent: 55.5;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 672px !important;
+          left: 4px !important;
+        }
+        >div{
+          @include bp(sm) {
+            transform: rotate(2.22deg);
+          }
+          >i{
+            background-color: $pink;
+          }
+        }
+      }
+      &.advantage8{
+        left: 1118px;
+        //top: 106px;
+        top: 577px;
+        @media (max-width: 1400px) {
+          --left-percent: 78;
+          --top-percent: 50;
+        }
+        @include bp(md) {
+          --left-percent: 33;
+          --top-percent: 38;
+        }
+        @include bp(sm) {
+          --left-percent: 0;
+          --top-percent: 0;
+          top: 575px !important;
+          left: 6px !important;
+        }
+        >div{
+          transform: rotate(13.615deg);
+          @include bp(md) {
+            transform: rotate(-2deg);
+          }
+          @include bp(sm) {
+            transform: rotate(-5.335deg);
+          }
+          >i{
+            background-color: $light-yellow;
+          }
+        }
+      }
+    }
+    >div{
+      display: flex;
+      padding: 6px 20px;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      border-radius: 24px;
+      background: $black;
+      height: 42px;
+      width: max-content;
+      color: #fff;
+      @include bp(lg) {
+        padding: 0 0.8rem;
+        gap: 0.3rem;
+        height: 2.2rem;
+      }
+      @include bp(sm) {
+        height: 33px;
+        padding: 0 16px;
+        gap: 8px;
+        border-radius: 40px;
+      }
+      >i{
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        @include bp(lg) {
+          width: 0.5rem;
+          height: 0.5rem;
+        }
+        @include bp(sm) {
+          width: 8px;
+          height: 8px;
+        }
+      }
+      >img{
+        height: 100%;
+        width: auto;
+        object-fit: contain;
+        @include bp(lg) {
+          width: 2rem;
+        }
+        @include bp(sm) {
+          display: none;
+        }
+      }
+    }
+  }
+}
+
+@keyframes fadeInScale {
+  /* 0%: Start state (set in base class) */
+  0%   { opacity: 0; transform: translateY(-460px) scale(0.8); }
+  /* 100%: End state (fully visible, fully scaled, still up high) */
+  100% { opacity: 1; transform: translateY(-460px) scale(1); }
+}
+
+/* --- 2. BOUNCE PHYSICS KEYFRAMES (4 Smoother, Snappier Bounces) --- */
+@keyframes bouncePhysics {
+  /* 0% Start: Top of fall (starts at -460px) */
+  0%   { transform: translateY(-460px) scale(1); opacity: 1; }
+
+  /* 40% Impact 1: Slower initial fall (uses default easing into this point) */
+  40%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+  /* This function controls 40% -> 55%. The aggressive negative y value causes the immediate, springy rebound. */
+
+  /* 55% Rebound 1 Apex: -100px */
+  55%  { transform: translateY(-100px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+  /* This function controls 55% -> 70%. It eases the chip back down smoothly. */
+
+  /* 70% Impact 2: Hit ground again */
+  70%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+  /* Rebound 2 */
+
+  /* 80% Rebound 2 Apex: -30px */
+  80%  { transform: translateY(-30px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+  /* Easing down */
+
+  /* 90% Impact 3: Hit ground again */
+  90%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+  /* Rebound 3 */
+
+  /* 95% Rebound 3 Apex: -10px */
+  95%  { transform: translateY(-10px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+  /* Easing down */
+
+  /* 98% Impact 4 (Final Minor Bounce): Back to ground (uses default easing into this point) */
+  98%  { transform: translateY(0) scale(1); opacity: 1; }
+
+  /* 100% Settle: Final rest on the ground */
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@media only screen and (max-width: 767px) {
+  @keyframes fadeInScale {
+    0%   { opacity: 0; transform: translateY(-510px) scale(0.8); }
+    100% { opacity: 1; transform: translateY(-510px) scale(1); }
+  }
+
+  @keyframes bouncePhysics {
+    /* 0% Start: Top of fall (starts at -460px) */
+    0%   { transform: translateY(-510px) scale(1); opacity: 1; }
+
+    /* 40% Impact 1: Slower initial fall (uses default easing into this point) */
+    40%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    /* This function controls 40% -> 55%. The aggressive negative y value causes the immediate, springy rebound. */
+
+    /* 55% Rebound 1 Apex: -100px */
+    55%  { transform: translateY(-100px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+    /* This function controls 55% -> 70%. It eases the chip back down smoothly. */
+
+    /* 70% Impact 2: Hit ground again */
+    70%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    /* Rebound 2 */
+
+    /* 80% Rebound 2 Apex: -30px */
+    80%  { transform: translateY(-30px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+    /* Easing down */
+
+    /* 90% Impact 3: Hit ground again */
+    90%  { transform: translateY(0) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+    /* Rebound 3 */
+
+    /* 95% Rebound 3 Apex: -10px */
+    95%  { transform: translateY(-10px) scale(1); opacity: 1; animation-timing-function: cubic-bezier(0.445, 0.050, 0.55, 0.95); }
+    /* Easing down */
+
+    /* 98% Impact 4 (Final Minor Bounce): Back to ground (uses default easing into this point) */
+    98%  { transform: translateY(0) scale(1); opacity: 1; }
+
+    /* 100% Settle: Final rest on the ground */
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .advantages-list li.advantage { transition: none !important; transform: translateY(0) scale(1) !important; opacity: 1 !important; animation: none !important; }
+}

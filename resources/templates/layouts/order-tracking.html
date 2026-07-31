@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="robots" content="noindex, nofollow">
+	<title>ProperLoud</title>
+	<meta name="description" content="ProperLoud descriprion">
+	<link rel="icon" type="image/png" href="../../images/favicon.png">
+	<link rel="icon" type="image/x-icon" href="../../images/favicon.ico">
+	<meta name="theme-color" content="#F4F4F4">
+	<meta name="msapplication-navbutton-color" content="#F4F4F4">
+	<meta name="apple-mobile-web-app-status-bar-style" content="#F4F4F4">
+	<meta name="mobile-web-app-capable" content="yes">
+</head>
+
+<body>
+<include src="app/assets/templates/parts/header.html"></include>
+<main class="main">
+	<div class="page-order-tracking">
+		<div class="page-top">
+			<div class="container">
+				<nav class="breadcrumbs">
+					<a href="/">Home</a>
+					<span>Order tracking</span>
+				</nav>
+				<h1 class="page-title">Track your order</h1>
+			</div>
+		</div>
+		<div class="order-tracking">
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="order-tracking__info">
+							<p class="order-tracking__text">To track your order, simply enter your Order ID in the box below and click the “Track Order” button. You can find your Order ID on your receipt and in the confirmation email you received.</p>
+							<form class="validate-form" >
+								<div class="input-wrapper">
+									<label for="orderid">Order ID</label>
+									<input class="input" id="orderid" type="text"  data-rule-required="true" data-msg-required="This field is required" placeholder="1679">
+								</div>
+								<div class="input-wrapper">
+									<label for="email">Billing email</label>
+									<input class="input" id="email" type="text" name="email" data-rule-required="true" data-msg-required="This field is required" data-msg-email="Enter a valid email address" placeholder="client@mail.com">
+								</div>
+								<button type="submit" class="btn">Track Order</button>
+							</form>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="order-tracking__pic">
+							<img src="../../images/order.png" class="lazy" alt="order">
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</main>
+<include src="app/assets/templates/parts/footer.html"></include>
+</body>
+</html>

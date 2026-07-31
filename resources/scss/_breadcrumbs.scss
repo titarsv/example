@@ -1,0 +1,39 @@
+.breadcrumbs {
+	color: $black;
+	font-size: 16px;
+	font-style: normal;
+	font-weight: 500;
+	line-height: normal;
+	text-transform: capitalize;
+	margin-bottom: 24px;
+	@include bp(xs) {
+		font-size: 14px;
+	}
+	a {
+		color: $grey;
+		&:hover {
+			color: $mint;
+		}
+		&:after {
+			content: ' > ';
+			color: $grey;
+			pointer-events: none;
+		}
+	}
+}
+
+.breadcrumbs-wrapper {
+	display: none;
+	padding-top: 24px;
+	@include bp(md) {
+		display: block !important;
+	}
+}
+
+.page-product {
+	.breadcrumbs {
+		@include bp(md) {
+			display: none;
+		}
+	}
+}

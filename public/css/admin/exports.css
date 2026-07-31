@@ -1,0 +1,42 @@
+.exports-list-wrapper table.dataTable.dtr-column > tbody > tr > td.control:before,
+.exports-list-wrapper table.dataTable.dtr-column > tbody > tr > th.control:before {
+  line-height: 18px;
+}
+
+.export-edit .nav-item.disabled {
+  pointer-events: none;
+}
+
+.btn-sm .bx,
+.btn-group-sm > .btn .bx,
+.modal .modal-content .btn-sm .bx {
+  font-size: 14px;
+  position: relative;
+  top: 0;
+}
+
+.btn-sm.btn-danger .bx.bx-x {
+  top: 2px;
+}
+
+.modifications fieldset:first-child .btn-danger {
+  display: none;
+}
+
+.modifications fieldset:not(:first-child) .btn-primary {
+  display: none;
+}
+
+.modifications fieldset:not(:first-child) .btn-danger {
+  border-top-right-radius: 0.267rem;
+  border-bottom-right-radius: 0.267rem;
+}
+
+.filter_form .card {
+  border: 1px solid #464d5c;
+  overflow: hidden;
+}
+
+.dt-right {
+    text-align: right;
+}
