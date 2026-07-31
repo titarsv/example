@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace Modules\Coupons\Models;
 
+use App\Models\Entity;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 use App;

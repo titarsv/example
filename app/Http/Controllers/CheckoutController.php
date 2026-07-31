@@ -14,7 +14,7 @@ use App\Models\Cart;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\User;
-use App\Models\Coupon;
+use Modules\Coupons\Models\Coupon;
 use App\Models\Sendpulse;
 use App\Models\Product;
 use App;
@@ -537,6 +537,10 @@ class CheckoutController extends Controller
     }
 
     public function applyCoupon(Request $request, Coupon $coupons){
+        if(!module_active('coupons')){
+            return response()->json(['result' => 'error', 'msg' => __('Invalid promo code')]);
+        }
+
         if(!empty($request->code)){
             $coupon = $coupons->where('code', $request->code)->where('used', 0)->where('status', 1)->first();
 

@@ -1,13 +1,14 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Modules\Coupons\Http\Controllers;
 
+use App\Http\Controllers\Controller;
 use App\Models\User;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
-use App\Models\Coupon;
+use Modules\Coupons\Models\Coupon;
 use App\Models\Action;
 use App;
 

@@ -33,7 +33,7 @@ class Cart extends Model
 	}
 
     public function coupon(){
-        return $this->hasOne('App\Models\Coupon', 'id', 'coupon_id');
+        return $this->hasOne(\Modules\Coupons\Models\Coupon::class, 'id', 'coupon_id');
     }
 
 	public function getSaleAttribute(){
@@ -148,6 +148,12 @@ class Cart extends Model
         $total_price = 0;
         $total_sale = 0;
         $salable = 0;
+
+        if(!module_active('coupons')){
+            // Отключённый модуль не должен применять скидку купона, даже если
+            // в корзине уже сохранён coupon_id с момента, когда модуль был включён.
+            $this->coupon_id = null;
+        }
 
         if(!empty($this->coupon_id) && !empty($this->coupon)){
             $coupon = $this->coupon;
@@ -515,6 +521,10 @@ class Cart extends Model
      * @return $this
      */
 	public function addCoupon($id){
+        if(!module_active('coupons')){
+            return $this;
+        }
+
         $this->coupon_id = $id;
         $this->update_cart();
 

@@ -144,17 +144,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
                 Route::middleware(['role:attributes.read'])->post('/values/{id}', 'AttributesController@adminAttributeValuesApi');
             });
         });
-        Route::group(['prefix' => 'promocodes'], function(){
-            Route::middleware(['role:coupons.read'])->get('/', 'CouponsController@adminIndexAction');
-            Route::middleware(['role:coupons.read'])->post('/list', 'CouponsController@adminListAction');
-            Route::middleware(['role:coupons.read'])->get('/create', 'CouponsController@adminCreateAction');
-            Route::middleware(['role:coupons.create'])->post('/create', 'CouponsController@adminStoreAction');
-            Route::middleware(['role:coupons.delete'])->post('/delete/{id}', 'CouponsController@adminDeleteAction');
-            Route::middleware(['role:coupons.read'])->get('/edit/{id}', 'CouponsController@adminEditAction');
-            Route::middleware(['role:coupons.write'])->post('/edit/{id}', 'CouponsController@adminUpdateAction');
-            Route::middleware(['role:coupons.write'])->post('/change_status/{id}', 'CouponsController@adminUpdateStatusAction');
-            Route::middleware(['role:coupons.write'])->post('/generate_code', 'CouponsController@adminGenerateCodeAction');
-        });
+        // Роуты промокодов перенесены в Modules/Coupons/routes/web.php
         Route::group(['prefix' => 'exports'], function(){
             Route::middleware(['role:exports.read'])->any('/', 'ExportsController@adminIndexAction');
             Route::middleware(['role:exports.read'])->post('/list', 'ExportsController@adminListAction');

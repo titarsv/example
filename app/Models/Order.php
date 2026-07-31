@@ -5,6 +5,7 @@ namespace App\Models;
 use App;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\DB;
+use Modules\Coupons\Models\Coupon;
 
 class Order extends Entity
 {
@@ -46,7 +47,7 @@ class Order extends Entity
                 $coupons = new Coupon();
 
                 foreach($products as $key => $product){
-                    if($product['product']->certificate && empty($product['generated'])){
+                    if($product['product']->certificate && empty($product['generated']) && module_active('coupons')){
                         $price = $product['product']->original_price;
 
                         $coupons->generateCoupon([
@@ -134,7 +135,7 @@ class Order extends Entity
     }
 
     public function coupon(){
-        return $this->hasOne('App\Models\Coupon', 'id', 'coupon_id');
+        return $this->hasOne(Coupon::class, 'id', 'coupon_id');
     }
 
     public function getFirstNameAttribute(){

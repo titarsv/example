@@ -85,6 +85,7 @@
                 @endif
             @endforeach
         </div>
+        @if(module_active('coupons'))
         <div class="cart-promo">
             <div class="cart-promo__head">
                 <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 36 36" fill="none">
@@ -113,10 +114,12 @@
                 <div class="promo-error" style="display: none">Promo code "<span></span>" does not exist!</div>
             </div>
         </div>
+        @endif
         <div class="cart-subtotal">
             <span>Subtotal</span>
             <span class="js_cart_price">£{{ number_format($cart->total_price, 0, '.', ' ') }}</span>
         </div>
+        @if(module_active('coupons'))
         <div class="cart-subtotal promo-subtotal{{ !empty($cart->coupon) ? ' active' : '' }} checkout-price__item-coupon">
             <span>Coupon sale</span>
             <span class="js_coupon_sale">- £{{ number_format($cart->coupon_sale, 0, '.', ' ') }}</span>
@@ -126,6 +129,7 @@
                 </svg>
             </i>
         </div>
+        @endif
         <div class="cart-slider">
             <div class="section-head">
                 <span class="section-title">Add to your order</span>
