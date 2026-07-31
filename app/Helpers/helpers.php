@@ -32,3 +32,18 @@ if(!function_exists('localizationFields')){
         return $localized;
     }
 }
+
+if(!function_exists('module_active')){
+    /**
+     * Whether an optional store feature is enabled. Works uniformly for real
+     * nwidart/laravel-modules packages (blog, reviews, wishlist, coupons, ai,
+     * notifications — same slug as the module name in lowercase) and for
+     * in-core-only toggles that never became a physical Modules/ package
+     * (cart_checkout). Both read the same `modules_settings` row via
+     * SettingsActivator, so admin's "Модули" toggle and this helper never
+     * disagree. Unknown slugs default to enabled.
+     */
+    function module_active(string $slug): bool {
+        return App\Support\Modules\SettingsActivator::isActive($slug);
+    }
+}

@@ -291,6 +291,7 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
             Route::post('/maintenance/down', 'MaintenanceController@down');
             Route::post('/maintenance/up', 'MaintenanceController@up');
             Route::post('/maintenance/settings', 'MaintenanceController@saveSettings');
+            Route::post('/modules', 'SettingsController@adminSaveModulesSettingsAction');
         });
     });
 
