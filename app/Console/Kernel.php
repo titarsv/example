@@ -19,6 +19,7 @@ class Kernel extends ConsoleKernel
         Commands\CartCleaner::class,
         Commands\TrustpilotReviewsUpdater::class,
         Commands\MyCryptoCheckout::class,
+        Commands\ThemeMakeCommand::class,
         // GenerateSeoContentCommand, BuildBoughtTogetherRecommendations,
         // BuildProductEmbeddings, TestSemanticSearch, SyncOrderProducts moved
         // to Modules\Ai and are now registered by AiServiceProvider::boot()

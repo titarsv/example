@@ -1,5 +1,6 @@
-<div class="field-group">
+<div class="field-group"@if(!empty($field->conditional_field)) data-conditional-field="{{ $field->conditional_field }}" data-conditional-operator="{{ !empty($field->conditional_operator) ? $field->conditional_operator : '==' }}" data-conditional-value="{{ $field->conditional_value ?? '' }}"@endif>
     <label>{{ $field->name }}</label>
+            @if(!empty($field->instructions))<small class="text-muted d-block mb-1">{{ $field->instructions }}</small>@endif
     <div class="row">
         @if(!empty($field->langs))
             @foreach($fields as $lang => $lang_fields)

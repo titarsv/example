@@ -256,6 +256,10 @@ $(document).ready(function () {
                 }
             }
 
+            if (typeof window.addBlockPickerToTinyMCE === 'function') {
+                window.addBlockPickerToTinyMCE(settings);
+            }
+
             // Initialize the editor
             tinymce.init(settings).then(function(editors) {
                 var $textarea = jQuery('#' + editorId);

@@ -17,8 +17,11 @@ return [
     'blog' => env('MODULE_BLOG', true),
     'reviews' => env('MODULE_REVIEWS', true),
     'wishlist' => env('MODULE_WISHLIST', true),
+    'compare' => env('MODULE_COMPARE', true),
     'coupons' => env('MODULE_COUPONS', true),
     'notifications' => env('MODULE_NOTIFICATIONS', true),
     'ai' => env('MODULE_AI', true),
+    'payments' => env('MODULE_PAYMENTS', true),
+    'delivery' => env('MODULE_DELIVERY', true),
     'cart_checkout' => env('MODULE_CART_CHECKOUT', true),
 ];

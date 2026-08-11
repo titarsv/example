@@ -1,4 +1,4 @@
-<div class="field-group">
+<div class="field-group"@if(!empty($field->conditional_field)) data-conditional-field="{{ $field->conditional_field }}" data-conditional-operator="{{ !empty($field->conditional_operator) ? $field->conditional_operator : '==' }}" data-conditional-value="{{ $field->conditional_value ?? '' }}"@endif>
     @if(!empty($field->langs))
         <div class="row">
             @foreach($fields as $lang => $lang_fields)
@@ -38,6 +38,7 @@
         </div>
     @else
         <label>{{ $field->name }}</label>
+            @if(!empty($field->instructions))<small class="text-muted d-block mb-1">{{ $field->instructions }}</small>@endif
         <div class="image-container js_picture_wrapper">
             <input type="hidden"
                    id="fields{{ !empty($parent) ? str_replace(['[', ']'], '', $parent).(isset($iterator) ? $iterator : 0) : '' }}{{ $field->slug }}"

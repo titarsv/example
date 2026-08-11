@@ -1,14 +1,7 @@
 {
-    "/css/critical/index.min.css": "/css/critical/index.min.css",
-    "/css/critical/index_header.min.css": "/css/critical/index_header.min.css",
-    "/css/critical/catalog.min.css": "/css/critical/catalog.min.css",
-    "/css/critical/catalog_header.min.css": "/css/critical/catalog_header.min.css",
-    "/css/critical/product.min.css": "/css/critical/product.min.css",
-    "/css/critical/product_header.min.css": "/css/critical/product_header.min.css",
-    "/js/app.js": "/js/app.js",
-    "/css/invisible.css": "/css/invisible.css",
-    "/css/app.css": "/css/app.css",
-    "/css/temp/critical.css": "/css/temp/critical.css",
-    "/css/temp/section-1.css": "/css/temp/section-1.css",
-    "/css/header.css": "/css/header.css"
+    "/themes/base/js/app.js": "/themes/base/js/app.js?id=da9adae747530fde1cdb989fd3331999",
+    "/themes/base/css/app.css": "/themes/base/css/app.css?id=4c11ef7cef6ed2eab7958ac1a703cc08",
+    "/themes/base/images/favicon.png": "/themes/base/images/favicon.png?id=b8b446a7d4b7e5ef68cec5427ba4c5c6",
+    "/themes/base/fonts/bootstrap-icons.woff": "/themes/base/fonts/bootstrap-icons.woff?id=d1af9af6052c51b169be6c628ae99bb5",
+    "/themes/base/fonts/bootstrap-icons.woff2": "/themes/base/fonts/bootstrap-icons.woff2?id=9ad5aa740d7d5e6a0191b309b9b1986c"
 }

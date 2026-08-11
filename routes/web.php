@@ -187,6 +187,8 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
         Route::middleware(['role:pages.create,pages.write'])->get('/templates', 'PagesController@adminTemplatesAction');
         Route::middleware(['role:pages.create,pages.write'])->get('/template/{name}', 'PagesController@adminTemplateAction');
         Route::middleware(['role:pages.create,pages.write'])->post('/template/{name}', 'PagesController@adminUpdateTemplateAction');
+        Route::middleware(['role:pages.create,pages.write'])->post('/template/duplicate/{name}', 'PagesController@adminDuplicateTemplateAction');
+        Route::middleware(['role:pages.create,pages.write'])->post('/template/restore/{name}', 'PagesController@adminRestoreTemplateRevisionAction');
         Route::middleware(['role:blocks.create,blocks.write'])->post('/template/fields/{name}', 'PagesController@adminUpdateTemplateFieldsAction');
         Route::middleware(['role:blocks.create,blocks.write'])->post('/template/file/{name}', 'PagesController@adminUpdateTemplateFileAction');
     });
@@ -201,6 +203,9 @@ Route::prefix('admin')->middleware(['admin'])->group(callback: function(){
         Route::middleware(['role:blocks.create,blocks.write'])->get('/templates', 'BlocksController@adminTemplatesAction');
         Route::middleware(['role:blocks.read'])->post('/templates/list', 'BlocksController@adminTemplatesListAction');
         Route::middleware(['role:blocks.create,blocks.write'])->get('/template/{name}', 'BlocksController@adminTemplateAction');
+        Route::middleware(['role:blocks.create,blocks.write'])->get('/template/preview/{name}', 'BlocksController@adminTemplatePreviewAction');
+        Route::middleware(['role:blocks.create,blocks.write'])->post('/template/duplicate/{name}', 'BlocksController@adminDuplicateTemplateAction');
+        Route::middleware(['role:blocks.create,blocks.write'])->post('/template/restore/{name}', 'BlocksController@adminRestoreTemplateRevisionAction');
         Route::middleware(['role:blocks.create,blocks.write'])->post('/template/fields/{name}', 'BlocksController@adminUpdateTemplateFieldsAction');
         Route::middleware(['role:blocks.create,blocks.write'])->post('/template/file/{name}', 'BlocksController@adminUpdateTemplateFileAction');
     });
@@ -386,7 +391,30 @@ foreach($prefixes as $prefix){
         Route::get('/login', 'AuthenticationController@loginAction');
         Route::post('/login', 'AuthenticationController@authenticate');
         Route::get('/logout', 'AuthenticationController@logoutAction');
+        Route::get('/register', 'AuthenticationController@registration');
+        Route::post('/register', 'AuthenticationController@store');
         Route::post('/sendmail', 'ContactFormsController@sendForm');
+
+        /**
+         * Личный кабинет
+         */
+        Route::prefix('user')->middleware(['user'])->group(function(){
+            Route::get('/', 'AccountController@indexAction');
+            Route::get('/orders', 'AccountController@ordersAction');
+            Route::get('/orders/{id}', 'AccountController@orderAction');
+        });
+
+        if (module_active('wishlist')) {
+            Route::get('/wishlist', '\Modules\Wishlist\Http\Controllers\WishlistController@indexAction')->middleware(['user']);
+            Route::post('/wishlist/toggle', '\Modules\Wishlist\Http\Controllers\WishlistController@toggleAction')->middleware(['user']);
+        }
+        if (module_active('compare')) {
+            // Список сравнения живёт в сессии — доступен и без логина, как корзина.
+            Route::get('/compare', '\Modules\Compare\Http\Controllers\CompareController@indexAction');
+            Route::post('/compare/toggle', '\Modules\Compare\Http\Controllers\CompareController@toggleAction');
+            Route::post('/compare/clear', '\Modules\Compare\Http\Controllers\CompareController@clearAction');
+            Route::post('/compare/reorder', '\Modules\Compare\Http\Controllers\CompareController@reorderAction');
+        }
         if (module_active('cart_checkout')) {
             Route::get('/thanks', 'OrdersController@thanksAction');
         }

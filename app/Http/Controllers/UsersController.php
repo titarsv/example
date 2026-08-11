@@ -21,8 +21,8 @@ use Modules\Reviews\Models\Review;
 use App\Models\Action;
 use App\Models\Order;
 use App\Models\User;
-use App\Models\Newpost;
-use App\Models\Justin;
+use Modules\Delivery\Models\Newpost;
+use Modules\Delivery\Models\Justin;
 
 class UsersController extends Controller
 {

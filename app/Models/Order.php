@@ -244,7 +244,8 @@ class Order extends Entity
     }
 
     public function getUserInfo(){
-        return json_decode($this->user_info);
+        $decoded = json_decode($this->user_info);
+        return is_object($decoded) ? $decoded : new \stdClass();
     }
 
     /**

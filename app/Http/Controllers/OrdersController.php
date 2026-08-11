@@ -7,12 +7,13 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\Models\OrderStatus;
 use App\Models\Product;
-use App\Models\Newpost;
+use Modules\Delivery\Models\Newpost;
 use App\Models\Setting;
-use App\Models\Justin;
+use Modules\Delivery\Models\Justin;
 use App\Models\Action;
 use App\Models\Order;
 use App\Models\User;
+use Modules\Payments\Models\Ipay;
 use Carbon\Carbon;
 use App;
 
@@ -277,15 +278,15 @@ class OrdersController extends Controller
 
         $id = Order::insertGetId([
             'user_id'   => $user->id,
-            'products' => json_encode($products, JSON_UNESCAPED_UNICODE),
+            'products' => json_encode($products, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
             'total_quantity' => $total_quantity,
             'total_price' => $total_price,
             'status_id' => $request->status,
-            'user_info' => json_encode($user_info, JSON_UNESCAPED_UNICODE),
-            'delivery' => json_encode($delivery_info, JSON_UNESCAPED_UNICODE),
+            'user_info' => json_encode($user_info, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
+            'delivery' => json_encode($delivery_info, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
             'notes' => $request->notes,
             'payment' => $request->payment,
-            'history' => json_encode($history, JSON_UNESCAPED_UNICODE)
+            'history' => json_encode($history, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)
         ]);
 
         return redirect('/admin/orders/edit/'. $id)
@@ -494,13 +495,13 @@ class OrdersController extends Controller
 
         $order->update([
             'status_id' => $request->status_id,
-            'user_info' => json_encode($user_info, JSON_UNESCAPED_UNICODE),
-            'delivery' => json_encode($delivery_info, JSON_UNESCAPED_UNICODE),
+            'user_info' => json_encode($user_info, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
+            'delivery' => json_encode($delivery_info, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
             'payment' => $request->payment,
             'payment_status' => $request->payment_status,
             'mcc_crypto_currency' => !empty($request->mcc_crypto_currency) ? $request->mcc_crypto_currency : null,
             'comment' => $request->comment,
-            'history' => json_encode($history, JSON_UNESCAPED_UNICODE)
+            'history' => json_encode($history, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE)
         ]);
 
         return response()->json(['result' => 'success', 'message' => trans('locale.order.success.updated', ['id' => $id])]);
@@ -1046,7 +1047,7 @@ class OrdersController extends Controller
         if (!$order || $order->email !== $validated['email']) {
             return response()->json([
                 'success' => false,
-                'message' => 'Sorry, the order could not be found. Please contact us if you are having difficulty finding your order details.'
+                'message' => 'Заказ не найден. Проверьте номер заказа и email, указанные при оформлении.'
             ]);
         }
 

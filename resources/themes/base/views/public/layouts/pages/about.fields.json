@@ -1,0 +1,119 @@
+{
+    "path": "resources/themes/base/views/public/layouts/pages/about.blade.php",
+    "name": "public.layouts.pages.about",
+    "category": null,
+    "fields": [
+        {
+            "id": "17654567901570",
+            "type": "text",
+            "name": "Subtitle",
+            "slug": "subtitle",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        },
+        {
+            "id": "17654569842810",
+            "type": "repeater",
+            "name": "Blocks",
+            "slug": "blocks",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null,
+            "fields": [
+                {
+                    "id": "17654569891200",
+                    "type": "oembed",
+                    "name": "Image",
+                    "slug": "image",
+                    "instructions": null,
+                    "default": null,
+                    "conditional_field": null,
+                    "conditional_operator": "==",
+                    "conditional_value": null
+                },
+                {
+                    "id": "17654569944010",
+                    "type": "text",
+                    "name": "Title",
+                    "slug": "title",
+                    "instructions": null,
+                    "default": null,
+                    "conditional_field": null,
+                    "conditional_operator": "==",
+                    "conditional_value": null
+                },
+                {
+                    "id": "17654569951190",
+                    "type": "textarea",
+                    "name": "Description",
+                    "slug": "description",
+                    "instructions": null,
+                    "default": null,
+                    "conditional_field": null,
+                    "conditional_operator": "==",
+                    "conditional_value": null
+                }
+            ]
+        },
+        {
+            "id": "17654570680190",
+            "type": "text",
+            "name": "Thanks title",
+            "slug": "thanks_title",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        },
+        {
+            "id": "17654570738020",
+            "type": "textarea",
+            "name": "Thanks description",
+            "slug": "thanks_description",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        },
+        {
+            "id": "17654570815200",
+            "type": "text",
+            "name": "Shop link title",
+            "slug": "shop_link_title",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        },
+        {
+            "id": "17654570885160",
+            "type": "text",
+            "name": "Shop link name",
+            "slug": "shop_link_name",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        },
+        {
+            "id": "17654570961880",
+            "type": "text",
+            "name": "Shop link url",
+            "slug": "shop_link_url",
+            "instructions": null,
+            "default": null,
+            "conditional_field": null,
+            "conditional_operator": "==",
+            "conditional_value": null
+        }
+    ]
+}

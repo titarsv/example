@@ -27,6 +27,11 @@ $(document).ready(function () {
                     data: 'name',
                     name: 'name',
                     render: function ( data, type, row ) {
+                        if(row.missing){
+                            return '<i class="bx bx-error-circle text-danger mr-1" data-toggle="tooltip" data-placement="bottom" title="'
+                                + __('Template file not found, referenced by :count block(s)', {count: row.entries_count})
+                                + '"></i>' + data;
+                        }
                         return data;
                     }
                 },
@@ -35,6 +40,13 @@ $(document).ready(function () {
                     name: 'path',
                     render: function ( data, type, row ) {
                         return data;
+                    }
+                },
+                {
+                    data: 'category',
+                    name: 'category',
+                    render: function ( data, type, row ) {
+                        return data ? data : '';
                     }
                 },
                 {
@@ -49,6 +61,9 @@ $(document).ready(function () {
                                 if(data[i].type === 'edit'){
                                     text = '<i class="bx bx-edit-alt" data-toggle="tooltip" data-placement="bottom" data-original-title="' + __('Edit') + '"></i>';
                                     html += '<a class="category-action-view mr-1" href="'+ data[i].link +'">'+ text +'</a>';
+                                }else if(data[i].type === 'duplicate'){
+                                    text = '<i class="bx bx-copy" data-toggle="tooltip" data-placement="bottom" data-original-title="' + __('Duplicate') + '"></i>';
+                                    html += '<span class="category-action-edit cursor-pointer js_duplicate_template mr-1" data-link="'+ data[i].link +'">'+ text +'</span>';
                                 }else if(data[i].type === 'delete'){
                                     text = '<i class="bx bx-trash" data-toggle="tooltip" data-placement="bottom" data-original-title="' + __('Delete') + '"></i>';
                                     html += '<span class="category-action-edit cursor-pointer js_delete_item" data-endpoint="products/categories" data-id="'+data[i].id+'" data-name="'+data[i].name+'">'+ text +'</span>';
@@ -68,7 +83,7 @@ $(document).ready(function () {
             deferRender: true,
             columnDefs: [
                 {
-                    targets: [1],
+                    targets: [1, 2],
                     orderable: false
                 }
             ],
@@ -132,8 +147,8 @@ $(document).ready(function () {
                 field.find('.add-field').data('parent', parent_key);
                 field.find('#heading0').attr('id', 'heading_secondary'+index).attr('data-target', '#accordion_secondary'+index).attr('data-parent', '#'+wrapper.attr('id')).attr('aria-controls', 'accordion_secondary'+index);
                 field.find('#accordion0').attr('id', 'accordion_secondary'+index).attr('aria-labelledby', 'heading_secondary'+index);
-                field.find('.custom-control-label').attr('for', 'langsSwitch'+index);
-                field.find('.custom-control-input').attr('id', 'langsSwitch'+index);
+                field.find('.langs-control .custom-control-label').attr('for', 'langsSwitch'+index);
+                field.find('.langs-control .custom-control-input').attr('id', 'langsSwitch'+index);
             });
         });
     });
@@ -174,8 +189,8 @@ $(document).ready(function () {
         field.find('#heading0').attr('id', 'heading'+key).attr('data-target', '#accordion'+key).attr('aria-controls', 'accordion'+key);
         field.find('#accordion0').attr('id', 'accordion'+key).attr('aria-labelledby', 'heading'+key);
         field.find('.badge').text($('#basic-list-group > .card').length + 1);
-        field.find('.custom-control-label').attr('for', 'langsSwitch'+key);
-        field.find('.custom-control-input').attr('id', 'langsSwitch'+key);
+        field.find('.langs-control .custom-control-label').attr('for', 'langsSwitch'+key);
+        field.find('.langs-control .custom-control-input').attr('id', 'langsSwitch'+key);
         field.find('.field_id').val(microtime());
         $('#basic-list-group').append(field);
         $this.data('key', key + 1);
@@ -185,7 +200,7 @@ $(document).ready(function () {
 
     $(document).on('change', '.field .type', function(){
         var $this = $(this);
-        if($.inArray($this.val(), ['select', 'repeater']) !== -1){
+        if($.inArray($this.val(), ['select', 'number', 'repeater', 'group']) !== -1){
             var field = $('.hidden .panel.'+$this.val()).clone();
             var parent = $this.data('parent');
             field.find('input, textarea, select').each(function(){
@@ -214,8 +229,8 @@ $(document).ready(function () {
         field.find('#heading0').attr('id', 'heading_secondary'+index).attr('data-target', '#accordion_secondary'+index).attr('data-parent', '#'+wrapper.attr('id')).attr('aria-controls', 'accordion_secondary'+index);
         field.find('#accordion0').attr('id', 'accordion_secondary'+index).attr('aria-labelledby', 'heading_secondary'+index);
         field.find('.badge').text(wrapper.children('.card').length + 1);
-        field.find('.custom-control-label').attr('for', 'langsSwitch'+index);
-        field.find('.custom-control-input').attr('id', 'langsSwitch'+index);
+        field.find('.langs-control .custom-control-label').attr('for', 'langsSwitch'+index);
+        field.find('.langs-control .custom-control-input').attr('id', 'langsSwitch'+index);
         field.find('.field_id').val(microtime());
         wrapper.append(field);
         drake.containers.push(document.getElementById(wrapper.attr('id')));
@@ -345,6 +360,77 @@ $(document).ready(function () {
                     cm.save()
                 }
             }
+        });
+    });
+
+    // Дублирование шаблона ("Save as new") из списка шаблонов блоков
+    $(document).on('click', '.js_duplicate_template', function(e){
+        e.preventDefault();
+        let link = $(this).data('link');
+
+        Swal.fire({
+            title: __('New template name'),
+            input: 'text',
+            confirmButtonClass: 'btn btn-primary',
+            buttonsStyling: false,
+            inputAttributes: {
+                autocapitalize: 'off'
+            },
+            showCancelButton: true,
+            confirmButtonText: __('Create'),
+            cancelButtonText: __('Cancel'),
+            cancelButtonClass: 'btn btn-danger ml-1',
+            preConfirm: function(name){
+                return fetch(link, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    body: JSON.stringify({name: name}),
+                    credentials: 'same-origin'
+                }).then(function(response){
+                    return response.json();
+                });
+            }
+        }).then(function(response){
+            if(response.value && response.value.result === 'success'){
+                location = response.value.redirect;
+            }else if(response.value){
+                toastr.error(response.value.message);
+            }
+        });
+    });
+
+    // Восстановление версии схемы полей/HTML шаблона из истории изменений
+    $(document).on('click', '.js_restore_revision', function(e){
+        e.preventDefault();
+        let $this = $(this);
+        let revisionId = $this.data('id');
+        let name = $this.data('name');
+        let app = $this.data('app');
+
+        Swal.fire({
+            title: __('Restore'),
+            text: __('Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).'),
+            confirmButtonClass: 'btn btn-primary',
+            buttonsStyling: false,
+            showCancelButton: true,
+            confirmButtonText: __('Restore'),
+            cancelButtonText: __('Cancel'),
+            cancelButtonClass: 'btn btn-light ml-1'
+        }).then(function(result){
+            if(!result.value){
+                return;
+            }
+            $.post('/admin/'+app+'/template/restore/'+name, {revision_id: revisionId}, function(response){
+                if(response.result === 'success'){
+                    toastr.success(response.message);
+                    location.reload();
+                }else{
+                    toastr.error(response.message);
+                }
+            });
         });
     });
 });

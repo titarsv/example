@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Helpers\Helper;
+use App\Models\Concerns\HasCustomFields;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App;
 
@@ -14,7 +15,7 @@ class Block extends Entity
         'template'
     ];
 
-    use SoftDeletes;
+    use SoftDeletes, HasCustomFields;
 
     protected $dates = ['deleted_at'];
 
@@ -31,7 +32,7 @@ class Block extends Entity
         $localization = $this->localization->first(function ($value, $key) use ($language, $field){
             return $value->language == $language && $value->field == $field;
         });
-        if(empty($localization))
+        if(empty($localization) && !isset($this->relations['localization']))
             $localization = $this->localization()->where(['language' => $language, 'field' => $field])->first();
 
         if(empty($localization)) {
@@ -58,122 +59,6 @@ class Block extends Entity
 
     public function getBodyAttribute(){
         return $this->getAttributeByName('body');
-    }
-
-    /**
-     * Подгрузка товаров в данные
-     *
-     * @param $fields
-     *
-     * @return mixed
-     */
-    public function setFieldsProducts($fields){
-        $products = new Product();
-
-        if(empty($fields)){
-            $fields = [];
-        }
-
-        foreach($fields as $i => $field){
-            if($field->type == 'repeater'){
-                $fields[$i]->data = $this->setRepeaterProducts($fields[$i]->fields, $fields[$i]->data);
-            }elseif($field->type == 'product'){
-                if(!empty($field->value)){
-                    $fields[$i]->value = [
-                        'id' => $field->value,
-                        'product' => $products->find($field->value)
-                    ];
-                }
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Подгрузка товаров в данные повторителя
-     *
-     * @param $fields
-     * @param $data
-     *
-     * @return mixed
-     */
-    public function setRepeaterProducts($fields, $data){
-        foreach($data as $i => $fields_data){
-            foreach($fields as $field){
-                if(isset($fields_data->{$field->slug})){
-                    if($field->type == 'repeater'){
-                        $data[$i]->{$field->slug} = $this->setRepeaterProducts($field->fields, $fields_data->{$field->slug});
-                    }elseif($field->type == 'product'){
-                        $products = new Product();
-                        $data[$i]->{$field->slug} = [
-                            'id' => $fields_data->{$field->slug},
-                            'product' => $products->find($fields_data->{$field->slug})
-                        ];
-                    }
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
-     * Подгрузка изобрпжений в данные
-     *
-     * @param $fields
-     *
-     * @return mixed
-     */
-    public function setFieldsImages($fields){
-        $images = new File();
-
-        if(empty($fields)){
-            $fields = [];
-        }
-
-        foreach($fields as $i => $field){
-            if($field->type == 'repeater'){
-                $fields[$i]->data = $this->setRepeaterImages($fields[$i]->fields, $fields[$i]->data);
-            }elseif($field->type == 'oembed'){
-                if(!empty($field->value)){
-                    $fields[$i]->value = [
-                        'id' => $field->value,
-                        'image' => $images->find($field->value)
-                    ];
-                }
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Подгрузка изобрпжений в данные повторителя
-     *
-     * @param $fields
-     * @param $data
-     *
-     * @return mixed
-     */
-    public function setRepeaterImages($fields, $data){
-        foreach($data as $i => $fields_data){
-            foreach($fields as $field){
-                if(isset($fields_data->{$field->slug})){
-                    if($field->type == 'repeater'){
-                        $data[$i]->{$field->slug} = $this->setRepeaterImages($field->fields, $fields_data->{$field->slug});
-                    }elseif($field->type == 'oembed'){
-                        $images = new File();
-                        $data[$i]->{$field->slug} = [
-                            'id' => $fields_data->{$field->slug},
-                            'image' => $images->find($fields_data->{$field->slug})
-                        ];
-                    }
-                }
-            }
-        }
-
-        return $data;
     }
 
     protected function dataMap(){

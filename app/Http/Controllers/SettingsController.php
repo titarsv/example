@@ -8,8 +8,8 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Http\Request;
 use App\Models\Setting;
-use App\Models\Newpost;
-use App\Models\Justin;
+use Modules\Delivery\Models\Newpost;
+use Modules\Delivery\Models\Justin;
 
 class SettingsController extends Controller
 {

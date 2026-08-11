@@ -1,0 +1,183 @@
+// The few bits Bootstrap's own components don't cover. Keep this file
+// small — if you need more than this for a client theme, that's a sign
+// the layout should be reworked with Bootstrap utilities instead.
+
+.product-card__image {
+    aspect-ratio: 1 / 1;
+    object-fit: contain;
+    background-color: var(--bs-light);
+}
+
+.product-card {
+    transition: box-shadow .15s ease, transform .15s ease;
+
+    &:hover {
+        box-shadow: var(--bs-box-shadow);
+        transform: translateY(-2px);
+    }
+}
+
+.text-warning-emphasis .bi-star-fill,
+.rating-stars .bi-star-fill {
+    color: #F5B700;
+}
+
+.hero {
+    background-color: var(--bs-light);
+    border-radius: var(--bs-border-radius-lg);
+}
+
+.footer {
+    background-color: var(--bs-dark);
+    color: rgba(255, 255, 255, .75);
+
+    a {
+        color: rgba(255, 255, 255, .75);
+
+        &:hover {
+            color: #fff;
+        }
+    }
+}
+
+// Атрибуты-фильтры типа multiple_color_checkboxes / single_color_radio —
+// сайдбар каталога рисует их кружками с картинкой значения вместо чекбоксов.
+.js-color-swatch {
+    display: inline-block;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background-color: var(--bs-secondary-bg);
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--bs-border-color);
+    cursor: pointer;
+
+    .js-color-swatch-input:checked + & {
+        border-color: var(--bs-primary);
+        box-shadow: 0 0 0 .15rem var(--bs-primary-bg-subtle);
+    }
+}
+
+// Атрибуты-фильтры типа range_slider — два нативных input[type=range],
+// наложенных друг на друга; каждый двигает свою половину диапазона.
+.js-range-slider {
+    height: 1.25rem;
+
+    .form-range {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        pointer-events: none;
+
+        &::-webkit-slider-thumb {
+            pointer-events: auto;
+        }
+
+        &::-moz-range-thumb {
+            pointer-events: auto;
+        }
+    }
+}
+
+// Слайдеры товарных рекомендаций (slick-carousel) — похожие товары,
+// сопутствующие, рекомендуем, хиты продаж и т.п. Своя стилизация стрелок
+// вместо slick-theme.css — под кнопки Bootstrap, без завязки на шрифт/
+// картинки из пакета slick.
+.js-products-slider {
+    // .slick-track вёрстан на float, а не flex, поэтому слайды сами по себе
+    // не растягиваются по высоте друг под друга — карточка с более длинным
+    // названием оказывается выше остальных. Стандартный фикс: пересаживаем
+    // трек на flex и прокидываем 100% высоты через обёртку слайда до карточки.
+    .slick-track {
+        display: flex !important;
+        align-items: stretch;
+    }
+
+    .slick-slide {
+        height: auto;
+        padding: 0 .5rem;
+
+        > div {
+            height: 100%;
+        }
+    }
+
+    .slick-list {
+        margin: 0 -.5rem;
+    }
+
+    .slick-prev,
+    .slick-next {
+        position: absolute;
+        top: 50%;
+        z-index: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        padding: 0;
+        border: 1px solid var(--bs-border-color);
+        border-radius: 50%;
+        background-color: var(--bs-body-bg);
+        color: var(--bs-body-color);
+        transform: translateY(-50%);
+
+        &:hover {
+            background-color: var(--bs-light);
+        }
+
+        &.slick-disabled {
+            opacity: .35;
+            pointer-events: none;
+        }
+    }
+
+    .slick-prev {
+        left: -1.25rem;
+    }
+
+    .slick-next {
+        right: -1.25rem;
+    }
+}
+
+// Страница сравнения товаров (Modules/Compare) — раскладка на CSS grid, не
+// <table>. Шапка (.js-compare-sticky) и тело таблицы (.js-compare-scroll >
+// .js-compare-grid) — два НЕЗАВИСИМЫХ overflow-x:auto блока, а не один общий
+// скролл-контейнер на двоих (см. подробный комментарий в compare.blade.php):
+// overflow-x:auto у общего контейнера по спеке CSS Overflow тянет за собой
+// overflow-y:auto, из-за чего этот контейнер сам становится точкой отсчёта
+// (containing block) для sticky внутри — а раз он сам никогда не скроллится
+// вертикально (скроллится страница), sticky просто перестаёт закрепляться.
+// Поэтому шапка держит собственный overflow-x:auto и ничем не обёрнута —
+// точка отсчёта для её sticky это окно, как и нужно. Полоса прокрутки у неё
+// скрыта (видна только полоса тела снизу), прокрутка синхронизируется в JS.
+// top выставляется из JS (app.js: updateCompareStickyOffset) — под реальную
+// высоту шапки сайта.
+.js-compare-wrapper {
+    .js-compare-sticky {
+        position: sticky;
+        z-index: 2;
+        background-color: var(--bs-body-bg);
+        scrollbar-width: none;
+
+        &::-webkit-scrollbar {
+            display: none;
+        }
+    }
+
+    .js-compare-grid.js-diff-only-active > .js-compare-label:not(.js-row-differs),
+    .js-compare-grid.js-diff-only-active > .js-compare-cell:not(.js-row-differs) {
+        display: none;
+    }
+}
+
+.js-compare-wrapper:fullscreen {
+    background-color: var(--bs-body-bg);
+    padding: 1rem;
+    overflow: auto;
+}

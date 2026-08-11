@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Helpers\Helper;
+use App\Helpers\Fields;
 use App\Models\AttributeValue;
 use Modules\Reviews\Models\SiteReview;
 use App\Models\Category;
@@ -23,6 +24,9 @@ use App;
 
 class PagesController extends Controller
 {
+    use \App\Http\Controllers\Concerns\DetectsMissingTemplates;
+    use \App\Http\Controllers\Concerns\RecordsTemplateRevisions;
+
     protected $rules = [
         'name' => 'required|unique:pages'
     ];
@@ -68,10 +72,10 @@ class PagesController extends Controller
         if($page->template == 'public.page'){
             $fields = null;
         }else{
-            $d = $this->setFieldsProducts($page->setFieldsImages(json_decode($page->localize(app()->getLocale(), 'body'))));
+            $d = $page->setFieldsCategories($page->setFieldsPages($page->setFieldsProducts($page->setFieldsImages(json_decode($page->localize(app()->getLocale(), 'body'))))));
             $fields = [];
             foreach($d as $field){
-                if($field->type == 'repeater'){
+                if(in_array($field->type, ['repeater', 'group'])){
                     $fields[$field->slug] = $field->data;
                 }else{
                     $fields[$field->slug] = isset($field->value) ? $field->value : '';
@@ -119,10 +123,10 @@ class PagesController extends Controller
         if($page->template == 'public.page'){
             $fields = null;
         }else{
-            $d = $this->setFieldsProducts($page->setFieldsImages(json_decode($page->localize(App::getLocale(), 'body'))));
+            $d = $page->setFieldsCategories($page->setFieldsPages($page->setFieldsProducts($page->setFieldsImages(json_decode($page->localize(App::getLocale(), 'body'))))));
             $fields = [];
             foreach($d as $field){
-                if($field->type == 'repeater'){
+                if(in_array($field->type, ['repeater', 'group'])){
                     $fields[$field->slug] = $field->data;
                 }else{
                     $fields[$field->slug] = isset($field->value) ? $field->value : '';
@@ -266,11 +270,16 @@ class PagesController extends Controller
             'name' => 'page',
             'value' => 'public.page'
         ]];
-        foreach(Storage::disk('local')->allFiles('/resources/views/public/layouts/pages') as $file){
+        foreach(Storage::disk('local')->allFiles(theme_relative_path('views/public/layouts/pages')) as $file){
+            if(!Str::endsWith($file, '.blade.php')){
+                // Пропускаем не-шаблоны в этой папке — например {name}.fields.json
+                // из Local JSON sync (см. adminUpdateTemplateFieldsAction).
+                continue;
+            }
             $parts = explode('/', $file);
             $templates[] = (object)[
                 'name' => str_replace('.blade.php', '', end($parts)),
-                'value' => str_replace(['resources/views/', '.blade.php', '/'], ['', '', '.'], $file)
+                'value' => str_replace([theme_relative_path('views/'), '.blade.php', '/'], ['', '', '.'], $file)
             ];
         }
 
@@ -327,11 +336,47 @@ class PagesController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      */
-    public function adminTemplatesListAction(Request $request){
+    public function adminTemplatesListAction(Request $request, Setting $settings){
         $files = [];
-        foreach(Storage::disk('local')->allFiles('/resources/views/public/layouts/pages') as $file){
+        $existing_paths = [];
+        foreach(Storage::disk('local')->allFiles(theme_relative_path('views/public/layouts/pages')) as $file){
+            if(!Str::endsWith($file, '.blade.php')){
+                // Пропускаем не-шаблоны в этой папке — например {name}.fields.json
+                // из Local JSON sync (см. adminUpdateTemplateFieldsAction).
+                continue;
+            }
             $parts = explode('/', $file);
             $name = str_replace('.blade.php', '', end($parts));
+            $path = str_replace([theme_relative_path('views/'), '.blade.php', '/'], ['', '', '.'], $file);
+            $existing_paths[] = $path;
+
+            $actions = [];
+            if($this->user->hasAccess(['pages.write'])){
+                $actions[] = [
+                    'type' => 'edit',
+                    'link' => asset('admin/pages/template/'.$name)
+                ];
+                $actions[] = [
+                    'type' => 'duplicate',
+                    'name' => $name,
+                    'link' => asset('admin/pages/template/duplicate/'.$name)
+                ];
+            }
+
+            $files[] = [
+                'path' => $path,
+                'name' => $name,
+                'category' => $this->templateCategory($settings, $path, $name, 'pages'),
+                'actions' => $actions
+            ];
+        }
+
+        // Шаблоны, на которые ссылаются страницы, но blade-файла для них уже
+        // (или ещё) нет на диске — переименовали/удалили файл в обход админки.
+        // Такие страницы молча падают при рендере на публичной части, поэтому
+        // показываем их в списке отдельной "битой" строкой вместо тихой потери.
+        foreach($this->missingTemplates(Page::class, $existing_paths, 'public.page') as $row){
+            $name = str_replace('public.layouts.pages.', '', $row->template);
             $actions = [];
             if($this->user->hasAccess(['pages.write'])){
                 $actions[] = [
@@ -341,8 +386,10 @@ class PagesController extends Controller
             }
 
             $files[] = [
-                'path' => str_replace(['resources/views/', '.blade.php', '/'], ['', '', '.'], $file),
+                'path' => $row->template,
                 'name' => $name,
+                'missing' => true,
+                'entries_count' => $row->entries_count,
                 'actions' => $actions
             ];
         }
@@ -399,10 +446,28 @@ class PagesController extends Controller
             }
         }
 
+        // Валидация значений полей по схеме шаблона (сейчас только required)
+        // отдельно от $rules/$messages выше, т.к. поля адресуются по slug'у
+        // из динамической схемы, а не по фиксированному имени input'а.
+        // Проверяем только реально включённые локали (app.locales), а не все ключи
+        // $fields — там, из-за рассинхрона app.locales/app.locales_names (см. config/app.php,
+        // 'en' закомментирован в locales, но не в locales_names), может быть локаль,
+        // которая структурно никогда не получает значение из запроса — required
+        // на ней всегда бы ложно проваливал сохранение.
+        $field_errors = [];
+        if(!empty($fields)){
+            foreach(Config::get('app.locales') as $locale){
+                if(isset($fields[$locale])){
+                    $field_errors = array_merge_recursive($field_errors, Fields::validateSubmission($fields[$locale]));
+                }
+            }
+        }
+
         $validator = Validator::make($request->all(), $rules, $messages);
 
-        if($validator->fails()){
-            return response()->json(['result' => 'error', 'errors' => $validator->messages(), 'message' => trans('locale.validation_error')], 200);
+        if($validator->fails() || !empty($field_errors)){
+            $errors = array_merge_recursive($validator->errors()->toArray(), $field_errors);
+            return response()->json(['result' => 'error', 'errors' => $errors, 'message' => trans('locale.validation_error')], 200);
         }
 
         $page = Page::find($id);
@@ -495,7 +560,17 @@ class PagesController extends Controller
      */
     public function adminTemplateAction($name, Setting $settings){
         $template = $settings->get_setting('template_public.layouts.pages.'.$name);
-        $path = "resources/views/public/layouts/pages/$name.blade.php";
+        $path = theme_relative_path("views/public/layouts/pages/$name.blade.php");
+
+        if(empty($template)){
+            // Local JSON fallback — если в settings пусто (свежее окружение без сида БД,
+            // например только что развёрнутый стейджинг), но рядом с шаблоном в репозитории
+            // есть {name}.fields.json, сохранённый при прошлом изменении схемы.
+            $json_path = theme_relative_path("views/public/layouts/pages/$name.fields.json");
+            if(Storage::disk('local')->exists($json_path)){
+                $template = json_decode(Storage::disk('local')->get($json_path));
+            }
+        }
 
         if(empty($template)){
             $template = (object)[
@@ -507,8 +582,16 @@ class PagesController extends Controller
         $template->name = $name;
         $template->html = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : '';
 
+        // Живое превью: показываем реальную страницу, использующую этот шаблон (если есть),
+        // вместо того чтобы собирать фиктивный контекст рендера ($seo/$page/доп. переменные —
+        // у разных шаблонов страниц они разные, например у 'home' их заметно больше, чем
+        // просто $fields) — так превью всегда 100% совпадает с тем, что видит посетитель.
+        $preview_page = Page::where('template', 'public.layouts.pages.'.$name)->whereHas('seo')->first();
+
         return view('admin.pages.templates.template')
             ->with('template', $template)
+            ->with('preview_page', $preview_page)
+            ->with('revisions', $this->templateRevisions('page_template_fields', 'page_template_html', 'public.layouts.pages.'.$name))
             ->with('treeview_data', $this->generateTreeviewData($template->fields));
     }
 
@@ -519,9 +602,19 @@ class PagesController extends Controller
             'textarea' => 'bx bx-menu',
             'wysiwyg' => 'bx bx-notepad',
             'oembed' => 'bx bx-image',
+            'gallery' => 'bx bx-images',
             'select' => 'bx bx-list-check',
             'product' => 'bx bxs-shopping-bag',
+            'relationship' => 'bx bx-file',
+            'taxonomy' => 'bx bx-collection',
             'repeater' => 'bx bx-repeat',
+            'group' => 'bx bx-folder',
+            'number' => 'bx bx-hash',
+            'email' => 'bx bx-envelope',
+            'url' => 'bx bx-link',
+            'date' => 'bx bx-calendar',
+            'color' => 'bx bx-palette',
+            'true_false' => 'bx bx-toggle-right',
         ];
 
         foreach($fields as $field){
@@ -531,7 +624,7 @@ class PagesController extends Controller
                 'href' => rtrim($this->generateTemplate($field, empty($parent) ? '$fields' : '$' . $parent->slug), "\r\n")
             ];
 
-            if($field->type == 'repeater'){
+            if(in_array($field->type, ['repeater', 'group'])){
                 $field_data['nodes'] = $this->generateTreeviewData($field->fields, $field);
             }
 
@@ -544,14 +637,26 @@ class PagesController extends Controller
     public function generateTemplate($field, $parent = '$fields'){
         $blade = '';
 
-        if(in_array($field->type, ['text', 'textarea', 'wysiwyg', 'select'])){
-            $blade .= "{!! " . $parent . '[\'' . $field->slug . "'] !!}\r\n";
+        if(in_array($field->type, ['text', 'textarea', 'wysiwyg', 'select', 'number', 'email', 'url', 'date', 'color'])){
+            $blade .= "{!! field(" . $parent . ", '" . $field->slug . "') !!}\r\n";
+        }elseif($field->type == 'true_false'){
+            $blade .= "@if(field(" . $parent . ", '" . $field->slug . "'))\r\n\r\n@endif\r\n";
         }elseif($field->type == 'oembed'){
             $blade .= "{!! " . $parent . '[\'' . $field->slug . "']['image']->webp([1920, 1080], ['alt' => " .'$fields[\'' . $field->slug . "']['image']->alt" . "]) !!}\r\n";
-        }elseif($field->type == 'repeater'){
+        }elseif($field->type == 'gallery'){
+            $blade .= '@foreach(' .$parent . '[\'' . $field->slug . '\'] as $' . $field->slug . "_image)\r\n";
+            $blade .= '    {!! $' . $field->slug . "_image->webp([1920, 1080], ['alt' => \$" . $field->slug . "_image->alt]) !!}\r\n";
+            $blade .= "@endforeach\r\n";
+        }elseif($field->type == 'product'){
+            $blade .= "{!! " . $parent . '[\'' . $field->slug . "']['product']->name !!}\r\n";
+        }elseif($field->type == 'relationship'){
+            $blade .= "{!! " . $parent . '[\'' . $field->slug . "']['page']->name !!}\r\n";
+        }elseif($field->type == 'taxonomy'){
+            $blade .= "{!! " . $parent . '[\'' . $field->slug . "']['category']->name !!}\r\n";
+        }elseif(in_array($field->type, ['repeater', 'group'])){
             $blade .= '@foreach(' .$parent . '[\'' . $field->slug . '\'] as $' . $field->slug . ")\r\n";
             foreach($field->fields as $subfield){
-                if($subfield->type == 'repeater'){
+                if(in_array($subfield->type, ['repeater', 'group'])){
                     $blade .= implode("\r\n    ", explode("\r\n", "    " . rtrim($this->generateTemplate($subfield, '$' . $field->slug), "\r\n"))) . "\r\n";
                 }else{
                     $blade .= "    " . $this->generateTemplate($subfield, '$' . $field->slug);
@@ -572,15 +677,80 @@ class PagesController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateTemplateFieldsAction($name, Request $request, Setting $settings){
+        $old_template = $settings->get_setting('template_public.layouts.pages.'.$name);
+
         $template = (object)[
-            'path' => "resources/views/public/layouts/pages/$name.blade.php",
+            'path' => theme_relative_path("views/public/layouts/pages/$name.blade.php"),
             'name' => 'public.layouts.pages.'.$name,
+            'category' => $request->category,
             'fields' => $this->refreshFieldsKeys($request->fields)
         ];
 
         $settings->update_setting('template_public.layouts.pages.'.$name, $template);
 
+        // Local JSON sync: копия схемы рядом с blade-файлом шаблона, чтобы конфиг полей
+        // ехал через git/деплой вместе с версткой, а не жил только в settings прод-базы.
+        Storage::disk('local')->put(
+            theme_relative_path("views/public/layouts/pages/$name.fields.json"),
+            json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
+
+        $this->recordTemplateRevision('page_template_fields', 'public.layouts.pages.'.$name, $old_template, $template);
+
         return response()->json(['result' => 'success', 'message' => trans('locale.changes_saved')], 200);
+    }
+
+    /**
+     * Дублирование шаблона: копия HTML-файла и схемы полей под новым именем
+     * ("Save as new" — быстрый старт нового шаблона на основе существующего).
+     *
+     * @param $name
+     * @param Request $request
+     * @param Setting $settings
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function adminDuplicateTemplateAction($name, Request $request, Setting $settings){
+        $new_name = Str::slug($request->name, '-');
+
+        if(empty($new_name)){
+            return response()->json(['result' => 'error', 'message' => trans('locale.This field must be filled!')], 200);
+        }
+
+        $new_path = theme_relative_path("views/public/layouts/pages/$new_name.blade.php");
+
+        if(Storage::disk('local')->exists($new_path)){
+            return response()->json(['result' => 'error', 'message' => trans('locale.The value must be unique!')], 200);
+        }
+
+        $source_path = theme_relative_path("views/public/layouts/pages/$name.blade.php");
+        Storage::disk('local')->put($new_path, Storage::disk('local')->exists($source_path) ? Storage::disk('local')->get($source_path) : '');
+
+        $source_template = $settings->get_setting('template_public.layouts.pages.'.$name);
+        if(empty($source_template)){
+            $json_path = theme_relative_path("views/public/layouts/pages/$name.fields.json");
+            if(Storage::disk('local')->exists($json_path)){
+                $source_template = json_decode(Storage::disk('local')->get($json_path));
+            }
+        }
+
+        $new_template = (object)[
+            'path' => $new_path,
+            'name' => 'public.layouts.pages.'.$new_name,
+            'category' => !empty($source_template->category) ? $source_template->category : null,
+            'fields' => !empty($source_template->fields) ? $source_template->fields : []
+        ];
+
+        $settings->update_setting('template_public.layouts.pages.'.$new_name, $new_template);
+        Storage::disk('local')->put(
+            theme_relative_path("views/public/layouts/pages/$new_name.fields.json"),
+            json_encode($new_template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+        );
+
+        return response()->json([
+            'result' => 'success',
+            'message' => trans('locale.changes_saved'),
+            'redirect' => asset('admin/pages/template/'.$new_name)
+        ], 200);
     }
 
     /**
@@ -610,9 +780,50 @@ class PagesController extends Controller
      * @return \Illuminate\Http\JsonResponse
      */
     public function adminUpdateTemplateFileAction($name, Request $request){
-        $path = "resources/views/public/layouts/pages/$name.blade.php";
+        $path = theme_relative_path("views/public/layouts/pages/$name.blade.php");
+        $old_html = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : null;
 
         Storage::disk('local')->put($path, $request->html);
+
+        $this->recordTemplateRevision('page_template_html', 'public.layouts.pages.'.$name, $old_html, $request->html);
+
+        return response()->json(['result' => 'success', 'message' => trans('locale.changes_saved')], 200);
+    }
+
+    /**
+     * Восстановление предыдущей версии схемы полей или HTML шаблона из истории
+     * изменений (см. RecordsTemplateRevisions).
+     *
+     * @param $name
+     * @param Request $request
+     * @param Setting $settings
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function adminRestoreTemplateRevisionAction($name, Request $request, Setting $settings){
+        $revision = Action::find($request->revision_id);
+
+        if(empty($revision) || $revision->entity_id !== 'public.layouts.pages.'.$name){
+            return response()->json(['result' => 'error', 'message' => trans('locale.Not found')], 200);
+        }
+
+        $restored = json_decode($revision->getRawOriginal('new_data'));
+
+        if($revision->entity === 'page_template_fields'){
+            $old_template = $settings->get_setting('template_public.layouts.pages.'.$name);
+            $settings->update_setting('template_public.layouts.pages.'.$name, $restored);
+            Storage::disk('local')->put(
+                theme_relative_path("views/public/layouts/pages/$name.fields.json"),
+                json_encode($restored, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
+            );
+            $this->recordTemplateRevision('page_template_fields', 'public.layouts.pages.'.$name, $old_template, $restored);
+        }elseif($revision->entity === 'page_template_html'){
+            $path = theme_relative_path("views/public/layouts/pages/$name.blade.php");
+            $old_html = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : null;
+            Storage::disk('local')->put($path, $restored);
+            $this->recordTemplateRevision('page_template_html', 'public.layouts.pages.'.$name, $old_html, $restored);
+        }else{
+            return response()->json(['result' => 'error', 'message' => trans('locale.Not found')], 200);
+        }
 
         return response()->json(['result' => 'success', 'message' => trans('locale.changes_saved')], 200);
     }
@@ -634,8 +845,16 @@ class PagesController extends Controller
         $request = $this->mergeLangFields($request);
         foreach($fields as $lang => $lang_fields){
             foreach($lang_fields as $i => $field){
-                if($field->type == 'repeater'){
-                    $fields[$lang][$i]->data = $request[$lang][$field->slug];
+                if(in_array($field->type, ['repeater', 'group'])){
+                    // ?? [] — на случай если для $lang вообще не пришло данных (например,
+                    // рассинхрон config('app.locales') / config('app.locales_names'), из-за
+                    // которого локаль есть в схеме полей, но не в присланном запросе)
+                    $fields[$lang][$i]->data = $request[$lang][$field->slug] ?? [];
+                }elseif($field->type == 'true_false'){
+                    // Снятый чекбокс не попадает в $request вовсе (стандартное
+                    // поведение HTML-формы) — без явного else поле бы тихо
+                    // сохраняло прежнее значение вместо сброса в false.
+                    $fields[$lang][$i]->value = isset($request[$lang][$field->slug]) ? 1 : 0;
                 }else{
                     if(isset($request[$lang][$field->slug])){
                         $fields[$lang][$i]->value = $request[$lang][$field->slug];
@@ -697,64 +916,6 @@ class PagesController extends Controller
     }
 
     /**
-     * Подгрузка товаров в данные
-     *
-     * @param $fields
-     *
-     * @return mixed
-     */
-    protected function setFieldsProducts($fields){
-        $products = new Product();
-
-        if(empty($fields)){
-            $fields = [];
-        }
-
-        foreach($fields as $i => $field){
-            if($field->type == 'repeater'){
-                $fields[$i]->data = $this->setRepeaterProducts($fields[$i]->fields, $fields[$i]->data);
-            }elseif($field->type == 'product'){
-                if(!empty($field->value)){
-                    $fields[$i]->value = [
-                        'id' => $field->value,
-                        'product' => $products->find($field->value)
-                    ];
-                }
-            }
-        }
-
-        return $fields;
-    }
-
-    /**
-     * Подгрузка товаров в данные повторителя
-     *
-     * @param $fields
-     * @param $data
-     *
-     * @return mixed
-     */
-    protected function setRepeaterProducts($fields, $data){
-        foreach($data as $i => $fields_data){
-            foreach($fields as $field){
-                if(isset($fields_data->{$field->slug})){
-                    if($field->type == 'repeater'){
-                        $data[$i]->{$field->slug} = $this->setRepeaterProducts($field->fields, $fields_data->{$field->slug});
-                    }elseif($field->type == 'product'){
-                        $products = new Product();
-                        $data[$i]->{$field->slug} = [
-                            'id' => $fields_data->{$field->slug},
-                            'product' => $products->find($fields_data->{$field->slug})
-                        ];
-                    }
-                }
-            }
-        }
-
-        return $data;
-    }
-
-    /**
      * Обновление настроек шаблона
      *
      * @param $template
@@ -768,7 +929,7 @@ class PagesController extends Controller
 
         foreach($template as $i => $field){
             if(isset($data[$i]) && ($field->type == $data[$i]->type || (in_array($field->type, ['text', 'textarea', 'wysiwyg']) && in_array($data[$i]->type, ['text', 'textarea', 'wysiwyg'])))){
-                if($field->type == 'repeater'){
+                if(in_array($field->type, ['repeater', 'group'])){
                     $template[$i]->fields = $this->updateTemplateData($template[$i]->fields , $data[$i]->fields);
                     if(isset($data[$i]->data)){
                         $template[$i]->data = $data[$i]->data;
@@ -777,9 +938,15 @@ class PagesController extends Controller
                     }
                 }elseif(isset($data[$i]->value)){
                     $template[$i]->value = $data[$i]->value;
+                }elseif(isset($field->default) && $field->default !== ''){
+                    $template[$i]->value = $field->default;
                 }
-            }elseif($field->type == 'repeater'){
+            }elseif(in_array($field->type, ['repeater', 'group'])){
                 $template[$i]->data = [];
+            }elseif(isset($field->default) && $field->default !== ''){
+                // Поле только что добавлено в схему шаблона — данных под него
+                // в уже сохранённой странице/блоке ещё нет вовсе
+                $template[$i]->value = $field->default;
             }
         }
 

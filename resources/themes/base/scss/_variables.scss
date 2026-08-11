@@ -1,0 +1,29 @@
+// Base theme — brand variables
+//
+// This is the one file a forked production theme is expected to edit
+// first: change these and most of the site restyles itself, since
+// everything else below is just Bootstrap's own components.
+
+$primary:   #3E3E93;
+$secondary: #6C757D;
+$success:   #2E7D32;
+$danger:    #C62828;
+$warning:   #ED6C02;
+$info:      #0288D1;
+$light:     #F5F5F7;
+$dark:      #17181C;
+
+$body-color: #212529;
+$body-bg:    #fff;
+
+$font-family-sans-serif: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+$headings-font-weight: 700;
+
+$border-radius:         .5rem;
+$border-radius-sm:      .375rem;
+$border-radius-lg:      .75rem;
+
+$link-decoration: none;
+$link-hover-decoration: underline;
+
+$enable-negative-margins: true;

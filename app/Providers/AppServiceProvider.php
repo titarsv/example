@@ -13,10 +13,12 @@ use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use Illuminate\Support\ServiceProvider;
 use App\Models\Setting;
 use App\Models\User;
-use App\Models\Paginator;
+use App\Helpers\Paginator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Blade;
+use App\Helpers\Fields;
 use App\Models\File;
 use App\Models\Order;
 use Modules\Reviews\Models\Review;
@@ -35,6 +37,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(Request $request): void
     {
+        // Автобиндинг ACF-подобных полей страниц/блоков в шаблонах: @field('slug')
+        // читает значение из ambient-переменной $fields, не требуя ручной вставки
+        // Blade-сниппета из кнопки "Generate" в админке шаблонов. Регистрируется
+        // до раннего возврата для консоли, т.к. нужна и для `artisan view:cache`.
+        Blade::directive('field', function($expression){
+            return "<?php echo Fields::value(\$fields ?? [], {$expression}); ?>";
+        });
+
         if(app()->runningInConsole()){
             return;
         }
@@ -203,7 +213,8 @@ class AppServiceProvider extends ServiceProvider
         });
 
         view()->composer([
-            'admin.pages.fields.product'
+            'admin.pages.fields.product',
+            'admin.blocks.fields.product', // раньше отсутствовало — $products не долетал до блоков
         ], function ($view) use ($user, $locale) {
             $view->with([
                 'products' => App\Models\Product::with(['localization' => function($query) use($locale){
@@ -212,6 +223,37 @@ class AppServiceProvider extends ServiceProvider
                         ->where('field', 'name');
                 }])->get()
             ]);
+        });
+
+        view()->composer([
+            'admin.pages.fields.relationship',
+            'admin.blocks.fields.relationship',
+        ], function ($view) use ($locale) {
+            $view->with([
+                'pages' => App\Models\Page::with(['localization' => function($query) use($locale){
+                    $query->select(['field', 'language', 'value', 'localizable_type', 'localizable_id'])
+                        ->where('language', $locale)
+                        ->where('field', 'name');
+                }])->get()
+            ]);
+        });
+
+        view()->composer([
+            'admin.pages.fields.taxonomy',
+            'admin.blocks.fields.taxonomy',
+        ], function ($view) use ($locale) {
+            // Category не даёт простого ->name как Page/Block/Product (см. Category::getOptimizedName) —
+            // читаем локализации напрямую, не трогая её оптимизированный кэширующий accessor.
+            $names = App\Models\Localization::where('localizable_type', 'Categories')
+                ->where('language', $locale)
+                ->where('field', 'name')
+                ->pluck('value', 'localizable_id');
+
+            $categories = App\Models\Category::orderBy('id')->pluck('id')->map(function($id) use ($names){
+                return (object)['id' => $id, 'name' => $names->get($id, '#'.$id)];
+            });
+
+            $view->with(['categories' => $categories]);
         });
 
         view()->composer(['admin.layouts.sidebar', 'admin.layouts.main'], function ($view) {
@@ -237,15 +279,6 @@ class AppServiceProvider extends ServiceProvider
                 ->with('reviews_grade', module_active('reviews') ? SiteReview::where('published', 1)->avg('grade') : null);
         });
 
-        view()->composer(['public.layouts.pages.city'], function ($view){
-            $view->with('effects', AttributeValue::where('attribute_id', 1)->get())
-                ->with('favorites', Product::orderBy('popularity', 'desc')->where('visible', 1)->limit(7)->get())
-                ->with('reviews', module_active('reviews') ? SiteReview::orderBy('id', 'desc')->where('published', 1)->limit(7)->get() : collect())
-                ->with('reviews_count', module_active('reviews') ? SiteReview::where('published', 1)->count() : 0)
-                ->with('reviews_grade', module_active('reviews') ? SiteReview::where('published', 1)->avg('grade') : null)
-                ->with('articles', module_active('blog') ? Blog::orderBy('id', 'desc')->where('status', 1)->limit(7)->get() : collect());
-        });
-
         view()->composer([
             'public.layouts.header'
         ], function ($view) {
@@ -255,8 +288,11 @@ class AppServiceProvider extends ServiceProvider
             $current_cart = module_active('cart_checkout') ? (new Cart)->current_cart() : null;
             $main_menu = Menu::find(2);
             $settings = new Setting;
+            $compare_groups = module_active('compare') ? app(\Modules\Compare\Services\CompareService::class)->groupsSummary() : collect();
             $view->with('cart', $current_cart)
                 ->with('main_menu', !empty($main_menu) ? $main_menu->links : null)
+                ->with('compare_groups', $compare_groups)
+                ->with('compare_count', $compare_groups->sum('count'))
                 ->with('site_message', $settings->get_setting('site_message_enabled') ? $settings->get_setting('site_message_'.app()->getLocale()) : null);
         });
 
@@ -265,6 +301,18 @@ class AppServiceProvider extends ServiceProvider
         ], function ($view) {
             $footer_menu = Menu::find(1);
             $view->with('footer_menu', !empty($footer_menu) ? $footer_menu->links : null);
+        });
+
+        view()->composer([
+            'public.layouts.cart'
+        ], function ($view) {
+            // Партиал подключается и из шапки (там $cart уже приходит из её композера),
+            // и из офканваса в футере (где $cart никто не передаёт) — считаем корзину
+            // только если она ещё не была передана явно, чтобы не дублировать запрос.
+            if($view->offsetExists('cart')){
+                return;
+            }
+            $view->with('cart', module_active('cart_checkout') ? (new Cart)->current_cart() : null);
         });
 
         view()->composer([
@@ -302,23 +350,6 @@ class AppServiceProvider extends ServiceProvider
                 ->with('main_lang', Config::get('app.locale'));
         });
 
-        view()->composer([
-            'public.layouts.pages.strain',
-        ], function ($view) {
-            $seo = App\Models\Seo::where('url', '/'.request()->path())->first();
-            $attribute = App\Models\Attribute::where('slug', 'strain')->first();
-            $strain = App\Models\AttributeValue::where('attribute_id', $attribute->id)->where('value', $seo->name)->first();
-            $page = request()->segment(3);
-            if(!$page){
-                $page = 1;
-            }
-            $products_ids = App\Models\Product::select('products.id')->where('products.visible', 1)->leftJoin('product_attributes', 'products.id', 'product_attributes.product_id')->where('product_attributes.attribute_value_id', $strain->id)->get()->pluck('id')->toArray();
-            $products = App\Models\Product::select('products.*')->where('products.visible', 1)->leftJoin('product_attributes', 'products.id', 'product_attributes.product_id')->where('product_attributes.attribute_value_id', $strain->id)->paginate(20, '', $seo->name, $page);
-            $view->with('products', $products)
-                ->with('reviews', module_active('reviews') ? Review::orderBy('id', 'desc')->where('published', 1)->whereIn('product_id', $products_ids)->limit(7)->get() : collect())
-                ->with('reviews_count', module_active('reviews') ? Review::where('published', 1)->whereIn('product_id', $products_ids)->count() : 0)
-                ->with('reviews_grade', module_active('reviews') ? Review::where('published', 1)->whereIn('product_id', $products_ids)->avg('grade') : null);
-        });
     }
 
     public function convert_hr_to_bytes( $value ) {

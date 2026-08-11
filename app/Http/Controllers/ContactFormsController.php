@@ -9,9 +9,6 @@ use Modules\Notifications\Services\TelegramNotifierService;
 
 class ContactFormsController extends Controller
 {
-    private $domain = 'properloud.cc';
-
-
     public function sendForm(Request $request){
         $files = [];
         if(count($_FILES)){
@@ -26,25 +23,28 @@ class ContactFormsController extends Controller
             }
         }
 
-        if(!empty($request->data)){
-            $data = json_decode($request->data);
+        $data = [
+            'form' => $request->input('form', 'Contact form'),
+            'name' => $request->input('name', ''),
+            'email' => $request->input('email', ''),
+            'message' => $request->input('message', ''),
+        ];
 
-            $form = !empty($data->form) ? $data->form->val : 'Contact form';
-
+        if(!empty($data['name']) || !empty($data['email']) || !empty($data['message'])){
             \App\Models\Request::insert([
-                'form' => $form,
-                'name' => isset($data->name->val) ? $data->name->val : '',
-                'email' => isset($data->email->val) ? $data->email->val : '',
-                'comment' => isset($data->message->val) ? $data->message->val : ''
+                'form' => $data['form'],
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'comment' => $data['message']
             ]);
 
             $text = trans('messages.new_application', ['sitename' => env('APP_NAME')]) . "\n";
-            if(isset($data->name->val))
-                $text .= trans('messages.name_label').": ".$data->name->val."\n";
-            if(isset($data->email->val))
-                $text .= trans('messages.email_label').": ".$data->email->val."\n";
-            if(isset($data->message->val))
-                $text .= trans('messages.message_label').": ".$data->message->val."\n";
+            if(!empty($data['name']))
+                $text .= trans('messages.name_label').": ".$data['name']."\n";
+            if(!empty($data['email']))
+                $text .= trans('messages.email_label').": ".$data['email']."\n";
+            if(!empty($data['message']))
+                $text .= trans('messages.message_label').": ".$data['message']."\n";
 
             app(TelegramNotifierService::class)->broadcast($text);
 
@@ -56,16 +56,22 @@ class ContactFormsController extends Controller
 
     public function sendMail($data, $files = []){
         $setting = new Setting();
-        $domain = $this->domain;
+        $domain = parse_url(config('app.url'), PHP_URL_HOST) ?: config('app.url');
 
         $eol = PHP_EOL;
         $msg = "<html><body style='font-family:Arial,sans-serif;'>";
         $msg .= "<h2 style='color:#161616;font-weight:bold;font-size:30px;border-bottom:2px dotted #bd0707;'>" . trans('locale.messages.new_request_on_website', ['domain' => $domain]) . "</h2>" . $eol;
 
-        foreach($data as $key => $params){
-            if(!empty($params->title) && !empty($params->val)){
-                $val = $this->prepareData($params->val, $key);
-                $msg .= "<p><strong>$params->title:</strong> $val</p>" . $eol;
+        $labels = [
+            'name' => trans('messages.name_label'),
+            'email' => trans('messages.email_label'),
+            'message' => trans('messages.message_label'),
+        ];
+
+        foreach($labels as $key => $title){
+            if(!empty($data[$key])){
+                $val = $this->prepareData($data[$key], $key);
+                $msg .= "<p><strong>$title:</strong> $val</p>" . $eol;
             }
         }
 

@@ -1,0 +1,25 @@
+{
+    "name": "nwidart/compare",
+    "description": "",
+    "authors": [],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\Compare\\": "app/",
+            "Modules\\Compare\\Database\\Factories\\": "database/factories/",
+            "Modules\\Compare\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\Compare\\Tests\\": "tests/"
+        }
+    }
+}

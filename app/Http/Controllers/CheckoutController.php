@@ -17,6 +17,9 @@ use App\Models\User;
 use Modules\Coupons\Models\Coupon;
 use Modules\Notifications\Models\Sendpulse;
 use Modules\Notifications\Services\TelegramNotifierService;
+use Modules\Payments\Models\Liqpay;
+use Modules\Delivery\Models\Newpost;
+use Modules\Delivery\Models\Justin;
 use App\Models\Product;
 use App;
 
@@ -188,8 +191,8 @@ class CheckoutController extends Controller
             'user_info'         => json_encode([
                 'name'  => !empty($request->first_name) && !empty($request->last_name) ? $request->first_name . ' ' . $request->last_name : $user->first_name . ' ' . $user->last_name,
                 'email' => !empty($request->email) ? $request->email : $user->email
-            ], JSON_UNESCAPED_UNICODE),
-            'delivery'  => json_encode($delivery_info, JSON_UNESCAPED_UNICODE),
+            ], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
+            'delivery'  => json_encode($delivery_info, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
             'payment'   => $request->payment,
             'status_id' => 0,
             'coupon_id' => $cart->coupon_id,
@@ -258,7 +261,7 @@ class CheckoutController extends Controller
         $products = $order->getProducts();
 
         $text = __("New order on the website").": ".base_url('/')."/admin/orders/edit/".$order->id."\n";
-        $text .= __("Order amount").": £".((float)$order->total_price - (float)$order->total_sale)."\n";
+        $text .= __("Order amount").": ₽".((float)$order->total_price - (float)$order->total_sale)."\n";
         $text .= __("Buyer's contacts").": ".(isset($user->name) ? $user->name : '')." ".(isset($user->phone) ? $user->phone : '')."\n";
         $text .= __("Delivery").": ".
             (!empty($delivery['method']) ? $delivery['method']." " : "").
@@ -285,7 +288,7 @@ class CheckoutController extends Controller
 	public function getLiqpayData($order){
 		$public_key = config('liqpay.public_key');
 		$private_key = config('liqpay.private_key');
-		$liqpay = new LiqPay($public_key, $private_key);
+		$liqpay = new Liqpay($public_key, $private_key);
 		$checkout = $liqpay->cnb_form([
 			'action'    => 'pay',
 			'amount'    => $order->total_price - $order->total_sale,
@@ -549,11 +552,11 @@ class CheckoutController extends Controller
 
                 return response()->json(['result' => 'success', 'cart' => [
                     'count' => $cart->total_quantity,
-                    'subtotal' => '£'.number_format($cart->total_price, 0, '.', ' '),
-                    'sale' => '- £'.number_format($cart->total_sale, 0, '.', ' '),
-                    'coupon_sale' => '- £'.number_format($cart->coupon_sale, 0, '.', ' '),
-                    'total' => '£'.number_format($cart->total_price - $cart->total_sale + $cart->shipping, 0, '.', ' '),
-                    'total_without_shipping' => '£'.number_format($cart->total_price - $cart->total_sale, 0, '.', ' '),
+                    'subtotal' => '₽'.number_format($cart->total_price, 0, '.', ' '),
+                    'sale' => '- ₽'.number_format($cart->total_sale, 0, '.', ' '),
+                    'coupon_sale' => '- ₽'.number_format($cart->coupon_sale, 0, '.', ' '),
+                    'total' => '₽'.number_format($cart->total_price - $cart->total_sale + $cart->shipping, 0, '.', ' '),
+                    'total_without_shipping' => '₽'.number_format($cart->total_price - $cart->total_sale, 0, '.', ' '),
                     'checkout_prices' => view('public.layouts.checkout_prices')->with('cart', $cart)->render(),
                 ]]);
             }
@@ -565,11 +568,11 @@ class CheckoutController extends Controller
 
             return response()->json(['result' => 'success', 'cart' => [
                 'count' => $cart->total_quantity,
-                'subtotal' => '£'.number_format($cart->total_price, 0, '.', ' '),
-                'sale' => '- £'.number_format($cart->total_sale, 0, '.', ' '),
-                'coupon_sale' => '- £'.number_format($cart->coupon_sale, 0, '.', ' '),
-                'total' => '£'.number_format($cart->total_price - $cart->total_sale + $cart->shipping, 0, '.', ' '),
-                'total_without_shipping' => '£'.number_format($cart->total_price - $cart->total_sale, 0, '.', ' '),
+                'subtotal' => '₽'.number_format($cart->total_price, 0, '.', ' '),
+                'sale' => '- ₽'.number_format($cart->total_sale, 0, '.', ' '),
+                'coupon_sale' => '- ₽'.number_format($cart->coupon_sale, 0, '.', ' '),
+                'total' => '₽'.number_format($cart->total_price - $cart->total_sale + $cart->shipping, 0, '.', ' '),
+                'total_without_shipping' => '₽'.number_format($cart->total_price - $cart->total_sale, 0, '.', ' '),
                 'checkout_prices' => view('public.layouts.checkout_prices')->with('cart', $cart)->render(),
             ]]);
         }

@@ -25,10 +25,10 @@ class BlockShortcode
             $body = $block->body;
 
             if (!empty($body)) {
-                $d = $block->setFieldsProducts($block->setFieldsImages(json_decode($block->localize(app()->getLocale(), 'body'))));
+                $d = $block->setFieldsCategories($block->setFieldsPages($block->setFieldsProducts($block->setFieldsImages(json_decode($block->localize(app()->getLocale(), 'body'))))));
                 $fields = [];
                 foreach($d as $field){
-                    if($field->type == 'repeater'){
+                    if(in_array($field->type, ['repeater', 'group'])){
                         $fields[$field->slug] = $field->data;
                     }else{
                         $fields[$field->slug] = isset($field->value) ? $field->value : '';

@@ -6,7 +6,7 @@ use App\Models\AttributeValue;
 use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\Product;
-use App\Models\Filter;
+use App\Services\Filter;
 use App\Models\Sale;
 use App\Models\Seo;
 use Illuminate\Http\Request;
@@ -146,7 +146,7 @@ class CatalogController extends Controller
         $filter->setAttributesValues($request->filters);
         $products = $filter->getProducts(isset($orders[$request->order]) ? $orders[$request->order] : ['sort_priority', 'asc']);
         $attributes = $filter->getFilterAttributes(true);
-        $name = !empty($category) ? $category->seo->name : 'THC Products';
+        $name = !empty($category) ? $category->seo->name : trans('locale.All products');
 
         return response()->json([
             'result' => 'success',

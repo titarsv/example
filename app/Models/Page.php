@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Str;
 use App\Helpers\Helper;
+use App\Models\Concerns\HasCustomFields;
 use App;
 
 class Page extends Entity
@@ -19,7 +20,7 @@ class Page extends Entity
         'sort_order'
     ];
 
-    use SoftDeletes;
+    use SoftDeletes, HasCustomFields;
 
     protected $dates = ['deleted_at'];
 
@@ -44,7 +45,7 @@ class Page extends Entity
         $localization = $this->localization->first(function ($value, $key) use ($language, $field){
             return $value->language == $language && $value->field == $field;
         });
-        if(empty($localization))
+        if(empty($localization) && !isset($this->relations['localization']))
             $localization = $this->localization()->where(['language' => $language, 'field' => $field])->first();
 
         if(empty($localization)) {
@@ -96,111 +97,6 @@ class Page extends Entity
 
     public function link(){
         return $this->seo->link;
-    }
-
-    /**
-     * Подгрузка изобрпжений в данные
-     *
-     * @param $fields
-     *
-     * @return mixed
-     */
-    public function setFieldsImages($fields){
-        $ids = [];
-
-        if(empty($fields)){
-            $fields = [];
-        }
-
-        foreach($fields as $i => $field){
-            if($field->type == 'repeater'){
-                $ids = array_merge($ids, $this->getRepeaterImagesIds($fields[$i]->fields, $fields[$i]->data));
-            }elseif($field->type == 'oembed'){
-                if(!empty($field->value)){
-                    $ids[] = $field->value;
-                }
-            }
-        }
-
-        if(!empty($ids)){
-            $images = [];
-            foreach(File::whereIn('id', array_unique($ids))->get() as $image){
-                $images[$image->id] = $image;
-            }
-            foreach($fields as $i => $field){
-                if($field->type == 'repeater'){
-                    $fields[$i]->data = $this->setRepeaterImages($fields[$i]->fields, $fields[$i]->data, $images);
-                }elseif($field->type == 'oembed'){
-                    if(!empty($field->value) && isset($images[$field->value])){
-                        $fields[$i]->value = [
-                            'id' => $field->value,
-                            'image' => $images[$field->value]
-                        ];
-                    }
-                }
-            }
-        }
-
-        return $fields;
-    }
-
-    protected function getRepeaterImagesIds($fields, $data){
-        $ids = [];
-
-        if(is_array($data) || is_object($data)){
-            foreach($data as $i => $fields_data){
-                foreach($fields as $field){
-                    if(isset($fields_data->{$field->slug})){
-                        if($field->type == 'repeater'){
-                            $ids = array_merge($ids, $this->getRepeaterImagesIds($field->fields, $fields_data->{$field->slug}));
-                        }elseif($field->type == 'oembed'){
-                            $ids[] = $fields_data->{$field->slug};
-                        }
-                    }
-                }
-            }
-        }
-        return $ids;
-    }
-
-    /**
-     * Подгрузка изобрпжений в данные повторителя
-     *
-     * @param $fields
-     * @param $data
-     * @param $images
-     * @return mixed
-     */
-    protected function setRepeaterImages($fields, $data, $images){
-        if(is_array($data) || is_object($data)){
-            foreach($data as $i => $fields_data){
-                foreach($fields as $field){
-                    if(isset($fields_data->{$field->slug})){
-                        if($field->type == 'repeater'){
-                            if(is_array($data)){
-                                $data[$i]->{$field->slug} = $this->setRepeaterImages($field->fields, $fields_data->{$field->slug}, $images);
-                            }elseif(is_object($data)){
-                                $data->{$i}->{$field->slug} = $this->setRepeaterImages($field->fields, $fields_data->{$field->slug}, $images);
-                            }
-                        }elseif($field->type == 'oembed' && isset($images[$fields_data->{$field->slug}])){
-                            if(is_array($data)){
-                                $data[$i]->{$field->slug} = [
-                                    'id' => $fields_data->{$field->slug},
-                                    'image' => $images[$fields_data->{$field->slug}]
-                                ];
-                            }elseif(is_object($data)){
-                                $data->{$i}->{$field->slug} = [
-                                    'id' => $fields_data->{$field->slug},
-                                    'image' => $images[$fields_data->{$field->slug}]
-                                ];
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        return $data;
     }
 
     protected function dataMap(){

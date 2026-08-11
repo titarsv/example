@@ -60,18 +60,25 @@ class Cart extends Model
 			$user_id = $user->id;
 			$cart = $this->where('user_id', $user_id)->first();
 
-			if(!empty($cart_id) && !empty($cart) && $cart->id != $cart_id){
-				$saved_cart = $this->where('id', $cart_id)->where('total_quantity', '>', 0)->first();
-				if(!empty($saved_cart) && !empty($saved_cart->total_quantity)){
-					$products = (array)json_decode($cart->products, true) + (array)json_decode($saved_cart->products, true);
-					$cart->products = json_encode($products);
-					$cart->total_quantity += $saved_cart->total_quantity;
-					$cart->total_price += $saved_cart->total_price;
-					$cart->updated_at = date('Y-m-d H:i:s');
-					if($cart->session_id != Session::getId()){
-						$cart->session_id = Session::getId();
+			if(!empty($cart_id) && (empty($cart) || $cart->id != $cart_id)){
+				$saved_cart = $this->where('id', $cart_id)->where('user_id', 0)->where('total_quantity', '>', 0)->first();
+				if(!empty($saved_cart)){
+					if(empty($cart)){
+						// Своей корзины у пользователя ещё не было — закрепляем за ним гостевую
+						// корзину вместо того, чтобы создавать новую пустую и молча терять товары.
+						$saved_cart->update(['user_id' => $user_id, 'session_id' => Session::getId()]);
+						$cart = $saved_cart;
+					}else{
+						$products = (array)json_decode($cart->products, true) + (array)json_decode($saved_cart->products, true);
+						$cart->products = json_encode($products);
+						$cart->total_quantity += $saved_cart->total_quantity;
+						$cart->total_price += $saved_cart->total_price;
+						$cart->updated_at = date('Y-m-d H:i:s');
+						if($cart->session_id != Session::getId()){
+							$cart->session_id = Session::getId();
+						}
+						$cart->save();
 					}
-					$cart->save();
 				}
 			}
 

@@ -96,6 +96,13 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="form-group">
+                                            <div class="custom-control custom-checkbox">
+                                                <input type="checkbox" class="custom-control-input" name="allow_compare" value="1" id="allow_compare"{{ old('allow_compare', $category->allow_compare) ? ' checked' : '' }}>
+                                                <label class="custom-control-label" for="allow_compare">{{ trans('locale.Allow comparing products in this category') }}</label>
+                                                <div class="text-muted small mt-1">{{ trans('locale.Allow compare description') }}</div>
+                                            </div>
+                                        </div>
                                         @include('admin.layouts.form.field-group', [
                                             'type' => 'editor',
                                             'label' => trans('locale.Description'),

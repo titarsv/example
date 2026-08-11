@@ -14,7 +14,7 @@ use App\Models\Attribute;
 use App\Models\Category;
 use App\Models\Redirect;
 use App\Models\Product;
-use App\Models\Filter;
+use App\Services\Filter;
 use App\Models\Action;
 use App\Models\Sale;
 use App\Models\User;
@@ -291,6 +291,7 @@ class CategoriesController extends Controller
         $category->parent_id = $request->parent_id;
 	    $category->file_id = !empty($request->file_id) ? $request->file_id : null;
         $category->status = !empty($request->status) ? $request->status : 0;
+        $category->allow_compare = !empty($request->allow_compare);
         $category->save();
 	    $category->saveLocalization($request);
         $category->saveGalleries($request);

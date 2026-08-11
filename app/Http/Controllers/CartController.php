@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Http\Request;
 use App\Models\ProductsCart;
-use App\Models\Newpost;
+use Modules\Delivery\Models\Newpost;
 use App\Models\Cart;
 use App\Models\User;
 

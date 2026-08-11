@@ -26,7 +26,7 @@ use App\Models\Category;
 use App\Models\Product;
 use App\Models\Action;
 use App\Models\Setting;
-use App\Models\Filter;
+use App\Services\Filter;
 use App\Models\Sale;
 use App\Models\File;
 use App\Models\User;
@@ -1496,7 +1496,7 @@ class ProductsController extends Controller
 	 */
 	public function livesearch(Request $request, Product $products)
 	{
-		$search_text = $request->input('search');
+		$search_text = $request->input('text');
 		if(strpos($search_text, '%') === 0){
 			$search_text = urlencode($search_text);
 		}
@@ -1517,7 +1517,7 @@ class ProductsController extends Controller
 					'name'       => $result->name,
 					'sku'        => $result->sku,
 					'url'        => $result->link(),
-					'price'      => '£'.$result->price,
+					'price'      => '₽'.$result->price,
 					'image'      => !empty($result->image) ? $result->image->url() : '/uploads/no_image.jpg',
 				];
 			}
@@ -1547,6 +1547,7 @@ class ProductsController extends Controller
         }
 
         $filter->setSearchText($search_text);
+        $filter->setPage(max(1, (int)str_replace('page-', '', $page)));
 
         $products = $filter->getProducts(['sort_priority', 'asc'], 20, (int)str_replace('page-', '', $page));
 

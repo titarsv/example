@@ -250,4 +250,15 @@ return [
     'Enter attribute name' => 'Enter attribute name',
     'Enter article title' => 'Enter article title',
     'Enter category name' => 'Enter category name',
+
+    // TinyMCE block picker
+    'Block' => 'Block',
+    'Insert block' => 'Insert block',
+    'Nothing found' => 'Nothing found',
+
+    // Templates list
+    'Duplicate' => 'Duplicate',
+    'New template name' => 'New template name',
+    'Restore' => 'Restore',
+    'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).' => 'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).',
 ];

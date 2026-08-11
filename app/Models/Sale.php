@@ -72,7 +72,7 @@ class Sale extends Entity
         $localization = $this->localization->first(function ($value, $key) use ($language, $field){
             return $value->language == $language && $value->field == $field;
         });
-        if(empty($localization))
+        if(empty($localization) && !isset($this->relations['localization']))
             $localization = $this->localization()->where(['language' => $language, 'field' => $field])->first();
 
 		if(empty($localization)) {

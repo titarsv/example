@@ -248,4 +248,15 @@ return [
     'Enter attribute name' => 'Введіть назву атрибута',
     'Enter article title' => 'Введіть назву статті',
     'Enter category name' => 'Введіть назву категорії',
+
+    // TinyMCE block picker
+    'Block' => 'Блок',
+    'Insert block' => 'Вставити блок',
+    'Nothing found' => 'Нічого не знайдено',
+
+    // Templates list
+    'Duplicate' => 'Дублювати',
+    'New template name' => 'Назва нового шаблону',
+    'Restore' => 'Відновити',
+    'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).' => 'Відновити цю версію? Поточний вміст буде перезаписано (але збережеться в історії окремим записом — нічого не втратиться).',
 ];

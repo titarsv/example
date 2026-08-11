@@ -21,7 +21,9 @@
     <div class="hidden">
         @include('admin.pages.templates.field', ['index' => 0, 'key' => 0, 'field' => null, 'parent_key' => '_0', 'parent' => '', 'parent_id' => 'basic-list-group'])
         @include('admin.pages.templates.fields.select', ['field' => null, 'parent_key' => '_0', 'parent' => '', 'parent_id' => 'basic-list-group'])
+        @include('admin.pages.templates.fields.number', ['field' => null, 'parent_key' => '_0', 'parent' => '', 'parent_id' => 'basic-list-group'])
         @include('admin.pages.templates.fields.repeater', ['field' => null, 'parent_key' => '_0', 'parent' => '', 'parent_id' => 'basic-list-group'])
+        @include('admin.pages.templates.fields.group', ['field' => null, 'parent_key' => '_0', 'parent' => '', 'parent_id' => 'basic-list-group'])
     </div>
     <section class="users-edit">
         <div class="card">
@@ -40,11 +42,31 @@
                                 <i class="bx bxs-file-html mr-25"></i><span class="d-none d-sm-block">{{ trans('locale.Template') }}</span>
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center btn-sm" id="preview-tab" data-toggle="tab"
+                               href="#preview" aria-controls="preview" role="tab" aria-selected="false">
+                                <i class="bx bx-show mr-25"></i><span class="d-none d-sm-block">{{ trans('locale.Preview') }}</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link d-flex align-items-center btn-sm" id="history-tab" data-toggle="tab"
+                               href="#history" aria-controls="history" role="tab" aria-selected="false">
+                                <i class="bx bx-history mr-25"></i><span class="d-none d-sm-block">{{ trans('locale.History') }}</span>
+                            </a>
+                        </li>
                     </ul>
                     <div class="tab-content">
                         <div class="tab-pane active fade show" id="fields" aria-labelledby="fields-tab" role="tabpanel">
                             <form action="/admin/pages/template/fields/{{ $template->name }}" method="post" class="js_ajax_form" id="js_pages_template_form" novalidate>
                                 {!! csrf_field() !!}
+                                <div class="row mb-2">
+                                    <div class="col-md-4">
+                                        <fieldset>
+                                            <label for="helperText">{{ trans('locale.Category') }}</label>
+                                            <input type="text" class="form-control" name="category" value="{{ !empty($template->category) ? $template->category : '' }}">
+                                        </fieldset>
+                                    </div>
+                                </div>
                                 <div id="accordion-icon-wrapper" class="collapse-icon accordion-icon-rotate">
                                     <div class="accordion fields" data-parent="" id="basic-list-group">
                                         @foreach($template->fields as $key => $field)
@@ -126,6 +148,45 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="tab-pane fade show" id="preview" aria-labelledby="preview-tab" role="tabpanel">
+                            @if(!empty($preview_page))
+                                <iframe src="{{ $preview_page->link() }}" style="width:100%;height:75vh;border:1px solid #3b4253;border-radius:4px;"></iframe>
+                            @else
+                                <div class="alert alert-warning">{{ trans('locale.This template is not linked to any page or block yet — create one to see a live preview.') }}</div>
+                            @endif
+                        </div>
+                        <div class="tab-pane fade show" id="history" aria-labelledby="history-tab" role="tabpanel">
+                            @if($revisions->isEmpty())
+                                <div class="alert alert-warning">{{ trans('locale.No changes recorded yet') }}</div>
+                            @else
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>{{ trans('locale.Date') }}</th>
+                                            <th>{{ trans('locale.Type') }}</th>
+                                            <th>{{ trans('locale.User') }}</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @foreach($revisions as $revision)
+                                            <tr>
+                                                <td>{{ $revision->created_at->format('d.m.Y H:i') }}</td>
+                                                <td>{{ str_ends_with($revision->entity, '_fields') ? trans('locale.Fields') : trans('locale.Template') }}</td>
+                                                <td>{{ !empty($revision->user) ? $revision->user->name : '—' }}</td>
+                                                <td class="text-right">
+                                                    @if($me->hasAccess(['pages.write']))
+                                                        <button type="button" class="btn btn-sm btn-outline-primary js_restore_revision" data-id="{{ $revision->id }}" data-name="{{ $template->name }}" data-app="pages">
+                                                            {{ trans('locale.Restore') }}
+                                                        </button>
+                                                    @endif
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            @endif
+                        </div>
                     </div>
                 </div>
             </div>
@@ -137,6 +198,7 @@
     <script src="{{asset('vendors/js/extensions/dragula.min.js')}}"></script>
     <script src="{{asset('vendors/js/forms/select/select2.full.min.js')}}"></script>
     <script src="{{asset('vendors/js/extensions/toastr.min.js')}}"></script>
+    <script src="{{asset('vendors/js/extensions/sweetalert2.all.min.js')}}"></script>
     <script src="{{asset('vendors/js/extensions/bootstrap-treeview.min.js')}}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>

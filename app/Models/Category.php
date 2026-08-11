@@ -24,7 +24,8 @@ class Category extends Entity
     	'slug',
         'file_id',
         'parent_id',
-        'status'
+        'status',
+        'allow_compare'
     ];
 
     protected $localized_fields = [

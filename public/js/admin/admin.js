@@ -1,3 +1,79 @@
+// Визуальный пикер блока для TinyMCE (используется на редактировании страниц и блоков) —
+// вставляет [block id="X"] в контент вместо того, чтобы редактор вручную набирал шорткод
+// и подставлял правильный id. Работает и с "плоским" toolbar-конфигом (строка через ' | '),
+// и с WP-style конфигом из tinyMCEPreInit (toolbar1..4, кнопки через запятую).
+window.addBlockPickerToTinyMCE = function(settings){
+    var previousSetup = settings.setup;
+    settings.setup = function(editor){
+        if(typeof previousSetup === 'function'){
+            previousSetup(editor);
+        }
+        editor.addButton('insert_block', {
+            text: __('Block'),
+            icon: false,
+            onclick: function(){
+                openBlockPicker(editor);
+            }
+        });
+    };
+
+    if(typeof settings.toolbar === 'string'){
+        settings.toolbar += ' | insert_block';
+    }else if(typeof settings.toolbar3 === 'string'){
+        settings.toolbar3 += (settings.toolbar3 ? ',' : '') + 'insert_block';
+    }else{
+        settings.toolbar3 = 'insert_block';
+    }
+
+    function openBlockPicker(editor){
+        $('#js_block_picker').remove();
+
+        var $panel = $(
+            '<div id="js_block_picker" style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.5);z-index:100000;display:flex;align-items:center;justify-content:center;">' +
+                '<div style="background:#fff;color:#333;border-radius:6px;padding:20px;width:420px;max-height:70vh;overflow:auto;">' +
+                    '<h5 style="margin-top:0;">' + __('Insert block') + '</h5>' +
+                    '<input type="text" class="form-control mb-2" id="js_block_picker_search" placeholder="' + __('Search') + '">' +
+                    '<div id="js_block_picker_list"></div>' +
+                    '<button type="button" class="btn btn-light mt-2" id="js_block_picker_close">' + __('Cancel') + '</button>' +
+                '</div>' +
+            '</div>'
+        );
+        $('body').append($panel);
+
+        var searchTimeout;
+        function loadBlocks(search){
+            $.post('/admin/blocks/list', {draw: 1, start: 0, length: 50, 'search[value]': search || ''}, function(response){
+                var $list = $('#js_block_picker_list').empty();
+                if(!response.data || !response.data.length){
+                    $list.append($('<div class="text-muted p-2"></div>').text(__('Nothing found')));
+                    return;
+                }
+                response.data.forEach(function(block){
+                    var $item = $('<div style="padding:8px;cursor:pointer;border-bottom:1px solid #eee;"></div>').text(block.name);
+                    $item.on('mouseenter', function(){ $(this).css('background', '#f5f5f5'); });
+                    $item.on('mouseleave', function(){ $(this).css('background', ''); });
+                    $item.on('click', function(){
+                        editor.insertContent('[block id="' + block.id + '"]');
+                        $panel.remove();
+                    });
+                    $list.append($item);
+                });
+            });
+        }
+
+        loadBlocks('');
+        $('#js_block_picker_search').on('input', function(){
+            clearTimeout(searchTimeout);
+            var val = $(this).val();
+            searchTimeout = setTimeout(function(){ loadBlocks(val); }, 300);
+        });
+        $panel.on('click', function(e){
+            if(e.target === this){ $panel.remove(); }
+        });
+        $('#js_block_picker_close').on('click', function(){ $panel.remove(); });
+    }
+};
+
 $(document).ready(function(){
     $.ajaxSetup({
         headers: {
@@ -267,4 +343,37 @@ $(document).ready(function(){
             }
         });
     });
+
+    // Условная логика ACF-полей страниц/блоков: [data-conditional-field] задаёт slug
+    // другого поля того же уровня, чьё текущее значение сравнивается с
+    // [data-conditional-value] через [data-conditional-operator] (== / !=).
+    // Поддерживаются только поля верхнего уровня (не внутри repeater) — у самого
+    // условного поля и у его "цели" общий ближайший <form>, значение цели ищем по
+    // [data-name="slug"], который есть у любого input/select/textarea в этой системе полей.
+    function evaluateConditionalFields(){
+        $('[data-conditional-field]').each(function(){
+            var $field = $(this);
+            var targetSlug = $field.data('conditional-field');
+            if(!targetSlug){
+                return;
+            }
+            var operator = $field.data('conditional-operator') || '==';
+            var expected = String($field.data('conditional-value'));
+
+            var $target = $field.closest('form').find('[data-name="'+targetSlug+'"]').first();
+            if(!$target.length){
+                $field.show();
+                return;
+            }
+
+            var actual = $target.is(':checkbox') ? ($target.is(':checked') ? '1' : '0') : String($target.val());
+            var matches = operator === '!=' ? actual !== expected : actual === expected;
+            $field.toggle(matches);
+        });
+    }
+
+    if($('[data-conditional-field]').length){
+        evaluateConditionalFields();
+        $(document).on('change input', 'form :input', evaluateConditionalFields);
+    }
 });

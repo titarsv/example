@@ -21,6 +21,7 @@
                 <tr>
                     <th>{{ trans('locale.Name') }}</th>
                     <th>{{ trans('locale.Location') }}</th>
+                    <th>{{ trans('locale.Category') }}</th>
                     <th>{{ trans('locale.Actions') }}</th>
                 </tr>
                 </thead>
