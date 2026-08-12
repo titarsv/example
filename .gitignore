@@ -4,7 +4,9 @@
 /public/hot
 /public/storage
 /public/thumbnails
+/public/uploads
 /storage/*.key
+/storage/test_content
 /vendor
 .env
 .env.backup
