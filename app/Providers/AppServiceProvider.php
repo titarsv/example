@@ -42,7 +42,11 @@ class AppServiceProvider extends ServiceProvider
         // Blade-сниппета из кнопки "Generate" в админке шаблонов. Регистрируется
         // до раннего возврата для консоли, т.к. нужна и для `artisan view:cache`.
         Blade::directive('field', function($expression){
-            return "<?php echo Fields::value(\$fields ?? [], {$expression}); ?>";
+            // Полное имя класса обязательно: скомпилированный blade-файл выполняется без
+            // namespace/use — короткое "Fields::" резолвится в global-неймспейс и падает
+            // с "Class Fields not found" (поймали на живом рендере страницы, не только на
+            // синтаксической проверке компиляции — та этого не ловит).
+            return "<?php echo \\App\\Helpers\\Fields::value(\$fields ?? [], {$expression}); ?>";
         });
 
         if(app()->runningInConsole()){

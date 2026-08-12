@@ -92,6 +92,12 @@
 					"name": "Page Templates",
 					"i18n": "Page Templates",
 					"icon": "bx bx-right-arrow-alt"
+				},
+				{
+					"url": "/admin/page_imports",
+					"name": "Page Import",
+					"i18n": "Page Import",
+					"icon": "bx bx-right-arrow-alt"
 				}
 			]
 		},

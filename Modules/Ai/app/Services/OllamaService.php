@@ -5,9 +5,12 @@ namespace Modules\Ai\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Modules\Ai\Services\Concerns\BuildsPageMarkupPrompt;
 
 class OllamaService implements AiServiceInterface
 {
+    use BuildsPageMarkupPrompt;
+
     protected string $baseUrl;
     protected string $defaultModel;
 
@@ -278,6 +281,37 @@ class OllamaService implements AiServiceInterface
             Log::error("Ollama SEO Error: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Разбирает HTML-контент импортируемой страницы на узлы схемы полей (Modules/PageImport).
+     */
+    public function analyzePageMarkup(string $html, array $context = []): ?array
+    {
+        return $this->withRetries(function() use ($html, $context){
+            $prompt = $this->buildAnalyzePageMarkupPrompt($html, $context);
+
+            $response = Http::timeout(300)->post("{$this->baseUrl}/api/generate", [
+                'model' => $this->defaultModel,
+                'system' => "You are a JSON-only API. You never add explanations, markdown fences or conversational text — only valid JSON.",
+                'prompt' => $prompt,
+                'stream' => false,
+                'format' => 'json',
+                'options' => [
+                    'temperature' => 0.1,
+                    // Контент страницы + промпт легко перевешивают дефолтные 2048 токенов
+                    // контекста Ollama, даже если сама модель поддерживает намного больше.
+                    'num_ctx' => 8192,
+                ],
+            ]);
+
+            if ($response->failed()) {
+                Log::error("Ollama Page Markup Analysis Error: " . $response->body());
+                return null;
+            }
+
+            return $this->parsePageMarkupResponse($response->json('response'));
+        });
     }
 
     /**

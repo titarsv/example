@@ -1,0 +1,11 @@
+{
+    "name": "PageImport",
+    "alias": "pageimport",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\PageImport\\Providers\\PageImportServiceProvider"
+    ],
+    "files": []
+}

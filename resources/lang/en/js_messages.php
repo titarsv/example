@@ -261,4 +261,10 @@ return [
     'New template name' => 'New template name',
     'Restore' => 'Restore',
     'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).' => 'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).',
+
+    // Page import
+    'Upload page archive' => 'Upload page archive',
+    'Archive file (.zip)' => 'Archive file (.zip)',
+    'No file selected' => 'No file selected',
+    'Review' => 'Review',
 ];

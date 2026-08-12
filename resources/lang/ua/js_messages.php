@@ -259,4 +259,10 @@ return [
     'New template name' => 'Назва нового шаблону',
     'Restore' => 'Відновити',
     'Restore this version? The current content will be overwritten (but saved as a new history entry, so it is not lost).' => 'Відновити цю версію? Поточний вміст буде перезаписано (але збережеться в історії окремим записом — нічого не втратиться).',
+
+    // Page import
+    'Upload page archive' => 'Завантажити архів сторінки',
+    'Archive file (.zip)' => 'Файл архіву (.zip)',
+    'No file selected' => 'Файл не вибрано',
+    'Review' => 'Ревʼю',
 ];

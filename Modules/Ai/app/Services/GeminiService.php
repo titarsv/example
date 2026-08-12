@@ -7,14 +7,32 @@ use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Modules\Ai\Services\Concerns\BuildsPageMarkupPrompt;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Component\HttpClient\Psr18Client;
 
 class GeminiService implements AiServiceInterface
 {
+    use BuildsPageMarkupPrompt;
+
     protected Client $client;
 
     public function __construct()
     {
-        $this->client = \Gemini::client(config('services.gemini.key'));
+        // Дефолтный HTTP-клиент, который находит Gemini::client() через PSR-18 discovery
+        // (Symfony HttpClient в этом проекте), рвёт соединение по "idle timeout" ощутимо раньше,
+        // чем модели требуется на генерацию по-настоящему большому промпту — поймали живьём на
+        // самой длинной странице донора при импорте страниц (~15KB контента). Собираем клиент
+        // сами с более щедрым таймаутом вместо дефолтного.
+        $httpClient = new Psr18Client(HttpClient::create([
+            'timeout' => 120,
+            'max_duration' => 180,
+        ]));
+
+        $this->client = \Gemini::factory()
+            ->withApiKey(config('services.gemini.key'))
+            ->withHttpClient($httpClient)
+            ->make();
     }
 
     /**
@@ -229,6 +247,21 @@ class GeminiService implements AiServiceInterface
             Log::error("Gemini SEO Error: " . $e->getMessage());
             return null;
         }
+    }
+
+    /**
+     * Разбирает HTML-контент импортируемой страницы на узлы схемы полей (Modules/PageImport).
+     */
+    public function analyzePageMarkup(string $html, array $context = []): ?array
+    {
+        return $this->withRetries(function() use ($html, $context){
+            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $prompt = $this->buildAnalyzePageMarkupPrompt($html, $context);
+
+            $response = $model->generateContent($prompt);
+
+            return $this->parsePageMarkupResponse($response->text());
+        });
     }
 
     /**
