@@ -7,6 +7,9 @@
 /public/uploads
 /storage/*.key
 /storage/test_content
+/storage/service_key.json
+/storage/token.json
+/storage/credentials.json
 /vendor
 .env
 .env.backup
