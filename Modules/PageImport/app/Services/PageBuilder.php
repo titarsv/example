@@ -46,10 +46,14 @@ class PageBuilder
      *        `<title>` донора попадает в этот набор, он нерелевантен (общий бренд-плейсхолдер
      *        сборки, а не заголовок конкретной страницы, см. план, «Проверка на втором доноре»,
      *        находка 3) и в качестве имени страницы используется путь файла, как при пустом `<title>`.
+     * @param string|null $theme Целевая тема для файлов шаблона (blade/.fields.json) —
+     *        по умолчанию активная (как было изначально, для существующего `Modules\PageImport`).
+     *        `Modules\ThemeImport` передаёт сюда только что созданную `theme:make`-темой — страница
+     *        физически пишется туда, а не в текущую активную, см. docs/dynamic-page-import-plan.md.
      * @return array{status: string, name?: string, page_id?: int, url?: string, template?: string, error?: string}
      *         status: 'created'|'skipped'|'error'
      */
-    public function build(string $htmlFilePath, string $relativePath, array $duplicateTitles = []): array{
+    public function build(string $htmlFilePath, string $relativePath, array $duplicateTitles = [], ?string $theme = null): array{
         if(in_array($this->titleFromPath($relativePath), self::SKIP_NAMES, true)){
             return ['status' => 'skipped', 'file' => $relativePath];
         }
@@ -93,9 +97,9 @@ class PageBuilder
         }
 
         $baseName = Str::slug($this->titleFromPath($relativePath), '-') ?: 'page';
-        $name = $this->uniqueTemplateName($baseName);
+        $name = $this->uniqueTemplateName($baseName, $theme);
 
-        $this->writeTemplate($name, $this->wrapContent($built['blade']), $built['fields']);
+        $this->writeTemplate($name, $this->wrapContent($built['blade']), $built['fields'], $theme);
 
         $pageId = $this->createPage($name, $pageTitle, $built['fields'], $built['values']);
 
@@ -149,8 +153,8 @@ BLADE;
      * в разделе «Шаблоны страниц», adminDuplicateTemplateAction/adminUpdateTemplateFieldsAction)
      * + Local JSON sync рядом с blade-файлом.
      */
-    private function writeTemplate(string $name, string $blade, array $schema): void{
-        $bladePath = theme_relative_path("views/public/layouts/pages/$name.blade.php");
+    private function writeTemplate(string $name, string $blade, array $schema, ?string $theme = null): void{
+        $bladePath = theme_relative_path("views/public/layouts/pages/$name.blade.php", $theme);
 
         Storage::disk('local')->put($bladePath, $blade);
 
@@ -165,7 +169,7 @@ BLADE;
         $settings->update_setting('template_public.layouts.pages.'.$name, $template);
 
         Storage::disk('local')->put(
-            theme_relative_path("views/public/layouts/pages/$name.fields.json"),
+            theme_relative_path("views/public/layouts/pages/$name.fields.json", $theme),
             json_encode($template, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)
         );
     }
@@ -250,8 +254,8 @@ BLADE;
      * Гарантирует, что имя шаблона/страницы не столкнётся с уже существующим шаблоном сайта
      * (например донор снова назвал свою страницу "about", а на сайте уже есть свой "about").
      */
-    private function uniqueTemplateName(string $baseName): string{
-        if(!Storage::disk('local')->exists(theme_relative_path("views/public/layouts/pages/{$baseName}.blade.php"))){
+    private function uniqueTemplateName(string $baseName, ?string $theme = null): string{
+        if(!Storage::disk('local')->exists(theme_relative_path("views/public/layouts/pages/{$baseName}.blade.php", $theme))){
             return $baseName;
         }
 
@@ -260,7 +264,7 @@ BLADE;
         do{
             $name = $baseName.'-import-'.$i;
             $i++;
-        }while(Storage::disk('local')->exists(theme_relative_path("views/public/layouts/pages/{$name}.blade.php")));
+        }while(Storage::disk('local')->exists(theme_relative_path("views/public/layouts/pages/{$name}.blade.php", $theme)));
 
         return $name;
     }

@@ -1,0 +1,11 @@
+{
+    "name": "ThemeImport",
+    "alias": "themeimport",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ThemeImport\\Providers\\ThemeImportServiceProvider"
+    ],
+    "files": []
+}

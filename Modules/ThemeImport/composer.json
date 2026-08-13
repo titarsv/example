@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/themeimport",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\ThemeImport\\": "app/",
+            "Modules\\ThemeImport\\Database\\Factories\\": "database/factories/",
+            "Modules\\ThemeImport\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\ThemeImport\\Tests\\": "tests/"
+        }
+    }
+}

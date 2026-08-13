@@ -102,6 +102,12 @@
 			]
 		},
 		{
+			"url": "/admin/theme_imports",
+			"name": "Theme Import",
+			"i18n": "Theme Import",
+			"icon": "brush"
+		},
+		{
 			"url": "/admin/blocks",
 			"name": "Blocks",
 			"i18n": "Blocks",

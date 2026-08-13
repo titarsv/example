@@ -18227,94 +18227,20 @@ __webpack_require__.r(__webpack_exports__);
 
 
 window.$ = window.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
-__webpack_require__(/*! slick-carousel/slick/slick.js */ "./node_modules/slick-carousel/slick/slick.js");
 jquery__WEBPACK_IMPORTED_MODULE_0___default().ajaxSetup({
   headers: {
     'X-CSRF-TOKEN': jquery__WEBPACK_IMPORTED_MODULE_0___default()('meta[name="csrf-token"]').attr('content')
   }
 });
 
-// Фильтр FAQ по категориям.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-faq-tab', function () {
-  var tab = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-tab').removeClass('btn-primary').addClass('btn-outline-secondary');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).removeClass('btn-outline-secondary').addClass('btn-primary');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-item').each(function () {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggle(tab === 'all' || jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab') == tab);
-  });
-});
-
-// Форма отзыва о товаре/о магазине.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-review-form', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function (response) {
-    if (response && response.error) {
-      $form.find('.js-review-error').text('Проверьте, все ли обязательные поля заполнены.').removeClass('d-none');
-      return;
-    }
-    $form.closest('.modal').find('.modal-body').html('<div class="alert alert-success mb-0">Спасибо! Ваш отзыв отправлен на модерацию.</div>');
-  }).fail(function () {
-    $form.find('.js-review-error').text('Ошибка отправки, попробуйте ещё раз.').removeClass('d-none');
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-rating-input .bi', function () {
-  var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).closest('.js-rating-input');
-  var value = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value');
-  $wrapper.find('input[name="grade"]').val(value);
-  $wrapper.find('.bi').each(function () {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggleClass('bi-star-fill', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') <= value).toggleClass('bi-star', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') > value);
-  });
-});
-
-// Универсальная отправка форм (подписка в футере, контакты, отзывы)
-// без перезагрузки страницы — с простым инлайн-уведомлением.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.ajax_form', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  var $btn = $form.find('[type="submit"]');
-  var originalText = $btn.text();
-  $form.find('.js-form-alert').remove();
-  $btn.prop('disabled', true);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function () {
-    $form.prepend('<div class="alert alert-success js-form-alert">' + ($form.data('success-title') || 'Готово') + ($form.data('success-message') ? ' ' + $form.data('success-message') : '') + '</div>');
-    $form[0].reset();
-  }).fail(function () {
-    $form.prepend('<div class="alert alert-danger js-form-alert">' + ($form.data('error-title') || 'Ошибка отправки, попробуйте ещё раз.') + '</div>');
-  }).always(function () {
-    $btn.prop('disabled', false).text(originalText);
-  });
-});
-
-// Слайдеры блоков с товарными рекомендациями (похожие/сопутствующие/
-// рекомендуемые/хиты продаж и т.п.) — везде одна и та же карусель.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-products-slider').slick({
-  rows: 0,
-  // иначе slick сам оборачивает каждый слайд доп. div'ом с
-  // инлайновым display:inline-block, и height:100% до карточки не доходит
-  slidesToShow: 5,
-  slidesToScroll: 1,
-  infinite: false,
-  prevArrow: '<button type="button" class="slick-prev"><i class="bi bi-chevron-left"></i></button>',
-  nextArrow: '<button type="button" class="slick-next"><i class="bi bi-chevron-right"></i></button>',
-  responsive: [{
-    breakpoint: 992,
-    settings: {
-      slidesToShow: 3
-    }
-  }, {
-    breakpoint: 576,
-    settings: {
-      slidesToShow: 2
-    }
-  }]
-});
-
 // Бизнес-логика магазина (корзина/избранное/сравнение/фильтры каталога/чекаут) — вынесена в
-// js/shop/*.js, см. docs/dynamic-page-import-plan.md, п.0.1. Один require здесь даёт тот же
-// эффект, что и require('./custom.js') в конце app.js у nnn-site.lh: UI-код темы выше не зависит
-// от бизнес-логики, бизнес-логика не зависит от того, чей это app.js — донора или собственный.
+// js/shop/*.js, см. docs/dynamic-page-import-plan.md, п.0.1. Презентационная логика самой темы
+// `base` (FAQ-таб/форма отзыва/универсальные AJAX-формы/слайдер рекомендаций, ни от чего не
+// зависящая специфика donor-дизайна) — в js/site.js по той же причине: страницы, унаследованные
+// из `base` темой, собранной оркестратором Modules\ThemeImport, не переопределяют их разметку,
+// поэтому она должна работать независимо от того, чей это app.js — донора или собственный.
 __webpack_require__(/*! ./shop */ "./resources/themes/base/js/shop/index.js");
+__webpack_require__(/*! ./site */ "./resources/themes/base/js/site.js");
 
 /***/ }),
 
@@ -19068,6 +18994,104 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-wishlis
     $btn.find('.bi').removeClass('bi-heart bi-heart-fill').addClass(response.in_wish ? 'bi-heart-fill' : 'bi-heart');
     $btn.toggleClass('text-danger', response.in_wish);
   });
+});
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/site.js":
+/*!******************************************!*\
+  !*** ./resources/themes/base/js/site.js ***!
+  \******************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+__webpack_require__(/*! slick-carousel/slick/slick.js */ "./node_modules/slick-carousel/slick/slick.js");
+
+// Собственная презентационная логика темы `base` (не бизнес-логика, см. js/shop/) — вынесена
+// в отдельный файл по той же причине: страницы, унаследованные из `base` темой, собранной
+// оркестратором импорта динамических страниц (Modules\ThemeImport, см.
+// docs/dynamic-page-import-plan.md), не переопределяются этой темой (значит, рендерятся с
+// разметкой `base`, ожидающей именно эти классы) — им тоже нужен этот код, а не только
+// собственному app.js `base`.
+
+// Фильтр FAQ по категориям.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-faq-tab', function () {
+  var tab = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-tab').removeClass('btn-primary').addClass('btn-outline-secondary');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).removeClass('btn-outline-secondary').addClass('btn-primary');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-item').each(function () {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggle(tab === 'all' || jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab') == tab);
+  });
+});
+
+// Форма отзыва о товаре/о магазине.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-review-form', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function (response) {
+    if (response && response.error) {
+      $form.find('.js-review-error').text('Проверьте, все ли обязательные поля заполнены.').removeClass('d-none');
+      return;
+    }
+    $form.closest('.modal').find('.modal-body').html('<div class="alert alert-success mb-0">Спасибо! Ваш отзыв отправлен на модерацию.</div>');
+  }).fail(function () {
+    $form.find('.js-review-error').text('Ошибка отправки, попробуйте ещё раз.').removeClass('d-none');
+  });
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-rating-input .bi', function () {
+  var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).closest('.js-rating-input');
+  var value = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value');
+  $wrapper.find('input[name="grade"]').val(value);
+  $wrapper.find('.bi').each(function () {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggleClass('bi-star-fill', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') <= value).toggleClass('bi-star', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') > value);
+  });
+});
+
+// Универсальная отправка форм (подписка в футере, контакты, отзывы)
+// без перезагрузки страницы — с простым инлайн-уведомлением.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.ajax_form', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  var $btn = $form.find('[type="submit"]');
+  var originalText = $btn.text();
+  $form.find('.js-form-alert').remove();
+  $btn.prop('disabled', true);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function () {
+    $form.prepend('<div class="alert alert-success js-form-alert">' + ($form.data('success-title') || 'Готово') + ($form.data('success-message') ? ' ' + $form.data('success-message') : '') + '</div>');
+    $form[0].reset();
+  }).fail(function () {
+    $form.prepend('<div class="alert alert-danger js-form-alert">' + ($form.data('error-title') || 'Ошибка отправки, попробуйте ещё раз.') + '</div>');
+  }).always(function () {
+    $btn.prop('disabled', false).text(originalText);
+  });
+});
+
+// Слайдеры блоков с товарными рекомендациями (похожие/сопутствующие/
+// рекомендуемые/хиты продаж и т.п.) — везде одна и та же карусель.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-products-slider').slick({
+  rows: 0,
+  // иначе slick сам оборачивает каждый слайд доп. div'ом с
+  // инлайновым display:inline-block, и height:100% до карточки не доходит
+  slidesToShow: 5,
+  slidesToScroll: 1,
+  infinite: false,
+  prevArrow: '<button type="button" class="slick-prev"><i class="bi bi-chevron-left"></i></button>',
+  nextArrow: '<button type="button" class="slick-next"><i class="bi bi-chevron-right"></i></button>',
+  responsive: [{
+    breakpoint: 992,
+    settings: {
+      slidesToShow: 3
+    }
+  }, {
+    breakpoint: 576,
+    settings: {
+      slidesToShow: 2
+    }
+  }]
 });
 
 /***/ }),

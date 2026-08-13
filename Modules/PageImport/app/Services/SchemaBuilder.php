@@ -7,6 +7,7 @@ use DOMElement;
 use DOMNode;
 use DOMXPath;
 use Illuminate\Support\Str;
+use Modules\PageImport\Services\Concerns\ResolvesDomNodes;
 
 /**
  * Конвертирует ответ AiServiceInterface::analyzePageMarkup() в формат схемы шаблона (тот же
@@ -16,6 +17,8 @@ use Illuminate\Support\Str;
  */
 class SchemaBuilder
 {
+    use ResolvesDomNodes;
+
     /** @var array<string, string> Плейсхолдер => оригинальное значение, из ArchiveParser::preprocessForAi() */
     private array $placeholders;
 
@@ -233,86 +236,6 @@ class SchemaBuilder
     }
 
     /**
-     * Поднимает границу повторителя выше найденного по классу узла, если реальная повторяющаяся
-     * структура на самом деле на уровень (или несколько) выше. Пример живого бага (см. план,
-     * «Заметки по ходу реализации», этап 1.3): найденный класс "trading-item" лежит внутри
-     * сетки-обёртки class="col-lg-3 col-md-6" — именно обёртка и есть то, что на самом деле
-     * повторяется (даёт 4-колоночную раскладку). Без подъёма @foreach схлопывал бы только
-     * внутренние карточки, а обёртки вокруг них оставались вне цикла и пустели.
-     *
-     * Поднимаемся на уровень, только если это ОДНОЗНАЧНО тот же повтор: у всех найденных узлов
-     * РАЗНЫЕ непосредственные родители (сами узлы ещё не сиблинги — иначе поднимать некуда,
-     * граница уже верная), и эти родители — сиблинги друг друга одинакового тега под одним общим
-     * "дедом". Не совпало — останавливаемся на текущем уровне, ничего не портим.
-     *
-     * @param DOMElement[] $instances
-     * @return DOMElement[]
-     */
-    private function expandToRepeatBoundary(array $instances): array{
-        $maxLevels = 3;
-
-        for($level = 0; $level < $maxLevels; $level++){
-            $parents = [];
-            $distinct = true;
-
-            foreach($instances as $instance){
-                $parent = $instance->parentNode;
-
-                if(!($parent instanceof DOMElement)){
-                    return $instances;
-                }
-
-                if(in_array($parent, $parents, true)){
-                    // Минимум два инстанса делят родителя — они уже прямые сиблинги,
-                    // это и есть настоящая граница повторителя, подниматься некуда.
-                    $distinct = false;
-                    break;
-                }
-
-                $parents[] = $parent;
-            }
-
-            if(!$distinct || !$this->parentsFormRepeatBoundary($parents)){
-                break;
-            }
-
-            $instances = $parents;
-        }
-
-        return $instances;
-    }
-
-    /**
-     * Родители образуют границу повторителя, если это сиблинги одного тега под общим родителем —
-     * простая, но осознанно консервативная эвристика: ложноположительный подъём (взяли слишком
-     * широкий узел) хуже, чем отказ от подъёма (остаёмся на уже рабочем, просто не идеальном
-     * уровне вложенности).
-     *
-     * @param DOMElement[] $parents
-     */
-    private function parentsFormRepeatBoundary(array $parents): bool{
-        if(count($parents) < 2){
-            return false;
-        }
-
-        $grandParent = $parents[0]->parentNode;
-
-        if(!($grandParent instanceof DOMElement)){
-            return false;
-        }
-
-        $expectedTag = $parents[0]->tagName;
-
-        foreach($parents as $parent){
-            if($parent->parentNode !== $grandParent || $parent->tagName !== $expectedTag){
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    /**
      * Заменяет <img> на условную конструкцию: если для oembed-поля уже есть отхайдрейченное
      * значение ({id, image}, см. HasCustomFields), рендерим через него (->url()), иначе
      * оставляем оригинальный тег донора как есть — тот же фолбэк-паттерн, что уже используется
@@ -341,9 +264,8 @@ class SchemaBuilder
 
     private function imageFieldReplacement(string $imgTag, string $slug, string $baseVar): string{
         $accessor = "field({$baseVar}, '{$slug}.image')";
-        $dynamicTag = preg_replace('/src=(["\']).*?\1/', 'src="{{ '.$accessor.'->url() }}"', $imgTag, 1);
 
-        return "@if(!empty({$accessor})){$dynamicTag}@else{$imgTag}@endif";
+        return $this->conditionalImageReplacement($imgTag, "!empty({$accessor})", "{$accessor}->url()");
     }
 
     /**
@@ -397,46 +319,6 @@ class SchemaBuilder
     }
 
     /**
-     * Простой резолвер CSS-подобного селектора (tag, tag.class, .class, tag:nth-of-type(N)) —
-     * ровно тот набор форм, которые модель реально возвращает для детей repeater'а в наших живых
-     * тестах. Сложные селекторы (комбинаторы, псевдоклассы кроме nth-of-type) не поддерживаются —
-     * в этом случае возвращаем null; вызывающий код тогда пропускает поле для этой строки, а не
-     * подставляет весь инстанс целиком (иначе в текстовое поле утекут соседние узлы — иконка,
-     * другие подписи; так уже ловили баг на живых данных, см. Заметки в плане).
-     */
-    private function resolveSimpleSelector(DOMXPath $xpath, DOMElement $context, string $selector): ?DOMNode{
-        $selector = trim($selector);
-
-        // Пустой селектор — единственный случай, когда "это сам инстанс" осмыслен. Совпадение
-        // с тегом контекста ("div" при контексте <div class="trading-item">) НЕ считаем этим
-        // случаем — почти всегда имеется в виду вложенный <div>, а не сам инстанс.
-        if($selector === ''){
-            return $context;
-        }
-
-        if(!preg_match('/^([a-zA-Z0-9]*)(?:\.([a-zA-Z0-9_-]+))?(?::nth-of-type\((\d+)\))?$/', $selector, $m)){
-            return null;
-        }
-
-        $tag = $m[1] !== '' ? $m[1] : '*';
-        $class = $m[2] ?? '';
-        $nth = isset($m[3]) ? (int)$m[3] : 1;
-
-        $query = './/'.$tag;
-        if($class !== ''){
-            $query .= "[contains(concat(' ', normalize-space(@class), ' '), ' {$class} ')]";
-        }
-
-        $matches = $xpath->query($query, $context);
-
-        if($matches === false || $matches->length === 0){
-            return null;
-        }
-
-        return $matches->item(min($nth, $matches->length) - 1);
-    }
-
-    /**
      * Значение "листового" (не-repeater) поля верхнего уровня — icon/style/data-плейсхолдеры
      * разворачиваются в реальные значения, для image — резолвится в id записи медиатеки.
      */
@@ -468,73 +350,6 @@ class SchemaBuilder
         }
 
         return (string)($this->imageIdByUrl[$m[1]] ?? '');
-    }
-
-    /**
-     * Находит все инстансы повторяющегося элемента репитера в разметке по его selector_path.
-     * Два поддерживаемых случая:
-     *
-     * 1. У самого повторяющегося элемента есть класс ("... .trading-wrapper .trading-item" —
-     *    последний токен ".trading-item") — глобальный поиск по этому классу, ближайшие токены
-     *    селектора (обёртки) игнорируются, класс самого повтора обычно достаточно специфичен.
-     *    Исходное поведение, без изменений.
-     * 2. У повторяющегося элемента класса НЕТ, только голый тег ("... .about-main__wrapper div",
-     *    ".about-main__wrapper > div") — по правилу 9 промпта (`BuildsPageMarkupPrompt`) это
-     *    единственный способ ИИ описать повтор классических «голых» карточек без обёртки на
-     *    каждый элемент (см. план, «Проверка на втором доноре», находка 2 — репитер без класса на
-     *    инстансе раньше вообще не распознавался, `null` уже на этом шаге). Ищем ближайший токен
-     *    слева с классом — это контейнер, инстансы — его ПРЯМЫЕ дети с тегом последнего токена.
-     *
-     * @return DOMElement[]|null null — селектор совсем нечитаем (ни класса, ни тега), пустой
-     *         массив — читаем, но в разметке ничего не нашлось.
-     */
-    private function findRepeaterInstanceNodes(string $selectorPath, DOMXPath $xpath): ?array{
-        $parts = array_values(array_filter(
-            preg_split('/\s+/', trim($selectorPath)),
-            fn($part) => $part !== '' && $part !== '>'
-        ));
-
-        if(empty($parts)){
-            return null;
-        }
-
-        $last = end($parts);
-
-        if(preg_match('/\.([a-zA-Z0-9_-]+)/', $last, $m)){
-            $nodes = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' {$m[1]} ')]");
-            return $nodes === false ? [] : iterator_to_array($nodes);
-        }
-
-        if(count($parts) < 2 || !preg_match('/^[a-zA-Z][a-zA-Z0-9]*$/', $last)){
-            // Ни класса на инстансе, ни голого тега с классом-контейнером слева — селектор
-            // непригоден ни для одного из двух поддерживаемых случаев.
-            return null;
-        }
-
-        for($i = count($parts) - 2; $i >= 0; $i--){
-            if(!preg_match('/\.([a-zA-Z0-9_-]+)/', $parts[$i], $m)){
-                continue;
-            }
-
-            $containers = $xpath->query("//*[contains(concat(' ', normalize-space(@class), ' '), ' {$m[1]} ')]");
-
-            if($containers === false){
-                return [];
-            }
-
-            $instances = [];
-            foreach($containers as $container){
-                foreach($container->childNodes as $child){
-                    if($child instanceof DOMElement && strtolower($child->tagName) === strtolower($last)){
-                        $instances[] = $child;
-                    }
-                }
-            }
-
-            return $instances;
-        }
-
-        return null;
     }
 
     /**
@@ -594,42 +409,6 @@ class SchemaBuilder
         $used[$slug] = true;
 
         return $slug;
-    }
-
-    private function replaceFirst(string $haystack, string $needle, string $replacement): string{
-        if($needle === ''){
-            return $haystack;
-        }
-
-        $pos = strpos($haystack, $needle);
-
-        if($pos === false){
-            return $haystack;
-        }
-
-        return substr_replace($haystack, $replacement, $pos, strlen($needle));
-    }
-
-    private function parseFragment(string $html): DOMDocument{
-        $dom = new DOMDocument();
-        $previous = libxml_use_internal_errors(true);
-        $dom->loadHTML('<?xml encoding="UTF-8"><div id="__root__">'.$html.'</div>', LIBXML_NOERROR | LIBXML_NOWARNING);
-        libxml_clear_errors();
-        libxml_use_internal_errors($previous);
-
-        return $dom;
-    }
-
-    private function innerHtml(DOMNode $node): string{
-        $html = '';
-        foreach($node->childNodes as $child){
-            $html .= $node->ownerDocument->saveHTML($child);
-        }
-        return $html;
-    }
-
-    private function outerHtml(DOMNode $node): string{
-        return $node->ownerDocument->saveHTML($node);
     }
 
     private function placeholderParser(): ArchiveParser{

@@ -7,13 +7,15 @@ use Gemini\Data\Blob;
 use Gemini\Enums\MimeType;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Modules\Ai\Services\Concerns\BuildsDynamicPageSlotsPrompt;
 use Modules\Ai\Services\Concerns\BuildsPageMarkupPrompt;
+use Modules\Ai\Services\Concerns\BuildsPageTypePrompt;
 use Symfony\Component\HttpClient\HttpClient;
 use Symfony\Component\HttpClient\Psr18Client;
 
 class GeminiService implements AiServiceInterface
 {
-    use BuildsPageMarkupPrompt;
+    use BuildsPageMarkupPrompt, BuildsPageTypePrompt, BuildsDynamicPageSlotsPrompt;
 
     protected Client $client;
 
@@ -63,7 +65,7 @@ class GeminiService implements AiServiceInterface
                 $langsJson .= "\"{$locale}\": {\"alt\": \"...\", \"title\": \"...\", \"description\": \"...\"}";
             }
 
-            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $model = $this->client->generativeModel('gemini-3.5-flash-lite');
             $prompt = "Ты — эксперт по международному SEO. Проанализируй изображение и составь метаданные (alt, title, description).
                ЗАДАЧА: Сгенерируй контент сразу для нескольких языков: {$langsString}.
                ТРЕБОВАНИЯ:
@@ -100,7 +102,7 @@ class GeminiService implements AiServiceInterface
      * Пакетный перевод строк.
      * Добавлена поддержка выбора модели и улучшенный промпт.
      */
-    public function translateBatch(array $items, string $targetLang, ?string $modelName = 'gemini-2.5-flash-lite'): ?array
+    public function translateBatch(array $items, string $targetLang, ?string $modelName = 'gemini-3.5-flash-lite'): ?array
     {
         try {
             if (empty($items)) return [];
@@ -146,7 +148,7 @@ class GeminiService implements AiServiceInterface
     {
         try {
             // Используем полноценную Flash модель вместо Lite
-            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $model = $this->client->generativeModel('gemini-3.5-flash-lite');
 
             $prompt = "Ты — старший редактор локализации. Твоя задача — ПЕРЕВЕСТИ строку СТРОГО на язык: {$targetLang}.
                    ВНИМАНИЕ: Предыдущая попытка автоматического перевода оставила эту строку без изменений или на неверном языке.
@@ -174,7 +176,7 @@ class GeminiService implements AiServiceInterface
     {
         try {
             // Для JSON лучше использовать полноценную модель для точности структуры
-            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $model = $this->client->generativeModel('gemini-3.5-flash-lite');
 
             $prompt = "Ты — API для перевода JSON-данных.
                ЗАДАЧА: Переведи все текстовые ЗНАЧЕНИЯ в предоставленном JSON на язык: {$targetLang}.
@@ -214,7 +216,7 @@ class GeminiService implements AiServiceInterface
                 }";
             }
 
-            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $model = $this->client->generativeModel('gemini-3.5-flash-lite');
 
             $prompt = "Ты — ведущий SEO-специалист e-commerce. Твоя задача — создать контент для страницы фильтра.
                 КОНТЕКСТ:
@@ -255,12 +257,47 @@ class GeminiService implements AiServiceInterface
     public function analyzePageMarkup(string $html, array $context = []): ?array
     {
         return $this->withRetries(function() use ($html, $context){
-            $model = $this->client->generativeModel('gemini-2.5-flash');
+            $model = $this->client->generativeModel('gemini-3.5-flash-lite');
             $prompt = $this->buildAnalyzePageMarkupPrompt($html, $context);
 
             $response = $model->generateContent($prompt);
 
             return $this->parsePageMarkupResponse($response->text());
+        });
+    }
+
+    /**
+     * Фоллбэк-классификация типа страницы (Modules\ThemeImport) — см. AiServiceInterface. Без
+     * withRetries(): вызов лёгкий и не критичный — при неудаче оркестратор просто трактует
+     * страницу как static (безопасный дефолт), не блокируется на повторных попытках.
+     */
+    public function classifyPageType(string $html, array $context = []): ?string
+    {
+        try {
+            $model = $this->client->generativeModel('gemini-2.5-flash-lite');
+            $prompt = $this->buildClassifyPageTypePrompt($html, $context);
+
+            $response = $model->generateContent($prompt);
+
+            return $this->parsePageTypeResponse($response->text());
+        } catch (\Exception $e) {
+            Log::error("Gemini Page Type Classification Error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Узкая версия analyzePageMarkup() с фиксированным словарём слотов — см. AiServiceInterface.
+     */
+    public function mapDynamicPageSlots(string $html, array $slotVocabulary): ?array
+    {
+        return $this->withRetries(function() use ($html, $slotVocabulary){
+            $model = $this->client->generativeModel('gemini-2.5-flash-lite');
+            $prompt = $this->buildMapDynamicPageSlotsPrompt($html, $slotVocabulary);
+
+            $response = $model->generateContent($prompt);
+
+            return $this->parseDynamicPageSlotsResponse($response->text());
         });
     }
 

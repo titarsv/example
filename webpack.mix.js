@@ -38,6 +38,23 @@ if (fs.existsSync(`${themeSrc}/fonts`)) {
     mix.copyDirectory(`${themeSrc}/fonts`, `${themeDist}/fonts`);
 }
 
+// scss/imported/{page}/entry.scss — per-page изолированные entry-точки, которые раскладывает
+// Modules\ThemeImport (см. docs/dynamic-page-import-plan.md, «Источник архива»): SCSS-переменные
+// донора конкретной страницы не должны утекать в общий app.scss темы (реальная коллизия имён,
+// не гипотетическая — у донора и темы могут совпадать имена вроде $dark), поэтому каждая такая
+// страница компилируется отдельным bundle'ом и подключается своим <link> только на своей странице.
+const importedScssRoot = `${themeSrc}/scss/imported`;
+
+if (fs.existsSync(importedScssRoot)) {
+    for (const page of fs.readdirSync(importedScssRoot)) {
+        const entry = `${importedScssRoot}/${page}/entry.scss`;
+
+        if (fs.existsSync(entry)) {
+            mix.sass(entry, `${themeDist}/css/imported/${page}.css`);
+        }
+    }
+}
+
 mix.version();
 
 mix.browserSync({

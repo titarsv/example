@@ -5,11 +5,13 @@ namespace Modules\Ai\Services;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\File;
+use Modules\Ai\Services\Concerns\BuildsDynamicPageSlotsPrompt;
 use Modules\Ai\Services\Concerns\BuildsPageMarkupPrompt;
+use Modules\Ai\Services\Concerns\BuildsPageTypePrompt;
 
 class OllamaService implements AiServiceInterface
 {
-    use BuildsPageMarkupPrompt;
+    use BuildsPageMarkupPrompt, BuildsPageTypePrompt, BuildsDynamicPageSlotsPrompt;
 
     protected string $baseUrl;
     protected string $defaultModel;
@@ -311,6 +313,66 @@ class OllamaService implements AiServiceInterface
             }
 
             return $this->parsePageMarkupResponse($response->json('response'));
+        });
+    }
+
+    /**
+     * Фоллбэк-классификация типа страницы (Modules\ThemeImport) — см. AiServiceInterface.
+     */
+    public function classifyPageType(string $html, array $context = []): ?string
+    {
+        try {
+            $prompt = $this->buildClassifyPageTypePrompt($html, $context);
+
+            $response = Http::timeout(60)->post("{$this->baseUrl}/api/generate", [
+                'model' => $this->defaultModel,
+                'system' => "You are a JSON-only API. You never add explanations, markdown fences or conversational text — only valid JSON.",
+                'prompt' => $prompt,
+                'stream' => false,
+                'format' => 'json',
+                'options' => [
+                    'temperature' => 0.1,
+                ],
+            ]);
+
+            if ($response->failed()) {
+                Log::error("Ollama Page Type Classification Error: " . $response->body());
+                return null;
+            }
+
+            return $this->parsePageTypeResponse($response->json('response'));
+        } catch (\Exception $e) {
+            Log::error("Ollama Page Type Classification Error: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Узкая версия analyzePageMarkup() с фиксированным словарём слотов — см. AiServiceInterface.
+     */
+    public function mapDynamicPageSlots(string $html, array $slotVocabulary): ?array
+    {
+        return $this->withRetries(function() use ($html, $slotVocabulary){
+            $prompt = $this->buildMapDynamicPageSlotsPrompt($html, $slotVocabulary);
+
+            $response = Http::timeout(300)->post("{$this->baseUrl}/api/generate", [
+                'model' => $this->defaultModel,
+                'system' => "You are a JSON-only API. You never add explanations, markdown fences or conversational text — only valid JSON.",
+                'prompt' => $prompt,
+                'stream' => false,
+                'format' => 'json',
+                'options' => [
+                    'temperature' => 0.1,
+                    'num_ctx' => 8192,
+                ],
+            ]);
+
+            if ($response->failed()) {
+                Log::error("Ollama Dynamic Page Slots Error: " . $response->body());
+                return null;
+            }
+
+            return $this->parseDynamicPageSlotsResponse($response->json('response'));
         });
     }
 
