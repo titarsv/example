@@ -24,7 +24,8 @@ class ArchiveParser
      *     content_selector: string,
      *     content: string,
      *     images: array<int, array{src: string, path: string|null, alt: string}>,
-     *     svgs: array<int, string>
+     *     svgs: array<int, string>,
+     *     heading: string|null
      * }|null Null, если файл не читается или в нём нет узла $contentSelector
      */
     public function parseHtmlFile(string $htmlFilePath, string $contentSelector = 'main'): ?array{
@@ -55,6 +56,14 @@ class ArchiveParser
         if(!($contentNode instanceof DOMElement)){
             return null;
         }
+
+        // <h1> и хлебные крошки донора — не контент шаблона: <h1> идёт в Seo::name (рендерится
+        // всеми ручными шаблонами страниц как {{ $seo->name }}), крошки — отдельный, уже
+        // подключённый везде модуль (Breadcrumbs::render('page', $page), routes/breadcrumbs.php).
+        // Вырезаем ОБА из разметки ДО того, как контент вообще увидит ИИ — иначе он принимает их
+        // за обычный контент и заводит под них поля/repeater, дублируя то, что уже даёт сайт.
+        $heading = $this->extractHeading($xpath, $contentNode);
+        $this->removeBreadcrumbNodes($xpath, $contentNode);
 
         $images = [];
         foreach($xpath->query('.//img', $contentNode) as $img){
@@ -89,7 +98,66 @@ class ArchiveParser
             'content' => $this->innerHtml($contentNode),
             'images' => $images,
             'svgs' => $svgs,
+            'heading' => $heading,
         ];
+    }
+
+    /**
+     * Первый <h1> внутри контентной области — заголовок страницы для Seo::name, а не поле схемы.
+     * Узел вырезается из DOM, чтобы дальше по конвейеру (ИИ/SchemaBuilder) его текст не попал
+     * в обычное текстовое поле шаблона.
+     */
+    private function extractHeading(DOMXPath $xpath, DOMElement $contentNode): ?string{
+        $node = $xpath->query('.//h1', $contentNode)->item(0);
+
+        if(!($node instanceof DOMElement)){
+            return null;
+        }
+
+        $heading = trim($node->textContent);
+        $node->parentNode->removeChild($node);
+
+        return $heading !== '' ? $heading : null;
+    }
+
+    /**
+     * Вырезает из контентной области разметку хлебных крошек донора: `<nav aria-label="breadcrumb">`
+     * (паттерн, которым пользуется и сам этот проект, см. layouts/breadcrumbs.blade.php) и любой
+     * узел с классом "breadcrumb"/"breadcrumbs" (сам контейнер, не отдельные "breadcrumb-item" —
+     * они уходят вместе с родителем). Эвристика, не 100% доноров попадёт под неё, но покрывает
+     * стандартную Bootstrap-разметку, которой построены оба протестированных донора.
+     */
+    private function removeBreadcrumbNodes(DOMXPath $xpath, DOMElement $contentNode): void{
+        $candidates = $xpath->query(
+            './/nav[contains(translate(@aria-label, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "abcdefghijklmnopqrstuvwxyz"), "breadcrumb")]'
+            .' | .//*[contains(concat(" ", normalize-space(@class), " "), " breadcrumb ")'
+            .' or contains(concat(" ", normalize-space(@class), " "), " breadcrumbs ")]',
+            $contentNode
+        );
+
+        if($candidates === false || $candidates->length === 0){
+            return;
+        }
+
+        $set = iterator_to_array($candidates);
+
+        foreach($set as $node){
+            // Узел, чей предок уже есть в наборе, уйдёт вместе с ним — удалять отдельно не нужно
+            // (и небезопасно: могли бы попытаться отсоединить уже отсоединённый узел).
+            $ancestor = $node->parentNode;
+            $nested = false;
+            while($ancestor instanceof DOMElement && $ancestor !== $contentNode){
+                if(in_array($ancestor, $set, true)){
+                    $nested = true;
+                    break;
+                }
+                $ancestor = $ancestor->parentNode;
+            }
+
+            if(!$nested && $node->parentNode !== null){
+                $node->parentNode->removeChild($node);
+            }
+        }
     }
 
     /**

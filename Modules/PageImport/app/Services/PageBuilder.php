@@ -65,10 +65,20 @@ class PageBuilder
 
         $prep = $this->parser->preprocessForAi($content, $result['svgs']);
 
-        $rawTitle = $this->extractTitle($htmlFilePath);
-        $pageTitle = ($rawTitle && !in_array($rawTitle, $duplicateTitles, true))
-            ? $rawTitle
-            : $this->titleFromPath($relativePath);
+        // <h1> донора (уже вырезанный из контента ArchiveParser'ом) — приоритетный источник
+        // заголовка: это и есть реальный видимый заголовок страницы, идёт в Seo::name (H1).
+        // <title> — запасной вариант (часто общий бренд-плейсхолдер сборки, см. titleFromPath()
+        // и $duplicateTitles ниже), используется только если на странице вообще нет <h1>.
+        $heading = !empty($result['heading']) ? $result['heading'] : null;
+
+        if($heading !== null){
+            $pageTitle = $heading;
+        }else{
+            $rawTitle = $this->extractTitle($htmlFilePath);
+            $pageTitle = ($rawTitle && !in_array($rawTitle, $duplicateTitles, true))
+                ? $rawTitle
+                : $this->titleFromPath($relativePath);
+        }
 
         $aiFields = $this->ai->analyzePageMarkup($prep['content'], ['page_name' => $pageTitle]);
 
@@ -85,7 +95,7 @@ class PageBuilder
         $baseName = Str::slug($this->titleFromPath($relativePath), '-') ?: 'page';
         $name = $this->uniqueTemplateName($baseName);
 
-        $this->writeTemplate($name, $built['blade'], $built['fields']);
+        $this->writeTemplate($name, $this->wrapContent($built['blade']), $built['fields']);
 
         $pageId = $this->createPage($name, $pageTitle, $built['fields'], $built['values']);
 
@@ -97,6 +107,41 @@ class PageBuilder
             'page_id' => $pageId,
             'title' => $pageTitle,
         ];
+    }
+
+    /**
+     * Оборачивает контент, собранный SchemaBuilder'ом (голый innerHTML бывшего <main>, с уже
+     * расставленными @field()), в тот же каркас, которым написаны ВСЕ шаблоны страниц вручную
+     * (см. resources/themes/{theme}/views/public/layouts/pages/about.blade.php) — layout сайта,
+     * OpenGraph, крошки и <h1> из Seo::name. SchemaBuilder про этот каркас ничего не знает (и не
+     * должен — он занимается только контентом), поэтому без этого шага сгенерированный blade был
+     * бы фрагментом без @extends вовсе — без хедера/футера темы при рендере.
+     */
+    private function wrapContent(string $body): string{
+        $header = <<<'BLADE'
+@extends('public.layouts.main')
+@section('page_vars')
+    @include('public.layouts.microdata.open_graph', [
+     'title' => $seo->meta_title,
+     'description' => $seo->meta_description,
+     'image' => theme_asset('images/favicon.png')
+     ])
+@endsection
+
+@section('content')
+    <div class="container py-4">
+        <div class="mb-3">{!! Breadcrumbs::render('page', $page) !!}</div>
+        <h1 class="h3 mb-4">{{ $seo->name }}</h1>
+
+BLADE;
+
+        $footer = <<<'BLADE'
+
+    </div>
+@endsection
+BLADE;
+
+        return $header.$body.$footer;
     }
 
     /**
