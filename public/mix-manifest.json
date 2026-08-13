@@ -1,7 +1,5 @@
 {
-    "/themes/base/js/app.js": "/themes/base/js/app.js?id=da9adae747530fde1cdb989fd3331999",
-    "/themes/base/css/app.css": "/themes/base/css/app.css?id=4c11ef7cef6ed2eab7958ac1a703cc08",
-    "/themes/base/images/favicon.png": "/themes/base/images/favicon.png?id=b8b446a7d4b7e5ef68cec5427ba4c5c6",
-    "/themes/base/fonts/bootstrap-icons.woff": "/themes/base/fonts/bootstrap-icons.woff?id=d1af9af6052c51b169be6c628ae99bb5",
-    "/themes/base/fonts/bootstrap-icons.woff2": "/themes/base/fonts/bootstrap-icons.woff2?id=9ad5aa740d7d5e6a0191b309b9b1986c"
+    "/themes/custom/js/app.js": "/themes/custom/js/app.js?id=ec2f0184886ee9794af9e16cce816ca1",
+    "/themes/custom/css/app.css": "/themes/custom/css/app.css?id=4c11ef7cef6ed2eab7958ac1a703cc08",
+    "/themes/custom/images/favicon.png": "/themes/custom/images/favicon.png?id=b8b446a7d4b7e5ef68cec5427ba4c5c6"
 }

@@ -25,5 +25,6 @@ return [
 
     'available' => [
         'base',
+        'custom',
     ],
 ];
