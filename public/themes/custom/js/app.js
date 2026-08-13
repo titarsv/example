@@ -18213,10 +18213,10 @@ return jQuery;
 
 /***/ }),
 
-/***/ "./resources/themes/custom/js/app.js":
-/*!*******************************************!*\
-  !*** ./resources/themes/custom/js/app.js ***!
-  \*******************************************/
+/***/ "./resources/themes/base/js/app.js":
+/*!*****************************************!*\
+  !*** ./resources/themes/base/js/app.js ***!
+  \*****************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
@@ -18233,6 +18233,104 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default().ajaxSetup({
     'X-CSRF-TOKEN': jquery__WEBPACK_IMPORTED_MODULE_0___default()('meta[name="csrf-token"]').attr('content')
   }
 });
+
+// Фильтр FAQ по категориям.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-faq-tab', function () {
+  var tab = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-tab').removeClass('btn-primary').addClass('btn-outline-secondary');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).removeClass('btn-outline-secondary').addClass('btn-primary');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-item').each(function () {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggle(tab === 'all' || jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab') == tab);
+  });
+});
+
+// Форма отзыва о товаре/о магазине.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-review-form', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function (response) {
+    if (response && response.error) {
+      $form.find('.js-review-error').text('Проверьте, все ли обязательные поля заполнены.').removeClass('d-none');
+      return;
+    }
+    $form.closest('.modal').find('.modal-body').html('<div class="alert alert-success mb-0">Спасибо! Ваш отзыв отправлен на модерацию.</div>');
+  }).fail(function () {
+    $form.find('.js-review-error').text('Ошибка отправки, попробуйте ещё раз.').removeClass('d-none');
+  });
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-rating-input .bi', function () {
+  var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).closest('.js-rating-input');
+  var value = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value');
+  $wrapper.find('input[name="grade"]').val(value);
+  $wrapper.find('.bi').each(function () {
+    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggleClass('bi-star-fill', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') <= value).toggleClass('bi-star', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') > value);
+  });
+});
+
+// Универсальная отправка форм (подписка в футере, контакты, отзывы)
+// без перезагрузки страницы — с простым инлайн-уведомлением.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.ajax_form', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  var $btn = $form.find('[type="submit"]');
+  var originalText = $btn.text();
+  $form.find('.js-form-alert').remove();
+  $btn.prop('disabled', true);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function () {
+    $form.prepend('<div class="alert alert-success js-form-alert">' + ($form.data('success-title') || 'Готово') + ($form.data('success-message') ? ' ' + $form.data('success-message') : '') + '</div>');
+    $form[0].reset();
+  }).fail(function () {
+    $form.prepend('<div class="alert alert-danger js-form-alert">' + ($form.data('error-title') || 'Ошибка отправки, попробуйте ещё раз.') + '</div>');
+  }).always(function () {
+    $btn.prop('disabled', false).text(originalText);
+  });
+});
+
+// Слайдеры блоков с товарными рекомендациями (похожие/сопутствующие/
+// рекомендуемые/хиты продаж и т.п.) — везде одна и та же карусель.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-products-slider').slick({
+  rows: 0,
+  // иначе slick сам оборачивает каждый слайд доп. div'ом с
+  // инлайновым display:inline-block, и height:100% до карточки не доходит
+  slidesToShow: 5,
+  slidesToScroll: 1,
+  infinite: false,
+  prevArrow: '<button type="button" class="slick-prev"><i class="bi bi-chevron-left"></i></button>',
+  nextArrow: '<button type="button" class="slick-next"><i class="bi bi-chevron-right"></i></button>',
+  responsive: [{
+    breakpoint: 992,
+    settings: {
+      slidesToShow: 3
+    }
+  }, {
+    breakpoint: 576,
+    settings: {
+      slidesToShow: 2
+    }
+  }]
+});
+
+// Бизнес-логика магазина (корзина/избранное/сравнение/фильтры каталога/чекаут) — вынесена в
+// js/shop/*.js, см. docs/dynamic-page-import-plan.md, п.0.1. Один require здесь даёт тот же
+// эффект, что и require('./custom.js') в конце app.js у nnn-site.lh: UI-код темы выше не зависит
+// от бизнес-логики, бизнес-логика не зависит от того, чей это app.js — донора или собственный.
+__webpack_require__(/*! ./shop */ "./resources/themes/base/js/shop/index.js");
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/cart.js":
+/*!***********************************************!*\
+  !*** ./resources/themes/base/js/shop/cart.js ***!
+  \***********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
+
+
 
 // Корзина: добавление/удаление/изменение количества через AJAX,
 // обновление счётчика в шапке и содержимого офканваса корзины.
@@ -18273,18 +18371,128 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('change', '.js-cart-q
   }, updateCartUI);
 });
 
-// Избранное: переключение сердечка на карточке товара/странице товара.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-wishlist-toggle', function (e) {
+// Вариации товара (объём/размер и т.п.) — переключение цены.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js_variation:not(.disabled)', function () {
+  var $this = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  var $card = $this.closest('.js-product-card');
+  var id = $this.data('id');
+  $card.find('.js_variation').removeClass('js_active current');
+  $this.addClass('js_active current');
+  var $input = $card.find('.js_var_' + id);
+  $card.find('[name="variation"]').prop('checked', false);
+  if ($input.length) {
+    $input.prop('checked', true);
+    var price = $input.data('price');
+    var originalPrice = $input.data('original_price');
+    $card.find('.js_current_price').text('₽' + price);
+    $card.find('.js_old_price').remove();
+    if (originalPrice > price) {
+      $card.find('.js_current_price').after('<span class="text-muted text-decoration-line-through js_old_price ms-1">₽' + originalPrice + '</span>');
+    }
+  }
+});
+
+// Купон на странице корзины/оформления заказа.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-coupon-form', function (e) {
   e.preventDefault();
-  var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/wishlist/toggle', {
-    product_id: $btn.data('id')
-  }, function (response) {
-    $btn.find('.bi').toggleClass('bi-heart bi-heart-fill', false);
-    $btn.find('.bi').removeClass('bi-heart bi-heart-fill').addClass(response.in_wish ? 'bi-heart-fill' : 'bi-heart');
-    $btn.toggleClass('text-danger', response.in_wish);
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/apply_coupon', $form.serialize(), function (response) {
+    if (response.result === 'success') {
+      location.reload();
+    } else {
+      $form.find('.js-coupon-error').text(response.msg).removeClass('d-none');
+    }
   });
 });
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/checkout.js":
+/*!***************************************************!*\
+  !*** ./resources/themes/base/js/shop/checkout.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+
+// Изменение количества/удаление товара на странице оформления заказа —
+// проще всего пересчитать перезагрузкой страницы после ответа сервера.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('change', '.js_checkout_qty', function () {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/cart/update', {
+    action: 'update',
+    product_id: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('prod-id'),
+    quantity: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).val()
+  }, function () {
+    location.reload();
+  });
+});
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js_remove_product_from_checkout', function () {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/cart/update', {
+    action: 'remove',
+    product_id: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('id')
+  }, function () {
+    location.reload();
+  });
+});
+
+// Оформление заказа.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '#order-checkout', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  var $btn = $form.find('.js_checkout_submit');
+  $form.find('.js-checkout-error').addClass('d-none');
+  $btn.prop('disabled', true);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post(location.pathname + location.search, $form.serialize()).done(function (response) {
+    if (response.success === 'redirect') {
+      location.href = response.url || '/thanks?order_id=' + response.order_id;
+      return;
+    }
+    if (response.error) {
+      var messages = typeof response.error === 'string' ? response.error : Object.values(response.error).join(' ');
+      $form.find('.js-checkout-error').text(messages).removeClass('d-none');
+      $btn.prop('disabled', false);
+    }
+  }).fail(function () {
+    $form.find('.js-checkout-error').text('Ошибка оформления заказа, попробуйте ещё раз.').removeClass('d-none');
+    $btn.prop('disabled', false);
+  });
+});
+
+// Отслеживание заказа по номеру и email.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '#js_track_order', function (e) {
+  e.preventDefault();
+  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  $form.find('.js-track-error').addClass('d-none');
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/track_order', $form.serialize(), function (response) {
+    if (response.success) {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-track-result').html(response.html);
+    } else {
+      $form.find('.js-track-error').text(response.message).removeClass('d-none');
+    }
+  });
+});
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/compare.js":
+/*!**************************************************!*\
+  !*** ./resources/themes/base/js/shop/compare.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./resources/themes/base/js/shop/utils.js");
+
+
+
 
 // Всплывающее уведомление — используется сравнением для ошибок
 // несовместимости («нельзя сравнивать наушники с телефонами» и т.п.).
@@ -18315,7 +18523,7 @@ function renderCompareGroups(groups) {
     return '<li class="px-3 py-1 text-muted small">Список сравнения пуст</li>';
   }
   return groups.map(function (group) {
-    return '<li class="d-flex align-items-center justify-content-between px-3 py-1 gap-2">' + '<a href="/compare?category=' + group.id + '" class="text-body text-decoration-none text-truncate">' + escapeHtml(group.name) + ' <span class="text-muted">(' + group.count + ')</span>' + '</a>' + '<button type="button" class="btn btn-sm btn-link text-danger p-0 js-compare-clear" data-category="' + group.id + '" aria-label="Удалить группу">' + '<i class="bi bi-trash"></i>' + '</button>' + '</li>';
+    return '<li class="d-flex align-items-center justify-content-between px-3 py-1 gap-2">' + '<a href="/compare?category=' + group.id + '" class="text-body text-decoration-none text-truncate">' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(group.name) + ' <span class="text-muted">(' + group.count + ')</span>' + '</a>' + '<button type="button" class="btn btn-sm btn-link text-danger p-0 js-compare-clear" data-category="' + group.id + '" aria-label="Удалить группу">' + '<i class="bi bi-trash"></i>' + '</button>' + '</li>';
   }).join('');
 }
 jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-compare-toggle', function (e) {
@@ -18501,7 +18709,7 @@ function buildCompareHtmlTable(rows) {
   rows.forEach(function (row, i) {
     var tag = i === 0 ? 'th' : 'td';
     html += '<tr>' + row.map(function (cell) {
-      return '<' + tag + '>' + escapeHtml(cell) + '</' + tag + '>';
+      return '<' + tag + '>' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(cell) + '</' + tag + '>';
     }).join('') + '</tr>';
   });
   return html + '</table>';
@@ -18612,26 +18820,23 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-compare
   });
 });
 
-// Вариации товара (объём/размер и т.п.) — переключение цены.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js_variation:not(.disabled)', function () {
-  var $this = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  var $card = $this.closest('.js-product-card');
-  var id = $this.data('id');
-  $card.find('.js_variation').removeClass('js_active current');
-  $this.addClass('js_active current');
-  var $input = $card.find('.js_var_' + id);
-  $card.find('[name="variation"]').prop('checked', false);
-  if ($input.length) {
-    $input.prop('checked', true);
-    var price = $input.data('price');
-    var originalPrice = $input.data('original_price');
-    $card.find('.js_current_price').text('₽' + price);
-    $card.find('.js_old_price').remove();
-    if (originalPrice > price) {
-      $card.find('.js_current_price').after('<span class="text-muted text-decoration-line-through js_old_price ms-1">₽' + originalPrice + '</span>');
-    }
-  }
-});
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/filters.js":
+/*!**************************************************!*\
+  !*** ./resources/themes/base/js/shop/filters.js ***!
+  \**************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var bootstrap__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! bootstrap */ "./node_modules/bootstrap/dist/js/bootstrap.esm.js");
+/* harmony import */ var _utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./utils */ "./resources/themes/base/js/shop/utils.js");
+
+
+
 
 // Каталог: применение фильтров/сортировки без перезагрузки страницы.
 function submitCatalogFilters($form) {
@@ -18752,138 +18957,13 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-quick-v
   });
 });
 
-// Фильтр FAQ по категориям.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-faq-tab', function () {
-  var tab = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-tab').removeClass('btn-primary').addClass('btn-outline-secondary');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).removeClass('btn-outline-secondary').addClass('btn-primary');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-faq-item').each(function () {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggle(tab === 'all' || jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('tab') == tab);
-  });
-});
-
-// Отслеживание заказа по номеру и email.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '#js_track_order', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  $form.find('.js-track-error').addClass('d-none');
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/track_order', $form.serialize(), function (response) {
-    if (response.success) {
-      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-track-result').html(response.html);
-    } else {
-      $form.find('.js-track-error').text(response.message).removeClass('d-none');
-    }
-  });
-});
-
-// Форма отзыва о товаре/о магазине.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-review-form', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function (response) {
-    if (response && response.error) {
-      $form.find('.js-review-error').text('Проверьте, все ли обязательные поля заполнены.').removeClass('d-none');
-      return;
-    }
-    $form.closest('.modal').find('.modal-body').html('<div class="alert alert-success mb-0">Спасибо! Ваш отзыв отправлен на модерацию.</div>');
-  }).fail(function () {
-    $form.find('.js-review-error').text('Ошибка отправки, попробуйте ещё раз.').removeClass('d-none');
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-rating-input .bi', function () {
-  var $wrapper = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).closest('.js-rating-input');
-  var value = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value');
-  $wrapper.find('input[name="grade"]').val(value);
-  $wrapper.find('.bi').each(function () {
-    jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).toggleClass('bi-star-fill', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') <= value).toggleClass('bi-star', jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('value') > value);
-  });
-});
-
-// Изменение количества/удаление товара на странице оформления заказа —
-// проще всего пересчитать перезагрузкой страницы после ответа сервера.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('change', '.js_checkout_qty', function () {
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/cart/update', {
-    action: 'update',
-    product_id: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('prod-id'),
-    quantity: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).val()
-  }, function () {
-    location.reload();
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js_remove_product_from_checkout', function () {
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/cart/update', {
-    action: 'remove',
-    product_id: jquery__WEBPACK_IMPORTED_MODULE_0___default()(this).data('id')
-  }, function () {
-    location.reload();
-  });
-});
-
-// Оформление заказа.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '#order-checkout', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  var $btn = $form.find('.js_checkout_submit');
-  $form.find('.js-checkout-error').addClass('d-none');
-  $btn.prop('disabled', true);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post(location.pathname + location.search, $form.serialize()).done(function (response) {
-    if (response.success === 'redirect') {
-      location.href = response.url || '/thanks?order_id=' + response.order_id;
-      return;
-    }
-    if (response.error) {
-      var messages = typeof response.error === 'string' ? response.error : Object.values(response.error).join(' ');
-      $form.find('.js-checkout-error').text(messages).removeClass('d-none');
-      $btn.prop('disabled', false);
-    }
-  }).fail(function () {
-    $form.find('.js-checkout-error').text('Ошибка оформления заказа, попробуйте ещё раз.').removeClass('d-none');
-    $btn.prop('disabled', false);
-  });
-});
-
-// Купон на странице корзины/оформления заказа.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.js-coupon-form', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/apply_coupon', $form.serialize(), function (response) {
-    if (response.result === 'success') {
-      location.reload();
-    } else {
-      $form.find('.js-coupon-error').text(response.msg).removeClass('d-none');
-    }
-  });
-});
-
-// Универсальная отправка форм (подписка в футере, контакты, отзывы)
-// без перезагрузки страницы — с простым инлайн-уведомлением.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('submit', '.ajax_form', function (e) {
-  e.preventDefault();
-  var $form = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
-  var $btn = $form.find('[type="submit"]');
-  var originalText = $btn.text();
-  $form.find('.js-form-alert').remove();
-  $btn.prop('disabled', true);
-  jquery__WEBPACK_IMPORTED_MODULE_0___default().post($form.attr('action'), $form.serialize()).done(function () {
-    $form.prepend('<div class="alert alert-success js-form-alert">' + ($form.data('success-title') || 'Готово') + ($form.data('success-message') ? ' ' + $form.data('success-message') : '') + '</div>');
-    $form[0].reset();
-  }).fail(function () {
-    $form.prepend('<div class="alert alert-danger js-form-alert">' + ($form.data('error-title') || 'Ошибка отправки, попробуйте ещё раз.') + '</div>');
-  }).always(function () {
-    $btn.prop('disabled', false).text(originalText);
-  });
-});
-
 // Живой поиск в шапке.
-function escapeHtml(value) {
-  return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').text(value == null ? '' : value).html();
-}
 function renderSearchResults(products) {
   if (!products.length) {
     return '<span class="dropdown-item-text text-muted">Ничего не найдено</span>';
   }
   return products.map(function (product) {
-    return '<a class="dropdown-item d-flex align-items-center gap-2" href="' + escapeHtml(product.url) + '">' + '<img src="' + escapeHtml(product.image) + '" alt="" width="40" height="40" class="object-fit-cover flex-shrink-0">' + '<span class="flex-grow-1 text-truncate">' + escapeHtml(product.name) + '</span>' + '<span class="text-nowrap fw-semibold">' + escapeHtml(product.price) + '</span>' + '</a>';
+    return '<a class="dropdown-item d-flex align-items-center gap-2" href="' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(product.url) + '">' + '<img src="' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(product.image) + '" alt="" width="40" height="40" class="object-fit-cover flex-shrink-0">' + '<span class="flex-grow-1 text-truncate">' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(product.name) + '</span>' + '<span class="text-nowrap fw-semibold">' + (0,_utils__WEBPACK_IMPORTED_MODULE_2__.escapeHtml)(product.price) + '</span>' + '</a>';
   }).join('');
 }
 var searchTimer;
@@ -18910,28 +18990,84 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', function (e)
   }
 });
 
-// Слайдеры блоков с товарными рекомендациями (похожие/сопутствующие/
-// рекомендуемые/хиты продаж и т.п.) — везде одна и та же карусель.
-jquery__WEBPACK_IMPORTED_MODULE_0___default()('.js-products-slider').slick({
-  rows: 0,
-  // иначе slick сам оборачивает каждый слайд доп. div'ом с
-  // инлайновым display:inline-block, и height:100% до карточки не доходит
-  slidesToShow: 5,
-  slidesToScroll: 1,
-  infinite: false,
-  prevArrow: '<button type="button" class="slick-prev"><i class="bi bi-chevron-left"></i></button>',
-  nextArrow: '<button type="button" class="slick-next"><i class="bi bi-chevron-right"></i></button>',
-  responsive: [{
-    breakpoint: 992,
-    settings: {
-      slidesToShow: 3
-    }
-  }, {
-    breakpoint: 576,
-    settings: {
-      slidesToShow: 2
-    }
-  }]
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/index.js":
+/*!************************************************!*\
+  !*** ./resources/themes/base/js/shop/index.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _cart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cart */ "./resources/themes/base/js/shop/cart.js");
+/* harmony import */ var _wishlist__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./wishlist */ "./resources/themes/base/js/shop/wishlist.js");
+/* harmony import */ var _compare__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./compare */ "./resources/themes/base/js/shop/compare.js");
+/* harmony import */ var _filters__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./filters */ "./resources/themes/base/js/shop/filters.js");
+/* harmony import */ var _checkout__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./checkout */ "./resources/themes/base/js/shop/checkout.js");
+// Бизнес-логика магазина, вынесенная из app.js (см. docs/dynamic-page-import-plan.md, п.0.1) —
+// сгруппирована по фиче, каждый файл самодостаточен (навешивает делегированные обработчики на
+// document/id, ни от чего другого в app.js не зависит). Подключается одним require('./shop')
+// из app.js — это то же самое, что require('./custom.js') -> require('./larchik/*') в
+// C:\OSPanel\home\nnn-site.lh\public\resources\js\app.js, просто с местными именами: не привязано
+// к конкретной UI-логике app.js, чистая бизнес-логика поверх backend-маршрутов сайта. Именно
+// поэтому оркестратор импорта динамических страниц сможет дописать require в конец
+// СГЕНЕРИРОВАННОГО из донора app.js новой темы и получить рабочую корзину/фильтры/чекаут без
+// переноса самой бизнес-логики.
+
+
+
+
+
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/utils.js":
+/*!************************************************!*\
+  !*** ./resources/themes/base/js/shop/utils.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   escapeHtml: () => (/* binding */ escapeHtml)
+/* harmony export */ });
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+
+// Общий мелкий хелпер для js/shop/*.js — экранирование значений, вставляемых
+// в разметку через строковую конкатенацию (карточки сравнения, живой поиск).
+function escapeHtml(value) {
+  return jquery__WEBPACK_IMPORTED_MODULE_0___default()('<div>').text(value == null ? '' : value).html();
+}
+
+/***/ }),
+
+/***/ "./resources/themes/base/js/shop/wishlist.js":
+/*!***************************************************!*\
+  !*** ./resources/themes/base/js/shop/wishlist.js ***!
+  \***************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+
+
+// Избранное: переключение сердечка на карточке товара/странице товара.
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(document).on('click', '.js-wishlist-toggle', function (e) {
+  e.preventDefault();
+  var $btn = jquery__WEBPACK_IMPORTED_MODULE_0___default()(this);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().post('/wishlist/toggle', {
+    product_id: $btn.data('id')
+  }, function (response) {
+    $btn.find('.bi').toggleClass('bi-heart bi-heart-fill', false);
+    $btn.find('.bi').removeClass('bi-heart bi-heart-fill').addClass(response.in_wish ? 'bi-heart-fill' : 'bi-heart');
+    $btn.toggleClass('text-danger', response.in_wish);
+  });
 });
 
 /***/ }),
@@ -22134,7 +22270,7 @@ var __WEBPACK_AMD_DEFINE_FACTORY__, __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_
 /******/ 	// startup
 /******/ 	// Load entry module and return exports
 /******/ 	// This entry module depends on other loaded chunks and execution need to be delayed
-/******/ 	__webpack_require__.O(undefined, ["themes/custom/css/app"], () => (__webpack_require__("./resources/themes/custom/js/app.js")))
+/******/ 	__webpack_require__.O(undefined, ["themes/custom/css/app"], () => (__webpack_require__("./resources/themes/base/js/app.js")))
 /******/ 	var __webpack_exports__ = __webpack_require__.O(undefined, ["themes/custom/css/app"], () => (__webpack_require__("./resources/themes/custom/scss/app.scss")))
 /******/ 	__webpack_exports__ = __webpack_require__.O(__webpack_exports__);
 /******/ 	

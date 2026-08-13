@@ -18,9 +18,17 @@ require('dotenv').config();
 const theme = process.env.ACTIVE_THEME || 'base';
 const themeSrc = `resources/themes/${theme}`;
 const themeDist = `public/themes/${theme}`;
+const fallbackSrc = 'resources/themes/base';
 
-mix.js(`${themeSrc}/js/app.js`, `${themeDist}/js`)
-    .sass(`${themeSrc}/scss/app.scss`, `${themeDist}/css`);
+// js/app.js и scss/app.scss — как и Blade-вьюхи (config/view.php) и images/fonts (copyDirectory
+// ниже) — не обязаны существовать в активной теме: тема, не переопределяющая ни JS, ни SCSS,
+// вправе не таскать их устаревшую копию и наследовать от base. В отличие от вьюх, здесь нет
+// готового движка резолва путей — путь к entry-файлу вычисляем сами, тем же принципом.
+const jsEntry = fs.existsSync(`${themeSrc}/js/app.js`) ? `${themeSrc}/js/app.js` : `${fallbackSrc}/js/app.js`;
+const sassEntry = fs.existsSync(`${themeSrc}/scss/app.scss`) ? `${themeSrc}/scss/app.scss` : `${fallbackSrc}/scss/app.scss`;
+
+mix.js(jsEntry, `${themeDist}/js`)
+    .sass(sassEntry, `${themeDist}/css`);
 
 if (fs.existsSync(`${themeSrc}/images`)) {
     mix.copyDirectory(`${themeSrc}/images`, `${themeDist}/images`);
