@@ -94,12 +94,12 @@ return [
     'locales_names' => [
         'ua' => 'Українською',
         'ru' => 'На русском',
-        'en' => 'English'
+//        'en' => 'English'
     ],
     'locales_gettext' => [
         'ua' => 'uk_UA',
         'ru' => 'ru_RU',
-        'en' => 'en_US',
+//        'en' => 'en_US',
     ],
     'languages_names' => [
         'ua' => 'Українська',
