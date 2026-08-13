@@ -62,7 +62,12 @@ class PageImportController extends Controller
         $data = [];
         foreach($imports as $import){
             $actions = [];
-            if(!empty($user) && $user->hasAccess(['page_imports.read']) && in_array((int)$import->status, [PageImport::STATUS_REVIEW, PageImport::STATUS_PUBLISHED])){
+            // STATUS_ERROR тоже ведёт на review: имеет смысл, когда хотя бы одна страница
+            // из батча всё же обработалась (imported_pages непусто) — review.blade.php умеет
+            // показывать построчные ошибки (badge-danger + причина), это единственное место
+            // в админке, где их вообще можно увидеть.
+            $reviewableStatuses = [PageImport::STATUS_REVIEW, PageImport::STATUS_PUBLISHED, PageImport::STATUS_ERROR];
+            if(!empty($user) && $user->hasAccess(['page_imports.read']) && in_array((int)$import->status, $reviewableStatuses) && !empty($import->imported_pages)){
                 $actions[] = [
                     'type' => 'review',
                     'link' => asset('admin/page_imports/review/'.$import->id)
