@@ -99,7 +99,12 @@ class PageBuilder
         $baseName = Str::slug($this->titleFromPath($relativePath), '-') ?: 'page';
         $name = $this->uniqueTemplateName($baseName, $theme);
 
-        $this->writeTemplate($name, $this->wrapContent($built['blade']), $built['fields'], $theme);
+        // css-слаг — donor's исходное имя ($baseName, ДО разрешения коллизии в $name, например
+        // "about", не "about-import-2") — так же, как ProcessThemeImportJob вызывает
+        // AssetPlacer::placeStylesheetsForPage() с исходным именем страницы, а не с уникальным
+        // именем шаблона (у per-page SCSS нет собственной коллизии — своя изолированная папка
+        // per-донорский-файл, см. AssetPlacer).
+        $this->writeTemplate($name, $this->wrapContent($built['blade'], $baseName), $built['fields'], $theme);
 
         $pageId = $this->createPage($name, $pageTitle, $built['fields'], $built['values']);
 
@@ -120,8 +125,13 @@ class PageBuilder
      * OpenGraph, крошки и <h1> из Seo::name. SchemaBuilder про этот каркас ничего не знает (и не
      * должен — он занимается только контентом), поэтому без этого шага сгенерированный blade был
      * бы фрагментом без @extends вовсе — без хедера/футера темы при рендере.
+     * `theme_mix_if_exists()` (не голый theme_mix()) — у не каждой страницы есть свой изолированный
+     * css-бандл (AssetPlacer::placeStylesheetsForPage() — не у каждого донора есть SCSS конкретно
+     * на эту страницу), а голый theme_mix() бросает исключение на отсутствующей записи в манифесте
+     * — живой баг, пойманный на реальном импорте (страница рендерилась стилизованной только по
+     * общему app.css темы, донорский SCSS страницы компилировался, но никуда не подключался).
      */
-    private function wrapContent(string $body): string{
+    private function wrapContent(string $body, string $cssSlug): string{
         $header = <<<'BLADE'
 @extends('public.layouts.main')
 @section('page_vars')
@@ -130,6 +140,13 @@ class PageBuilder
      'description' => $seo->meta_description,
      'image' => theme_asset('images/favicon.png')
      ])
+BLADE;
+
+        $header .= "\n    @if(\$__pageCss = theme_mix_if_exists('css/imported/{$cssSlug}.css'))\n"
+            ."        <link rel=\"stylesheet\" href=\"{{ \$__pageCss }}\">\n"
+            ."    @endif\n";
+
+        $header .= <<<'BLADE'
 @endsection
 
 @section('content')

@@ -81,7 +81,15 @@ class DynamicPageTransplanter
 
         $content = $this->parser->restorePlaceholders($content, $prep['placeholders']);
 
-        return $this->wrap($content, $map);
+        // css-слаг — имя ИМЕННО ЭТОГО донорского файла (например "city" для city.html), не
+        // $pageType ("catalog") — у каждого донорского файла своя изолированная per-page SCSS-
+        // папка (AssetPlacer::placeStylesheetsForPage() вызывается с $page['name'], тем же именем,
+        // что pathinfo() даёт и здесь). Важно при "последний обработанный побеждает" (несколько
+        // донорских файлов одного типа, см. docs/dynamic-page-import-plan.md, шаг 3) — CSS должен
+        // совпадать с тем же файлом, чей контент реально попал в этот Blade.
+        $cssSlug = pathinfo($htmlFilePath, PATHINFO_FILENAME);
+
+        return $this->wrap($content, $map, $cssSlug);
     }
 
     /**
@@ -113,6 +121,14 @@ class DynamicPageTransplanter
             // лучше оставить разметку донора как есть, чем размножить статичный текст первого
             // инстанса на N строк.
             return [$content, false];
+        }
+
+        // Живой баг: карточка-repeater часто целиком обёрнута в <a> (donor's "вся карточка
+        // кликабельна"), но donor's собственный href — заглушка ("javascript:void(0)"), а слот на
+        // него не заводится (это не текстовое/картиночное поле). Без этого блог/статьи собирались
+        // бы полностью рабочими ВНУТРИ карточки, но нажатие на саму карточку никуда не вело.
+        if(!empty($map['repeat_link']) && strtolower($firstInstance->nodeName) === 'a'){
+            $loopBody = preg_replace('/href=(["\']).*?\1/', "href=\"{{ {$map['repeat_link']} }}\"", $loopBody, 1);
         }
 
         $instanceHtmls = array_map(fn($i) => $this->outerHtml($i), $instances);
@@ -315,15 +331,22 @@ class DynamicPageTransplanter
      * 'extends_params'/'open_graph' — точечные переопределения под конкретный тип (см.
      * BladeExpressionMap): catalog передаёт доп. параметры в @extends (pagination/root_category),
      * search вообще не имеет переменной $seo, поэтому переопределяет секцию page_vars целиком.
+     * $cssSlug — theme_mix_if_exists() (не голый theme_mix() — не у каждого донора есть SCSS
+     * конкретно на эту страницу), см. PageBuilder::wrapContent() — тот же живой баг (SCSS страницы
+     * компилировался, но никуда не подключался), тот же фикс.
      */
-    private function wrap(string $body, array $map): string{
+    private function wrap(string $body, array $map, string $cssSlug): string{
         $breadcrumbs = $map['breadcrumbs'];
         $heading = !empty($map['heading']) ? "        <h1 class=\"h3 mb-4\">{$map['heading']}</h1>\n" : '';
         $extendsExtra = !empty($map['extends_params']) ? ', '.$map['extends_params'] : '';
         $openGraph = $map['open_graph'] ?? $this->defaultOpenGraph();
 
         $header = "@extends('public.layouts.main'{$extendsExtra})\n";
-        $header .= "@section('page_vars')\n    {$openGraph}\n@endsection\n";
+        $header .= "@section('page_vars')\n    {$openGraph}\n";
+        $header .= "    @if(\$__pageCss = theme_mix_if_exists('css/imported/{$cssSlug}.css'))\n";
+        $header .= "        <link rel=\"stylesheet\" href=\"{{ \$__pageCss }}\">\n";
+        $header .= "    @endif\n";
+        $header .= "@endsection\n";
         $header .= "\n@section('content')\n    <div class=\"container py-4\">\n";
         $header .= "        <div class=\"mb-3\">{$breadcrumbs}</div>\n".$heading;
 

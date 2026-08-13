@@ -111,6 +111,25 @@ if(!function_exists('theme_asset')){
     }
 }
 
+if(!function_exists('theme_mix_if_exists')){
+    /**
+     * Same as theme_mix(), but returns null instead of throwing when the manifest has no entry
+     * for $path — unlike app.css/app.js (always built), per-page isolated CSS bundles
+     * (Modules\ThemeImport\Services\AssetPlacer::placeStylesheetsForPage(), see
+     * docs/dynamic-page-import-plan.md) only exist for pages whose donor had matching SCSS, and
+     * only after the active theme's build has actually run — a plain theme_mix() call in a page
+     * template (blog/article/catalog/search/404/static pages) would throw
+     * "Unable to locate Mix file" for every visitor otherwise.
+     */
+    function theme_mix_if_exists(string $path): ?string {
+        try {
+            return (string) theme_mix($path);
+        } catch(\Throwable $e){
+            return null;
+        }
+    }
+}
+
 if(!function_exists('module_active')){
     /**
      * Whether an optional store feature is enabled. Works uniformly for real

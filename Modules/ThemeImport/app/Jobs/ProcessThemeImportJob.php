@@ -108,9 +108,11 @@ class ProcessThemeImportJob implements ShouldQueue
 
         $assetPlacer = new AssetPlacer();
         $assetPlacer->placeImagesAndFonts($located['images'], $located['fonts'], $themeName);
+        $assetPlacer->placeSharedPartials($located['stylesheets'], $themeName);
 
         if($located['modules'] !== null){
             $assetPlacer->copyDir($located['modules'], theme_path('js/modules', $themeName));
+            $assetPlacer->rewriteModuleScssImports($themeName);
         }
 
         if($located['appJs'] !== null){

@@ -16,11 +16,15 @@ namespace Modules\ThemeImport\Services;
  *    scss/app.scss, см. resources/themes/base/scss/app.scss).
  * 3. Реальный блок инициализации jQuery/Bootstrap 5 (тот же, что в начале
  *    resources/themes/base/js/app.js) — ставится ПЕРЕД контентом донора, а не заменяет его.
- *    Donor's собственные require('jquery')/require('bootstrap-sass') после этого не вредят —
- *    bootstrap-sass не переопределяет глобальный jQuery-неймспейс, которым пользуется остальной
- *    код сайта (не монки-патчит $.fn.*, в отличие от того, как это делала бы более старая версия
- *    без namespace) — оставлять их безопаснее, чем вырезать регэкспом (риск случайно повредить
- *    файл при малейшем отличии формулировки у другого донора).
+ *    Donor's собственный require('bootstrap-sass') после этого не вредит — bootstrap-sass не
+ *    переопределяет глобальный jQuery-неймспейс, которым пользуется остальной код сайта (не
+ *    монки-патчит $.fn.*, в отличие от того, как это делала бы более старая версия без namespace).
+ *    А вот donor's `let $ = require('jquery')` (реальный, живьём встреченный паттерн, не
+ *    гипотеза) — вредит: `let $` в vendorInitBlock() и donor's `let $` оказываются в ОДНОМ
+ *    модульном scope после конкатенации, повторное `let`-объявление одного имени — не просто
+ *    избыточность, а SyntaxError у babel/webpack. Присваивание вырезается точечно (см.
+ *    stripDonorJqueryDeclaration()), сам require() остаётся — вдруг донор полагается на его
+ *    побочный эффект (плагины, вешающиеся на $.fn при загрузке).
  * 4. `require('.../shop')` — бизнес-логика магазина (корзина/фильтры/чекаут), которую сам донор
  *    никогда не может дать — дописывается в конец. Тот же принцип, что уже видели живьём в
  *    C:\OSPanel\home\nnn-site.lh\public\resources\js\app.js (app.js -> custom.js -> larchik/*).
@@ -36,6 +40,7 @@ class JsAppAssembler
         }
 
         $content = $this->stripScssImports($content);
+        $content = $this->stripDonorJqueryDeclaration($content);
         $content = $this->rebaseNodeModulesDepth($content);
 
         return $this->vendorInitBlock()."\n".rtrim($content)."\n\n".$this->shopRequireBlock($baseThemeName);
@@ -52,6 +57,20 @@ class JsAppAssembler
         // концом строки в multiline-режиме совпадение срывалось на висящем \r (живой баг,
         // пойманный именно на этом прогоне, не гипотеза).
         return preg_replace('/^.*[\'"][^\'"\n]*\.scss[\'"];?[ \t]*\r?$/mi', '', $content) ?? $content;
+    }
+
+    /**
+     * `let/const/var $ = require('jquery')` → `require('jquery');` — снимает конфликтующее
+     * присваивание, оставляя сам вызов (см. пункт 3 в докблоке класса). Другие имена (donor мог
+     * назвать переменную не `$`) не трогаются — конфликта с vendorInitBlock() у них нет.
+     */
+    private function stripDonorJqueryDeclaration(string $content): string
+    {
+        return preg_replace(
+            '/\b(?:let|const|var)\s+\$\s*=\s*(require\((["\'])jquery\2\))\s*;?/',
+            '$1;',
+            $content
+        ) ?? $content;
     }
 
     /**

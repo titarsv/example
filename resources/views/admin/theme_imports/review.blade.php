@@ -55,11 +55,15 @@
                             @endif
                         </td>
                         <td>
-                            @if(($result['status'] ?? '') === 'created')
+                            @if(($result['status'] ?? '') === 'created' && !empty($result['page_id']))
                                 @php($page = $pages[$result['page_id']] ?? null)
                                 <span class="badge badge-{{ !empty($page) && $page->status ? 'success' : 'warning' }}">
                                     {{ !empty($page) && $page->status ? trans('locale.page_import.published') : trans('locale.page_import.created') }}
                                 </span>
+                            @elseif(($result['status'] ?? '') === 'created')
+                                {{-- blog/article/catalog/search/404 — файл темы, не Page-запись
+                                     (см. docs/dynamic-page-import-plan.md, шаги 2–3, 5) --}}
+                                <span class="badge badge-success">{{ trans('locale.page_import.created') }}</span>
                             @elseif(($result['status'] ?? '') === 'skipped')
                                 <span class="badge badge-light">{{ trans('locale.page_import.skipped') }}</span>
                             @elseif(($result['status'] ?? '') === 'not_implemented')
@@ -76,7 +80,7 @@
                             @endif
                         </td>
                         <td>
-                            @if(($result['status'] ?? '') === 'created')
+                            @if(!empty($result['page_id']))
                                 <a class="mr-2" href="/admin/pages/edit/{{ $result['page_id'] }}" target="_blank">
                                     <i class="bx bx-edit-alt" data-toggle="tooltip" title="{{ trans('locale.page_import.edit_page') }}"></i>
                                 </a>

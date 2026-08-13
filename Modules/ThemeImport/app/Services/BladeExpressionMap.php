@@ -28,6 +28,11 @@ class BladeExpressionMap
             'blog' => [
                 'repeat_source' => '$articles',
                 'repeat_var' => 'article',
+                // Донорская карточка обычно целиком обёрнута в <a href="javascript:void(0)"> —
+                // repeat_link переписывает href ЭТОГО инстанса на реальную ссылку (см.
+                // DynamicPageTransplanter::spliceRepeat()), иначе клик по карточке никуда не вёл
+                // бы (живой баг, пойманный на реальном прогоне, не гипотеза).
+                'repeat_link' => '$article->link()',
                 'repeat_children' => [
                     'title' => ['kind' => 'text', 'expr' => '$article->name'],
                     'date' => ['kind' => 'text', 'expr' => "date('d.m.Y', strtotime(\$article->created_at))"],
