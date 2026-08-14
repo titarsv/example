@@ -211,20 +211,27 @@ trait ResolvesDomNodes
     }
 
     /**
-     * Резолвит один токен цепочки ("tag", "tag.class", ".class", "tag:nth-of-type(N)") относительно
-     * $context — см. resolveSimpleSelector().
+     * Резолвит один токен цепочки ("tag", "tag.class", "tag.class1.class2", "tag:nth-of-type(N)")
+     * относительно $context — см. resolveSimpleSelector(). Несколько классов подряд (".class1.class2")
+     * — реальный, живьём встреченный паттерн модели для узла с несколькими CSS-классами
+     * (donor's `class="product-page__info-buttons sticky"` → модель иногда пишет
+     * "div.product-page__info-buttons.sticky") — раньше поддерживался только ОДИН класс на токен,
+     * такой селектор молча проваливался целиком (весь токен не матчился регэкспом). Каждый указанный
+     * класс — отдельный XPath contains()-предикат (И-семантика, как у CSS ".a.b" — узел должен
+     * содержать ВСЕ перечисленные классы, порядок не важен).
      */
     private function resolveSimpleSelectorToken(DOMXPath $xpath, DOMElement $context, string $token): ?DOMNode{
-        if(!preg_match('/^([a-zA-Z0-9]*)(?:\.([a-zA-Z0-9_-]+))?(?::nth-of-type\((\d+)\))?$/', $token, $m)){
+        if(!preg_match('/^([a-zA-Z0-9]*)((?:\.[a-zA-Z0-9_-]+)*)(?::nth-of-type\((\d+)\))?$/', $token, $m)){
             return null;
         }
 
         $tag = $m[1] !== '' ? $m[1] : '*';
-        $class = $m[2] ?? '';
         $nth = isset($m[3]) ? (int)$m[3] : 1;
 
+        preg_match_all('/\.([a-zA-Z0-9_-]+)/', $m[2] ?? '', $classMatches);
+
         $query = './/'.$tag;
-        if($class !== ''){
+        foreach($classMatches[1] as $class){
             $query .= "[contains(concat(' ', normalize-space(@class), ' '), ' {$class} ')]";
         }
 

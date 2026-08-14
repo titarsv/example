@@ -36,53 +36,11 @@
 
                     <h1 class="h3 mt-2">{{ $product->name }}</h1>
 
-                    <div class="fs-3 fw-bold mb-3">
-                        @if($product->actual_price > 0)
-                            <span class="js_current_price" data-price="{{ $product->actual_price }}" data-original_price="{{ $product->original_price }}">₽{{ $product->actual_price }}</span>
-                        @endif
-                        @if($product->actual_price < $product->original_price && $product->original_price > 0)
-                            <span class="text-muted text-decoration-line-through js_old_price fs-5 ms-2">₽{{ $product->original_price }}</span>
-                        @endif
-                    </div>
+                    @include('public.layouts.product_price')
 
-                    @if(!empty($variations))
-                        @foreach($variations as $variation)
-                            <div class="mb-3">
-                                <div class="small text-muted mb-1">{{ $variation['name'] }}:</div>
-                                <div class="d-flex flex-wrap gap-2">
-                                    @foreach($variation['values'] as $val_id => $value)
-                                        <span class="btn btn-sm {{ in_array($val_id, $selected_variation_attributes) ? 'btn-primary current js_active' : 'btn-outline-secondary' }} {{ $value['stock'] ? 'js_variation' : 'disabled' }}" data-id="{{ $val_id }}">
-                                            {{ $value['name'] }}{{ isset($variations_prices[$val_id]) ? ' — ₽'.$variations_prices[$val_id]['price'] : '' }}
-                                        </span>
-                                    @endforeach
-                                </div>
-                            </div>
-                        @endforeach
-                        @foreach($variations_prices as $variation => $val)
-                            <input class="js_var_{{ $variation }} d-none" data-id="{{ $variation }}" type="radio" name="variation" value="{{ $val['id'] }}" data-price="{{ $val['price'] }}" data-original_price="{{ $val['original_price'] }}"{{ $variation == array_key_first($variations_prices) ? ' checked' : '' }}>
-                        @endforeach
-                    @endif
+                    @include('public.layouts.product_variations')
 
-                    @if(module_active('cart_checkout') || module_active('wishlist') || module_active('compare'))
-                        <div class="d-flex flex-wrap gap-2 mb-4">
-                            @if(module_active('cart_checkout'))
-                                <button type="button" class="btn btn-primary js-add-to-cart" data-id="{{ $product->id }}">В корзину</button>
-                                <a href="{{ base_url('/checkout') }}" class="btn btn-outline-primary js-add-to-cart" data-id="{{ $product->id }}">Купить сейчас</a>
-                            @endif
-                            @if(module_active('wishlist') && \Cartalyst\Sentinel\Native\Facades\Sentinel::check())
-                                <button type="button" class="btn btn-outline-secondary js-wishlist-toggle{{ $product->in_wish() ? ' text-danger' : '' }}" data-id="{{ $product->id }}">
-                                    <i class="bi {{ $product->in_wish() ? 'bi-heart-fill' : 'bi-heart' }}"></i>
-                                </button>
-                            @endif
-                            @if(module_active('compare'))
-                                @php($in_compare = in_array($product->id, session(\Modules\Compare\Services\CompareService::SESSION_KEY, [])))
-                                <button type="button" class="btn btn-outline-secondary js-compare-toggle{{ $in_compare ? ' text-primary' : '' }}" data-id="{{ $product->id }}">
-                                    <i class="bi bi-arrow-left-right"></i>
-                                    <span class="js-compare-label">{{ $in_compare ? 'В сравнении' : 'Сравнить' }}</span>
-                                </button>
-                            @endif
-                        </div>
-                    @endif
+                    @include('public.layouts.product_actions')
 
                     @if(!empty($attributes))
                         <table class="table table-sm">

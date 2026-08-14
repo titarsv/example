@@ -97,6 +97,44 @@ class BladeExpressionMap
                 'heading' => 'Результаты поиска «{{ $search_text }}»',
                 'open_graph' => "@include('public.layouts.microdata.open_graph', [\n     'title' => 'Поиск: '.\$search_text,\n     'description' => 'Поиск: '.\$search_text,\n     'image' => theme_asset('images/favicon.png')\n     ])",
             ],
+            // Источник: resources/themes/base/views/public/product.blade.php. Цена/варианты/кнопки
+            // покупки — 'component'-листья (kind: 'component', 'replacement' вместо 'expr'/condition-
+            // src): не текстовое значение, а готовый рабочий кусок разметки (реальные
+            // корзина/избранное/сравнение/переключатели вариантов, специально вынесенные в отдельные
+            // partial'ы public.layouts.product_{price,variations,actions} — донорская вёрстка
+            // структурно не может дать им эти хуки, тот же принцип, что у карточки товара в catalog).
+            // Отзывы — обычный полевой репитер (текст/автор), см. DynamicSlotVocabulary — карточка
+            // отзыва не интерактивна, реальный partial ей не нужен.
+            'product' => [
+                'repeat_source' => '$reviews',
+                'repeat_var' => 'review',
+                'repeat_children' => [
+                    'text' => ['kind' => 'text', 'expr' => '$review->review'],
+                    'author' => ['kind' => 'text', 'expr' => '$review->author'],
+                ],
+                'leaves' => [
+                    'image' => [
+                        'kind' => 'image',
+                        'condition' => '!empty($product->image)',
+                        'src' => '$product->image->url()',
+                    ],
+                    'price_actions' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.product_price')\n@include('public.layouts.product_actions')",
+                    ],
+                    'variations' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.product_variations')",
+                    ],
+                    'description' => ['kind' => 'wysiwyg', 'expr' => '$product->description'],
+                ],
+                'breadcrumbs' => "{!! Breadcrumbs::render('product', \$product, \$product->category) !!}",
+                'heading' => '{{ $product->name }}',
+                // Как и у search: не $seo->name (у продукта заголовок — $product->name, отдельно от
+                // SEO-объекта), а картинка OpenGraph — фото товара, а не общий favicon (как у
+                // остальных типов) — то же самое, что рабочий product.blade.php уже делает.
+                'open_graph' => "@include('public.layouts.microdata.open_graph', [\n     'title' => \$seo->meta_title,\n     'description' => \$seo->meta_description,\n     'image' => !empty(\$product->image) ? \$product->image->url() : theme_asset('images/favicon.png')\n     ])",
+            ],
             default => null,
         };
     }

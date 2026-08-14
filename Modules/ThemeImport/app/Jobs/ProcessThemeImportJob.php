@@ -122,15 +122,15 @@ class ProcessThemeImportJob implements ShouldQueue
         $pageBuilder = new PageBuilder();
         $transplanter = new DynamicPageTransplanter();
         $notFoundBuilder = new NotFoundPageBuilder();
-        // Типы, для которых уже есть транспланter (см. план, шаг 2 — blog/article, шаг 3 —
-        // catalog/search; product пока отложен — см. план). checkout/thanks сюда никогда не
-        // попадут — по решению плана транспланter для них не строится в принципе. 404 — не в этом
-        // списке, у него свой отдельный builder (NotFoundPageBuilder, не Page-запись, см. план,
-        // шаг 5).
+        // Типы, для которых уже есть транспланter (см. план, шаги 2–3, 6 — blog/article, catalog/
+        // search, product). checkout/thanks сюда никогда не попадут — по решению плана транспланter
+        // для них не строится в принципе. 404 — не в этом списке, у него свой отдельный builder
+        // (NotFoundPageBuilder, не Page-запись, см. план, шаг 5).
         $transplantableTypes = [
             PageTypeClassifier::TYPE_BLOG,
             PageTypeClassifier::TYPE_ARTICLE,
             PageTypeClassifier::TYPE_CATALOG,
+            PageTypeClassifier::TYPE_PRODUCT,
             PageTypeClassifier::TYPE_SEARCH,
         ];
         $built = [];

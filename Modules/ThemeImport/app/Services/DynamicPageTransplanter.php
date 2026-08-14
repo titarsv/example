@@ -295,6 +295,27 @@ class DynamicPageTransplanter
                 continue;
             }
 
+            if($childMap['kind'] === 'component'){
+                // Как и repeat_component (см. spliceRepeatComponent()) — не значение донора, а
+                // готовый рабочий кусок разметки темы (например product_price/_variations/_actions,
+                // см. BladeExpressionMap::forType('product')), заменяет СОДЕРЖИМОЕ найденного узла
+                // целиком, донорскую обёртку (класс/атрибуты) сохраняет.
+                $inner = $this->innerHtml($target);
+
+                if($inner === ''){
+                    continue;
+                }
+
+                $newContent = $this->replaceFirst($content, $inner, $childMap['replacement']);
+
+                if($newContent !== $content){
+                    $content = $newContent;
+                    $spliced = true;
+                }
+
+                continue;
+            }
+
             // innerHtml, не outerHtml — заменяем только СОДЕРЖИМОЕ найденного узла, сохраняя его
             // собственный тег/класс (донорскую вёрстку/стили), тот же принцип, что и у детей
             // repeater'а (см. SchemaBuilder::resolveChildValue()).

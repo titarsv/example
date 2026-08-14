@@ -64,6 +64,30 @@ class DynamicSlotVocabulary
                     ['slug' => 'body', 'type' => 'wysiwyg', 'description' => 'основной текст статьи целиком'],
                 ],
             ],
+            // Отзывы о товаре — репитер (текст/автор, простые поля, без хуков) как у blog, а не
+            // компонентный, как у catalog — карточка отзыва не интерактивна, ей не нужен реальный
+            // partial. Цена/варианты/кнопки покупки, наоборот, — 'component'-листья (см.
+            // BladeExpressionMap::forType('product')): это не текстовые значения, а целые готовые
+            // блоки разметки (новые public.layouts.product_price/_variations/_actions, вынесенные
+            // из product.blade.php специально под это), донорская вёрстка структурно не может дать
+            // им реальные корзина/избранное/сравнение/варианты-JS-хуки, тот же принцип, что и у
+            // карточки товара в catalog.
+            'product' => [
+                'repeat' => [
+                    'slug' => 'review_card',
+                    'description' => 'один отзыв покупателя в списке отзывов о товаре',
+                    'children' => [
+                        ['slug' => 'text', 'type' => 'text', 'description' => 'текст отзыва'],
+                        ['slug' => 'author', 'type' => 'text', 'description' => 'имя автора отзыва'],
+                    ],
+                ],
+                'leaves' => [
+                    ['slug' => 'image', 'type' => 'image', 'description' => 'главное фото товара'],
+                    ['slug' => 'price_actions', 'type' => 'component', 'description' => 'блок с ценой и кнопками покупки (в корзину/купить сейчас/избранное/сравнить)'],
+                    ['slug' => 'variations', 'type' => 'component', 'description' => 'блок выбора вариантов товара — переключатели цвета/размера/вкуса и т.п. (если на странице их нет — не включай этот слот)'],
+                    ['slug' => 'description', 'type' => 'wysiwyg', 'description' => 'описание товара'],
+                ],
+            ],
             default => [],
         };
     }
