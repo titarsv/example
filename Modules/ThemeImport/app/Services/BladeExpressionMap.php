@@ -65,18 +65,21 @@ class BladeExpressionMap
                 // а не пытается найти место donor's заголовка (которого здесь физически уже нет).
                 'heading' => '{{ $seo->name }}',
             ],
-            // Источник: resources/themes/base/views/public/catalog.blade.php. 'repeat_component' —
-            // донорский инстанс карточки товара заменяется целиком на реальный интерактивный
-            // partial темы (см. DynamicSlotVocabulary — почему у catalog нет repeat_children).
-            // Донорский сайдбар фильтров/сортировки — специфичный для каждого архива UI, не
-            // фиксированный словарь, как у blog/article — сознательно НЕ трансплантируется в v1
-            // (см. docs/dynamic-page-import-plan.md, шаг 3), остаётся статичной декоративной
-            // вёрсткой донора, как и непокрытые словарём виджеты у blog/article.
+            // Источник: resources/themes/base/views/public/catalog.blade.php. 'filterable_area' —
+            // 'component'-лист (см. DynamicSlotVocabulary): заменяет ВЕСЬ найденный узел на реальный
+            // public.layouts.catalog_filterable_area (вынесен из catalog.blade.php целиком —
+            // сайдбар фильтров/сортировки + сетка товаров + пагинация, полностью рабочие, включая
+            // AJAX — см. её докблок в DynamicSlotVocabulary). Донорская вёрстка этой области отсюда
+            // теряется целиком (не просто карточка товара, как раньше в шаге 3) — сознательный
+            // компромисс: без реальных id/имён полей формы AJAX-фильтрация donor's вёрсткой в
+            // принципе недостижима (см. docs/dynamic-page-import-plan.md, шаг 7).
             'catalog' => [
-                'repeat_source' => '$products',
-                'repeat_var' => 'product',
-                'repeat_component' => "@include('public.layouts.product', ['product' => \$product])",
-                'after_repeat' => "@include('public.layouts.pagination', ['paginator' => \$products])",
+                'leaves' => [
+                    'filterable_area' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.catalog_filterable_area')",
+                    ],
+                ],
                 'breadcrumbs' => "@if(!empty(\$additional_crumb)){!! Breadcrumbs::render('filter', \$category, \$additional_crumb) !!}@elseif(!empty(\$category)){!! Breadcrumbs::render('categories', \$category) !!}@else{!! Breadcrumbs::render('catalog') !!}@endif",
                 'heading' => "{{ !empty(\$seo->getAttributes()['name']) ? \$seo->getAttributes()['name'] : \$seo->name }}",
                 // public.layouts.main использует $pagination (rel=prev/next в <head>) и

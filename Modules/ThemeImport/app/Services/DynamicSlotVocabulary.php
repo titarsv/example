@@ -29,21 +29,29 @@ class DynamicSlotVocabulary
                     ],
                 ],
             ],
+            // Один 'component'-лист на ВЕСЬ блок (сайдбар фильтров+сортировки + сетка товаров +
+            // пагинация) целиком, а не repeat на карточку товара — сортировка/фильтры на реальном
+            // сайте работают через AJAX, завязанный на конкретные id/имена полей формы
+            // (resources/themes/base/js/shop/filters.js: #catalogFilters, #catalogFilterFields,
+            // #catalogSelectedFilters, #catalogProducts, #catalogPagination), которых у донорской
+            // вёрстки естественно нет и структурно не может быть — попытка сплайсить донорские
+            // фильтры точечно оставила бы рабочую сетку без рабочей сортировки/фильтрации.
+            // BladeExpressionMap::forType('catalog') подставляет сюда реальный
+            // public.layouts.catalog_filterable_area (вынесен из catalog.blade.php целиком, со
+            // своей сеткой/пагинацией внутри — donor's собственная сетка карточек тоже уезжает).
+            'catalog' => [
+                'leaves' => [
+                    ['slug' => 'filterable_area', 'type' => 'component', 'description' => 'весь блок с сеткой товаров, сайдбаром фильтров, сортировкой и пагинацией целиком (обычно двухколоночная раскладка — сайдбар слева, товары и пагинация справа; ищи общий контейнер-обёртку ОБЕИХ колонок)'],
+                ],
+            ],
             // Без 'children': карточка товара — сложный интерактивный partial (корзина/избранное/
             // сравнение/quick-view, см. resources/themes/base/views/public/layouts/product.blade.php),
             // донорская вёрстка карточки структурно не может дать эти хуки через простой сплайсинг
             // текста, поэтому донорский инстанс целиком заменяется на реальный partial темы
-            // (BladeExpressionMap::forType('catalog')['repeat_component']) — нужен только сам факт
-            // повтора и его selector_path, разбирать содержимое одного инстанса незачем.
-            'catalog' => [
-                'repeat' => [
-                    'slug' => 'product_card',
-                    'description' => 'один товар в сетке/списке товаров каталога',
-                    'children' => [],
-                ],
-            ],
-            // Тот же компонентный повтор, что у catalog — search.blade.php переиспользует тот же
-            // partial карточки товара.
+            // (BladeExpressionMap::forType('search')['repeat_component']) — нужен только сам факт
+            // повтора и его selector_path, разбирать содержимое одного инстанса незачем. У search
+            // (в отличие от catalog) в РАБОЧЕЙ теме нет фильтров/сортировки вовсе — только сетка +
+            // пагинация, поэтому здесь остаётся прежний repeat-механизм шага 3, без изменений.
             'search' => [
                 'repeat' => [
                     'slug' => 'product_card',
