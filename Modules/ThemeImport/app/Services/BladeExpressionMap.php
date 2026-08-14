@@ -179,7 +179,15 @@ class BladeExpressionMap
                 // Как и у search: не $seo->name (у продукта заголовок — $product->name, отдельно от
                 // SEO-объекта), а картинка OpenGraph — фото товара, а не общий favicon (как у
                 // остальных типов) — то же самое, что рабочий product.blade.php уже делает.
-                'open_graph' => "@include('public.layouts.microdata.open_graph', [\n     'title' => \$seo->meta_title,\n     'description' => \$seo->meta_description,\n     'image' => !empty(\$product->image) ? \$product->image->url() : theme_asset('images/favicon.png')\n     ])",
+                // Название ключа 'open_graph' теперь не совсем точное — тут же schema.org JSON-LD
+                // (microdata.product — цена/наличие/рейтинг для Google Shopping/rich snippets,
+                // microdata.image), которых у рабочего product.blade.php ТОЖЕ ЕСТЬ, но transplant
+                // раньше вообще не подставлял (значения бы всё равно взялись из реальных
+                // $product/$reviews/$variations — тех же переменных, что уже в области видимости
+                // у остального product-транспланта, ничего нового прокидывать не нужно). Переименовать
+                // ключ в 'page_vars' затронуло бы уже закоммиченные catalog/search — не стали ради
+                // одной этой правки.
+                'open_graph' => "@include('public.layouts.microdata.product', ['product' => \$product, 'reviews' => \$reviews])\n    @if(!empty(\$product->image))\n        @include('public.layouts.microdata.image', ['image' => \$product->image])\n    @endif\n    @include('public.layouts.microdata.open_graph', [\n     'title' => \$seo->meta_title,\n     'description' => \$seo->meta_description,\n     'image' => !empty(\$product->image) ? \$product->image->url() : theme_asset('images/favicon.png')\n     ])",
             ],
             default => null,
         };
