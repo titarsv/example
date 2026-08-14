@@ -126,6 +126,15 @@ class BladeExpressionMap
                         'condition' => '!empty($product->image)',
                         'src' => '$product->image->url()',
                     ],
+                    // Отдельный от 'image' слот — тот просто свапает src у одного <img> (сохраняя
+                    // donor's тег/атрибуты), этот заменяет ЦЕЛИКОМ блок "фото + миниатюры" (если он
+                    // есть у донора) на public.layouts.product_image_area — тот же условный
+                    // (галерея vs просто фото) partial, что теперь использует и сам рабочий
+                    // product.blade.php (см. layouts/product_gallery.blade.php).
+                    'gallery' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.product_image_area')",
+                    ],
                     'price_actions' => [
                         'kind' => 'component',
                         'replacement' => "@include('public.layouts.product_price')\n@include('public.layouts.product_actions')",

@@ -46,6 +46,15 @@ $(document).on('click', '.js-rating-input .bi', function () {
     });
 });
 
+// Миниатюры галереи товара — клик меняет главное фото ($product->gallery(), см.
+// public.layouts.product_gallery). Умышленно простая замена src, без внешних
+// JS-библиотек/лайтбокса.
+$(document).on('click', '.js-gallery-thumb', function () {
+    $('.js-gallery-thumb').removeClass('active');
+    $(this).addClass('active');
+    $('#jsProductMainImage').attr('src', $(this).data('full'));
+});
+
 // Универсальная отправка форм (подписка в футере, контакты, отзывы)
 // без перезагрузки страницы — с простым инлайн-уведомлением.
 $(document).on('submit', '.ajax_form', function (e) {

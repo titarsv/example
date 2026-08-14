@@ -22,12 +22,7 @@
 
             <div class="row g-4 js-product-card">
                 <div class="col-lg-6">
-                    {!! !empty($product->image) ? $product->image->image(
-                        [600, 600],
-                        ['alt' => $product->name, 'loading' => 'lazy', 'class' => 'img-fluid rounded product-card__image w-100'],
-                        'cover',
-                        ['<991' => '100vw', 'calc(50vw - 48px)']
-                    ) : '<img src="/images/larchik/no_image.jpg" alt="Нет фото" class="img-fluid rounded w-100" loading="lazy">' !!}
+                    @include('public.layouts.product_image_area')
                 </div>
 
                 <div class="col-lg-6">
