@@ -87,6 +87,12 @@
                                 <a class="mr-2" href="/admin/pages/template/{{ $result['name'] }}" target="_blank">
                                     <i class="bx bx-code-alt" data-toggle="tooltip" title="{{ trans('locale.page_import.edit_template') }}"></i>
                                 </a>
+                            @elseif(($result['status'] ?? '') === 'created')
+                                {{-- blog/article/catalog/search/404 — не Page-запись, смотреть
+                                     реально можно только собранный Blade-файл темы --}}
+                                <a class="mr-2" href="/admin/theme_imports/preview/{{ $import->id }}/{{ $result['type'] }}" target="_blank">
+                                    <i class="bx bx-code-alt" data-toggle="tooltip" title="{{ trans('locale.theme_import.view_source') }}"></i>
+                                </a>
                             @endif
                         </td>
                     </tr>

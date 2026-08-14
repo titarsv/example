@@ -1156,6 +1156,10 @@ return [
         'classified_by_default' => 'Type determined by neither heuristic nor AI — fell back to the safe default (static)',
         'not_found' => 'Import not found',
         'deleted' => 'Import ":name" has been deleted',
+        'view_source' => 'View generated source',
+        'preview_title' => 'Source of ":type" — import ":name"',
+        'preview_hint' => 'The real generated theme Blade file, read-only — not an ACF template with fields (dynamic pages have no editable fields, values come from real PHP models).',
+        'source_not_found' => 'File not found in the theme',
     ],
     'telegram' => [
         'welcome' => 'Welcome to the chat!',

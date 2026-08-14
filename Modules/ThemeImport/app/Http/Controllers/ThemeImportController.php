@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Cartalyst\Sentinel\Native\Facades\Sentinel;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Modules\ThemeImport\Jobs\ProcessThemeImportJob;
 use Modules\ThemeImport\Models\ThemeImport;
 use ZipArchive;
@@ -180,6 +181,46 @@ class ThemeImportController extends Controller
         return view('admin.theme_imports.review')
             ->with('import', $import)
             ->with('pages', $pages);
+    }
+
+    /**
+     * Просмотр реально собранного исходника динамической страницы (blog/article/catalog/search/404)
+     * — в отличие от static-страниц (PagesController::adminTemplateAction()) это не ACF-шаблон со
+     * схемой полей в settings, а обычный Blade-файл темы с реальными PHP-выражениями ($article->,
+     * $product-> и т.п.) — редактировать через админку негде (тот же принцип, что и у самого
+     * транспланта — правки делаются вручную в файле темы), только посмотреть, что реально
+     * получилось, без необходимости лезть в файловую систему или переключать ACTIVE_THEME.
+     *
+     * @param $id
+     * @param string $type blog|article|catalog|search|404
+     */
+    public function adminPreviewAction($id, $type){
+        $import = ThemeImport::find($id);
+
+        if(empty($import) || empty($import->theme_name)){
+            abort(404);
+        }
+
+        $allowedTypes = ['blog', 'article', 'catalog', 'search', '404'];
+
+        if(!in_array($type, $allowedTypes, true)){
+            abort(404);
+        }
+
+        // 404 — не Page-запись и не отдельный маршрут темы (views/public/{type}.blade.php), а
+        // содержимое тонкой стабильной оболочки errors/404.blade.php, см. docs/dynamic-page-import-
+        // plan.md, «Решено: 404 заводится в тему через тонкую стабильную оболочку».
+        $relativePath = $type === '404'
+            ? 'views/public/errors/404_content.blade.php'
+            : "views/public/{$type}.blade.php";
+
+        $path = theme_relative_path($relativePath, $import->theme_name);
+        $source = Storage::disk('local')->exists($path) ? Storage::disk('local')->get($path) : null;
+
+        return view('admin.theme_imports.preview')
+            ->with('import', $import)
+            ->with('type', $type)
+            ->with('source', $source);
     }
 
     /**

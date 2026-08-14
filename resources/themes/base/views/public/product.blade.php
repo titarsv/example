@@ -42,18 +42,7 @@
 
                     @include('public.layouts.product_actions')
 
-                    @if(!empty($attributes))
-                        <table class="table table-sm">
-                            <tbody>
-                            @foreach($attributes as $attribute => $values)
-                                <tr>
-                                    <th class="text-muted fw-normal">{{ $attribute }}</th>
-                                    <td>{{ implode(', ', $values) }}</td>
-                                </tr>
-                            @endforeach
-                            </tbody>
-                        </table>
-                    @endif
+                    @include('public.layouts.product_attributes')
 
                     <div class="accordion mt-3" id="productInfoAccordion">
                         <div class="accordion-item">
