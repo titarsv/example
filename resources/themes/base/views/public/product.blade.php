@@ -128,35 +128,9 @@
             </div>
         @endif
 
-        @if($similar->count())
-            <div class="container py-4">
-                <h2 class="h4 mb-3">Похожие товары</h2>
-                <div class="position-relative px-4">
-                    <div class="js-products-slider">
-                        @foreach($similar as $similar_product)
-                            <div>
-                                @include('public.layouts.product', ['product' => $similar_product])
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @endif
+        @include('public.layouts.product_related_slider', ['items' => $similar, 'heading' => 'Похожие товары'])
 
-        @if($bought_together->count())
-            <div class="container py-4">
-                <h2 class="h4 mb-3">Часто покупают вместе</h2>
-                <div class="position-relative px-4">
-                    <div class="js-products-slider">
-                        @foreach($bought_together as $bought_together_product)
-                            <div>
-                                @include('public.layouts.product', ['product' => $bought_together_product])
-                            </div>
-                        @endforeach
-                    </div>
-                </div>
-            </div>
-        @endif
+        @include('public.layouts.product_related_slider', ['items' => $bought_together, 'heading' => 'Часто покупают вместе'])
 
         @if(!empty($seo->description))
             <div class="container py-4 border-top">
