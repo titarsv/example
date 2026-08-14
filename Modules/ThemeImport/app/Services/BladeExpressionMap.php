@@ -100,15 +100,15 @@ class BladeExpressionMap
                 'heading' => 'Результаты поиска «{{ $search_text }}»',
                 'open_graph' => "@include('public.layouts.microdata.open_graph', [\n     'title' => 'Поиск: '.\$search_text,\n     'description' => 'Поиск: '.\$search_text,\n     'image' => theme_asset('images/favicon.png')\n     ])",
             ],
-            // Источник: resources/themes/base/views/public/product.blade.php. Цена/варианты/атрибуты/
-            // кнопки покупки — 'component'-листья (kind: 'component', 'replacement' вместо 'expr'/
-            // condition-src): не текстовое значение, а готовый рабочий кусок разметки (реальные
-            // корзина/избранное/сравнение/переключатели вариантов/цикл $attributes, специально
-            // вынесенные в отдельные partial'ы public.layouts.product_{price,variations,actions,
-            // attributes} — донорская вёрстка структурно не может дать им эти хуки/данные, тот же
-            // принцип, что у карточки товара в catalog). Отзывы — обычный полевой репитер (текст/
-            // автор), см. DynamicSlotVocabulary — карточка отзыва не интерактивна, реальный partial
-            // ей не нужен.
+            // Источник: resources/themes/base/views/public/product.blade.php. Цена/варианты/
+            // атрибуты/видеообзоры/кнопки покупки — 'component'-листья (kind: 'component',
+            // 'replacement' вместо 'expr'/condition-src): не текстовое значение, а готовый рабочий
+            // кусок разметки (реальные корзина/избранное/сравнение/переключатели вариантов/циклы
+            // $attributes/$product->video_reviews, специально вынесенные в отдельные partial'ы
+            // public.layouts.product_{price,variations,actions,attributes,video_reviews} —
+            // донорская вёрстка структурно не может дать им эти хуки/данные, тот же принцип, что у
+            // карточки товара в catalog). Отзывы — обычный полевой репитер (текст/автор), см.
+            // DynamicSlotVocabulary — карточка отзыва не интерактивна, реальный partial ей не нужен.
             'product' => [
                 'repeat_source' => '$reviews',
                 'repeat_var' => 'review',
@@ -135,6 +135,10 @@ class BladeExpressionMap
                         'replacement' => "@include('public.layouts.product_attributes')",
                     ],
                     'description' => ['kind' => 'wysiwyg', 'expr' => '$product->description'],
+                    'video_reviews' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.product_video_reviews')",
+                    ],
                 ],
                 'breadcrumbs' => "{!! Breadcrumbs::render('product', \$product, \$product->category) !!}",
                 'heading' => '{{ $product->name }}',
