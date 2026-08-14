@@ -1,0 +1,2 @@
+<h2 class="h4 mb-0">Отзывы покупателей ({{ $reviews->count() }})</h2>
+<button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#productReviewModal">Написать отзыв</button>

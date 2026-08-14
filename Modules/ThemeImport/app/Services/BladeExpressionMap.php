@@ -151,7 +151,20 @@ class BladeExpressionMap
                         'kind' => 'component',
                         'replacement' => "@include('public.layouts.product_related_slider', ['items' => \$bought_together, 'heading' => 'Часто покупают вместе'])",
                     ],
+                    'review_header' => [
+                        'kind' => 'component',
+                        'replacement' => "@include('public.layouts.product_review_header')",
+                    ],
                 ],
+                // Модалка "написать отзыв" (public.layouts.product_review_modal) не привязана ни к
+                // какому donor's узлу вообще — это не значение/раздел контента, а инфраструктура
+                // (форма+JS-хуки js-review-form/js-rating-input), которая просто обязана
+                // СУЩЕСТВОВАТЬ где-то на странице, чтобы data-bs-target="#productReviewModal" у
+                // review_header нашёл её. after_repeat — тот же механизм, что уже добавляет
+                // пагинацию после сплайса repeater'а у blog/catalog, здесь просто добавляет фикс-
+                // разметку модалки сразу после карточек отзывов (репитер — $reviews, см. выше),
+                // без единой правки DynamicPageTransplanter.
+                'after_repeat' => "@include('public.layouts.product_review_modal')",
                 'breadcrumbs' => "{!! Breadcrumbs::render('product', \$product, \$product->category) !!}",
                 'heading' => '{{ $product->name }}',
                 // Как и у search: не $seo->name (у продукта заголовок — $product->name, отдельно от
